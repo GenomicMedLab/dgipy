@@ -1,9 +1,9 @@
 [project]
 name = "dgipy"
 authors = [
-    
+
     {name = "Matthew Cannon", email = "Matthew.Cannon2@nationwidechildrens.org"},
-    
+
 ]
 readme = "README.md"
 classifiers = [
@@ -23,6 +23,9 @@ requires-python = ">=3.8"
 description = "Python wrapper for accessing an instance of DGIdb v5 database"
 license = {file = "LICENSE"}
 dependencies = []
+dynamic = ["version"]
+
+
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov"]
