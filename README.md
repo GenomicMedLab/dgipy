@@ -47,21 +47,21 @@ Run tests with `pytest`:
 pytest
 ```
 
-## Using python-dgidb:
-dgidb.py must be imported from dgidb first:
+## Using dgipy:
+dgipy must be imported from dgidb first:
 
-    from dgidb import dgidb
+    import dgipy
 
-dgidb.py sends a pre-defined graphql query with user determined parameters to dgidb v5. Response objects are built into a dataframe using Pandas and returned to the user for readability, ease of use. Users can skip dataframe generation and instead receive the response object by setting use_pandas=False for most search functions.
+dgipy sends a pre-defined graphql query with user determined parameters to dgidb v5. Response objects are built into a dataframe using Pandas and returned to the user for readability, ease of use. Users can skip dataframe generation and instead receive the response object by setting use_pandas=False for most search functions.
 
 Currently supported searches:
 
-    dgidb.get_drug(terms, use_pandas=True)
+    dgipy.get_drug(terms, use_pandas=True)
 
-    dgidb.get_categories(terms, use_pandas=True)
+    dgipy.get_categories(terms, use_pandas=True)
 
-    dgidb.get_interactions(terms, search='genes', use_pandas=True)
-    dgidb.get_interactions(terms, search='drugs', use_pandas=True)
+    dgipy.get_interactions(terms, search='genes', use_pandas=True)
+    dgipy.get_interactions(terms, search='drugs', use_pandas=True)
 
 Search terms support list or string format inputs (e.g. terms=['BRAF','ABL1'] or terms='BRAF'). Interaction searches default to genes but can also accept drugs if search='drugs'.
 
@@ -70,24 +70,24 @@ Example usage:
     genes = ['BRAF','ABL1','BCR','PDGFRA']
     drugs = ['IMATINIB','OLARATUMAB','DASATINIB','NELOTINIB']
 
-    gene_interactions = dgidb.get_interactions(genes)
-    gene_categories = dgidb.get_categories(genes)
-    drug_interactions = dgidb.get_interactions(drugs,search='drugs')
-    drug_information = dgidb.get_drug(drugs)
+    gene_interactions = dgipy.get_interactions(genes)
+    gene_categories = dgipy.get_categories(genes)
+    drug_interactions = dgipy.get_interactions(drugs,search='drugs')
+    drug_information = dgipy.get_drug(drugs)
 
-    interaction_response_object = dgidb.get_interactions(genes, use_pandas=False)
+    interaction_response_object = dgipy.get_interactions(genes, use_pandas=False)
 
 ## Graph App Functionality
 
 ### Setup
 
-graph_app.py must be imported from dgidb first:
+dgipy must be imported from dgidb first:
 
-    from dgidb import graph_app
+    import dgipy
 
 To generate and run the app, run the following command:
 
-    app = graph_app.generate_app()
+    app = dgipy.generate_app()
     if __name__ == '__main__':
         app.run_server()
 
