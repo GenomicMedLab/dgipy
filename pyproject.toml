@@ -1,6 +1,5 @@
 [project]
 name = "dgipy"
-version = "1.0.0"
 authors = [
 
     {name = "Matthew Cannon", email = "Matthew.Cannon2@nationwidechildrens.org"},
