@@ -29,7 +29,7 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov"]
-dev = ["pre-commit", "ruff>=0.1.14"]
+dev = ["pre-commit", "ruff==0.2.0"]
 
 docs = [
     "sphinx==6.1.3",
