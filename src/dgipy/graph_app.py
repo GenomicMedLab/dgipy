@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, ctx, dash, dcc, html
-from dgidb import dgidb
-from dgidb import network_graph as ng
+from dgipy import dgidb
+from dgipy import network_graph as ng
 
 
 def generate_app():
