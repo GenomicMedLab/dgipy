@@ -68,8 +68,8 @@ branch = true
 
 [tool.ruff]
 src = ["src"]
-exclude = ["docs/source/conf.py", "src/dgipy/graph_app.py", "src/dgipy/network_graph.py"]
-select = [
+exclude = ["docs/source/conf.py"]
+lint.select = [
     "F",  # https://docs.astral.sh/ruff/rules/#pyflakes-f
     "E", "W",  # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
     "I",  # https://docs.astral.sh/ruff/rules/#isort-i
@@ -97,7 +97,7 @@ select = [
     "PGH",  # https://docs.astral.sh/ruff/rules/#pygrep-hooks-pgh
     "RUF",  # https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
 ]
-fixable = [
+lint.fixable = [
     "I",
     "F401",
     "D",
@@ -128,7 +128,7 @@ fixable = [
 # E501 - line-too-long*
 # W191 - tab-indentation*
 # *ignored for compatibility with formatter
-ignore = [
+lint.ignore = [
     "ANN101", "ANN003",
     "D203", "D205", "D206", "D213", "D300", "D400", "D415",
     "E111", "E114", "E117", "E501",
@@ -136,7 +136,7 @@ ignore = [
     "E722"
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 # ANN001 - missing-type-function-argument
 # ANN102 - missing-type-cls
 # ANN2 - missing-return-type
