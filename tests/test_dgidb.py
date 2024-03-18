@@ -45,7 +45,7 @@ def test_get_interactions():
     assert results.columns[0] == "drug"
 
     # Drug search is not grabbing genes
-    query = "braf"
+    query = "XPO1"
     results = get_interactions(query, search="drugs")
     assert len(results) == 0
 
@@ -77,7 +77,7 @@ def test_get_drugs():
     assert type(results) == type(pd.DataFrame())
 
     # Drug search does not return gene data
-    query = "braf"
+    query = "XPO1"
     results = get_drug(query)
     assert (len(results)) == 0
 
