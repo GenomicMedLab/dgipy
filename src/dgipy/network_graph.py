@@ -1,10 +1,12 @@
+"""Provides functionality to create networkx graphs and pltoly figures for network visualization"""
 import networkx as nx
+import pandas as pd
 import plotly.graph_objects as go
 
 PLOTLY_SEED = 7
 
 
-def initalize_network(interactions, selected_genes):
+def __initalize_network(interactions: pd.DataFrame, selected_genes: list) -> nx.Graph:
     interactions_graph = nx.Graph()
     graphed_genes = set()
     for index in interactions.index:
@@ -27,7 +29,7 @@ def initalize_network(interactions, selected_genes):
     return interactions_graph
 
 
-def add_node_attributes(interactions_graph):
+def __add_node_attributes(interactions_graph: nx.Graph) -> None:
     for node in interactions_graph.nodes:
         is_gene = interactions_graph.nodes[node]["isGene"]
         if is_gene:
@@ -45,17 +47,28 @@ def add_node_attributes(interactions_graph):
         interactions_graph.nodes[node]["node_size"] = set_size
 
 
-def create_network(interactions, selected_genes):
-    interactions_graph = initalize_network(interactions, selected_genes)
-    add_node_attributes(interactions_graph)
+def create_network(interactions: pd.DataFrame, selected_genes: list) -> nx.Graph:
+    """Create a networkx graph representing interactions between genes and drugs
+
+    :param interactions: DataFrame containing drug-gene interaction data
+    :param selected_genes: List containing genes used to query interaction data
+    :return: a networkx graph of drug-gene interactions
+    """
+    interactions_graph = __initalize_network(interactions, selected_genes)
+    __add_node_attributes(interactions_graph)
     return interactions_graph
 
 
-def generate_plotly(graph):
+def generate_plotly(graph: nx.Graph) -> go.Figure:
+    """Create a plotly graph representing interactions between genes and drugs
+
+    :param graph: networkx graph to be formatted as a plotly graph
+    :return: a plotly graph of drug-gene interactions
+    """
     layout = go.Layout(
         hovermode="closest",
-        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        xaxis={"showgrid": False, "zeroline": False, "showticklabels": False},
+        yaxis={"showgrid": False, "zeroline": False, "showticklabels": False},
         showlegend=True,
     )
     fig = go.Figure(layout=layout)
@@ -63,8 +76,8 @@ def generate_plotly(graph):
     if graph is not None:
         pos = nx.spring_layout(graph, seed=PLOTLY_SEED)
 
-        trace_nodes = create_trace_nodes(graph, pos)
-        trace_edges = create_trace_edges(graph, pos)
+        trace_nodes = __create_trace_nodes(graph, pos)
+        trace_edges = __create_trace_edges(graph, pos)
 
         fig.add_trace(trace_edges[0])
         fig.add_trace(trace_edges[1])
@@ -74,7 +87,7 @@ def generate_plotly(graph):
     return fig
 
 
-def create_trace_nodes(graph, pos):
+def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
     nodes_by_group = {
         "cyan": {
             "node_x": [],
@@ -117,14 +130,17 @@ def create_trace_nodes(graph, pos):
         nodes_by_group[node_color]["neighbors"].append(list(graph.neighbors(node)))
 
     trace_nodes = []
-    for node_group, node in nodes_by_group.items():
+
+    for _, node in nodes_by_group.items():
         trace_group = go.Scatter(
             x=node["node_x"],
             y=node["node_y"],
             mode="markers",
-            marker=dict(
-                symbol="circle", size=node["node_size"], color=node["node_color"]
-            ),
+            marker={
+                "symbol": "circle",
+                "size": node["node_size"],
+                "color": node["node_color"],
+            },
             text=node["node_text"],
             name=node["legend_name"],
             customdata=node["neighbors"],
@@ -137,7 +153,7 @@ def create_trace_nodes(graph, pos):
     return trace_nodes
 
 
-def create_trace_edges(graph, pos):
+def __create_trace_edges(graph: nx.Graph, pos: dict) -> go.Scatter:
     edge_x = []
     edge_y = []
 
@@ -163,7 +179,7 @@ def create_trace_edges(graph, pos):
         x=edge_x,
         y=edge_y,
         mode="lines",
-        line=dict(width=0.5, color="gray"),
+        line={"width": 0.5, "color": "gray"},
         hoverinfo="none",
         showlegend=False,
     )
@@ -181,5 +197,10 @@ def create_trace_edges(graph, pos):
     return trace_edges, i_trace_edges
 
 
-def generate_json(graph):
+def generate_json(graph: nx.Graph) -> dict:
+    """Generate a JSON representation of a networkx graph
+
+    :param graph: networkx graph to be formatted as a JSON
+    :return: a dictionary representing the JSON data of the graph
+    """
     return nx.node_link_data(graph)

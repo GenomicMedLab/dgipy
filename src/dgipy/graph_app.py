@@ -1,25 +1,31 @@
+"""Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, ctx, dash, dcc, html
+
 from dgipy import dgidb
 from dgipy import network_graph as ng
 
 
-def generate_app():
+def generate_app() -> dash.Dash:
+    """Initialize a Dash application object with a layout designed for visualizing: drug-gene interactions, options for user interactivity, and other visual elements.
+
+    :return: a python dash app that can be run with run_server()
+    """
     genes = dgidb.get_gene_list()
     plot = ng.generate_plotly(None)
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-    set_app_layout(app, plot, genes)
-    update_plot(app)
-    update_selected_node(app)
-    update_selected_node_display(app)
-    update_neighbor_dropdown(app)
-    update_edge_info(app)
+    __set_app_layout(app, plot, genes)
+    __update_plot(app)
+    __update_selected_node(app)
+    __update_selected_node_display(app)
+    __update_neighbor_dropdown(app)
+    __update_edge_info(app)
 
     return app
 
 
-def set_app_layout(app, plot, genes):
+def __set_app_layout(app: dash.Dash, plot: ng.go.Figure, genes: list) -> None:
     graph_display = dcc.Graph(
         id="network-graph", figure=plot, style={"width": "100%", "height": "800px"}
     )
@@ -86,12 +92,12 @@ def set_app_layout(app, plot, genes):
     )
 
 
-def update_plot(app):
+def __update_plot(app: dash.Dash) -> None:
     @app.callback(
         [Output("graph", "data"), Output("network-graph", "figure")],
         Input("gene-dropdown", "value"),
     )
-    def update(selected_genes):
+    def update(selected_genes: None | list) -> tuple[dict | None, ng.go.Figure]:
         if selected_genes is not None:
             gene_interactions = dgidb.get_interactions(selected_genes)
             updated_graph = ng.create_network(gene_interactions, selected_genes)
@@ -100,55 +106,58 @@ def update_plot(app):
         return None, ng.generate_plotly(None)
 
 
-def update_selected_node(app):
+def __update_selected_node(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-node", "data"),
-        [Input("network-graph", "clickData"), Input("gene-dropdown", "value")],
+        [Input("network-graph", "click_data"), Input("gene-dropdown", "value")],
     )
-    def update(clickData, newGene):
+    def update(click_data: None | dict, new_gene: None | list) -> str | dict:
         if ctx.triggered_id == "gene-dropdown":
             return ""
-        if clickData is not None and "points" in clickData:
-            selected_node = clickData["points"][0]
+        if click_data is not None and "points" in click_data:
+            selected_node = click_data["points"][0]
             if "text" not in selected_node:
                 return dash.no_update
             return selected_node
         return dash.no_update
 
 
-def update_selected_node_display(app):
+def __update_selected_node_display(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-node-text", "children"), Input("selected-node", "data")
     )
-    def update(selected_node):
+    def update(selected_node: str | dict) -> str:
         if selected_node != "":
             return selected_node["text"]
         return "No Node Selected"
 
 
-def update_neighbor_dropdown(app):
+def __update_neighbor_dropdown(app: dash.Dash) -> None:
     @app.callback(
         [Output("neighbor-dropdown", "options"), Output("neighbor-dropdown", "value")],
         Input("selected-node", "data"),
     )
-    def update(selected_node):
+    def update(selected_node: str | dict) -> tuple[list, None]:
         if selected_node != "" and selected_node["curveNumber"] != 1:
             return selected_node["customdata"], None
-        else:
-            return [], None
+        return [], None
 
 
-def update_edge_info(app):
+def __update_edge_info(app: dash.Dash) -> None:
     @app.callback(
         Output("edge-info-text", "children"),
         [Input("selected-node", "data"), Input("neighbor-dropdown", "value")],
         State("graph", "data"),
     )
-    def update(selected_node, selected_neighbor, graph):
+    def update(
+        selected_node: str | dict, selected_neighbor: None | str, graph: None | dict
+    ) -> str:
         if selected_node == "":
             return "No Edge Selected"
         if selected_node["curveNumber"] == 1:
-            selected_data = get_node_data_from_id(graph["links"], selected_node["text"])
+            selected_data = __get_node_data_from_id(
+                graph["links"], selected_node["text"]
+            )
             return (
                 "ID: "
                 + str(selected_data["id"])
@@ -165,19 +174,19 @@ def update_edge_info(app):
             )
         if selected_neighbor is not None:
             edge_node_id = None
-            selected_node_is_gene = get_node_data_from_id(
+            selected_node_is_gene = __get_node_data_from_id(
                 graph["nodes"], selected_node["text"]
             )["isGene"]
-            selected_neighbor_is_gene = get_node_data_from_id(
+            selected_neighbor_is_gene = __get_node_data_from_id(
                 graph["nodes"], selected_neighbor
             )["isGene"]
             if selected_node_is_gene == selected_neighbor_is_gene:
                 return dash.no_update
-            elif selected_node_is_gene:
+            if selected_node_is_gene:
                 edge_node_id = selected_node["text"] + " - " + selected_neighbor
             elif selected_neighbor_is_gene:
                 edge_node_id = selected_neighbor + " - " + selected_node["text"]
-            selected_data = get_node_data_from_id(graph["links"], edge_node_id)
+            selected_data = __get_node_data_from_id(graph["links"], edge_node_id)
             if selected_data is None:
                 return dash.no_update
             return (
@@ -197,7 +206,7 @@ def update_edge_info(app):
         return "No Edge Selected"
 
 
-def get_node_data_from_id(nodes, node_id):
+def __get_node_data_from_id(nodes: list, node_id: str) -> dict | None:
     for node in nodes:
         if node["id"] == node_id:
             return node
