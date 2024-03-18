@@ -28,7 +28,7 @@ dynamic = ["version"]
 
 
 [project.optional-dependencies]
-test = ["pytest", "pytest-cov"]
+test = ["pytest", "pytest-cov","pytest-benchmark"]
 dev = ["pre-commit", "ruff==0.2.0"]
 
 docs = [
@@ -62,13 +62,14 @@ where = ["src"]
 [tool.pytest.ini_options]
 addopts = "--cov=src --cov-report term-missing"
 testpaths = ["tests"]
+pythonpath = ["src"]
 
 [tool.coverage.run]
 branch = true
 
 [tool.ruff]
 src = ["src"]
-exclude = ["docs/source/conf.py"]
+exclude = ["docs/source/conf.py","tests/test_dgidb.py","tests/test_graph_app.py"]
 lint.select = [
     "F",  # https://docs.astral.sh/ruff/rules/#pyflakes-f
     "E", "W",  # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
