@@ -3,7 +3,7 @@
 [![image](https://img.shields.io/pypi/v/dgipy.svg)](https://pypi.python.org/pypi/dgipy)
 [![image](https://img.shields.io/pypi/l/dgipy.svg)](https://pypi.python.org/pypi/dgipy)
 [![image](https://img.shields.io/pypi/pyversions/dgipy.svg)](https://pypi.python.org/pypi/dgipy)
-[![Actions status](https://github.com/genomicmedlab/dgipy/workflows/CI/badge.svg)](https://github.com/genomicmedlab/dgipy/actions)
+[![Actions status](https://github.com/genomicmedlab/dgipy/actions/workflows/checks.yaml/badge.svg)](https://github.com/genomicmedlab/dgipy/actions)
 
 <!-- description -->
 Python wrapper for accessing an instance of DGIdb v5 database. Currently supported searches will return individual interaction data for drugs or genes, category annotations for genes, or information for drugs.
