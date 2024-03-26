@@ -11,12 +11,12 @@ from .dgidb import (
 from .graph_app import generate_app
 
 __all__ = [
-    get_drug,
-    get_gene,
-    get_interactions,
-    get_categories,
-    get_source,
-    get_gene_list,
-    get_drug_applications,
-    generate_app,
+    "get_drug",
+    "get_gene",
+    "get_interactions",
+    "get_categories",
+    "get_source",
+    "get_gene_list",
+    "get_drug_applications",
+    "generate_app",
 ]
