@@ -1,9 +1,7 @@
 [project]
 name = "dgipy"
 authors = [
-
     {name = "Matthew Cannon", email = "Matthew.Cannon2@nationwidechildrens.org"},
-
 ]
 readme = "README.md"
 classifiers = [
@@ -25,12 +23,9 @@ license = {file = "LICENSE"}
 dependencies = []
 dynamic = ["version"]
 
-
-
 [project.optional-dependencies]
 tests = ["pytest", "pytest-cov","pytest-benchmark"]
 dev = ["pre-commit", "ruff==0.2.0"]
-
 docs = [
     "sphinx==6.1.3",
     "sphinx-autodoc-typehints==1.22.0",
@@ -41,7 +36,6 @@ docs = [
     "gravis==0.1.0",
     "sphinx-github-changelog==1.2.1"
 ]
-
 
 [project.urls]
 Homepage = "https://github.com/genomicmedlab/dgipy"
@@ -55,6 +49,9 @@ Source = "https://github.com/genomicmedlab/dgipy"
 [build-system]
 requires = ["setuptools>=64", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "dgipy.version.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
