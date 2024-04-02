@@ -2,6 +2,8 @@
 name = "dgipy"
 authors = [
     {name = "Matthew Cannon", email = "Matthew.Cannon2@nationwidechildrens.org"},
+    {name = "Rohit Basu", email = "Rohit.Basu@nationwidechildrens.org>"},
+    {name = "James Stevenson", "james.stevenson@nationwidechildrens.org"}
 ]
 readme = "README.md"
 classifiers = [
