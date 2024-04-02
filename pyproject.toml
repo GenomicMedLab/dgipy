@@ -20,7 +20,14 @@ classifiers = [
 requires-python = ">=3.8"
 description = "Python wrapper for accessing an instance of DGIdb v5 database"
 license = {file = "LICENSE"}
-dependencies = []
+dependencies = [
+    "requests",
+    "pandas~=2.2.1",
+    "dash",
+    "dash-bootstrap-components",
+    "plotly",
+    "networkx",
+]
 dynamic = ["version"]
 
 [project.optional-dependencies]
@@ -33,7 +40,6 @@ docs = [
     "sphinx-copybutton==0.5.2",
     "sphinxext-opengraph==0.8.2",
     "furo==2023.3.27",
-    "gravis==0.1.0",
     "sphinx-github-changelog==1.2.1"
 ]
 
