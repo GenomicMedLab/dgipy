@@ -1,9 +1,9 @@
 """Provides methods for performing different searches in DGIdb"""
 import os
 from typing import Optional
+
 import pandas as pd
 import requests
-
 
 API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
 
@@ -73,7 +73,9 @@ def get_drug(
     return data
 
 
-def get_gene(terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None) -> pd.DataFrame | dict:
+def get_gene(
+    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
+) -> pd.DataFrame | dict:
     """Perform a record look up in DGIdb for a gene of interest
 
     :param terms: gene or genes for record lookup
@@ -185,7 +187,9 @@ def get_interactions(
     return data
 
 
-def get_categories(terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None) -> pd.DataFrame | dict:
+def get_categories(
+    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
+) -> pd.DataFrame | dict:
     """Perform a category annotation lookup for genes of interest
 
     :param terms: Genes of interest for annotations
