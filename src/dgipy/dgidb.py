@@ -1,29 +1,13 @@
 """Provides methods for performing different searches in DGIdb"""
 from typing import Dict, List, Optional, Union
+import os
 
 import pandas as pd
 import requests
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
 
-
-# TODO: learn how to implement global variables to reflect which API end point to use
-def __api_url(env: str = "local") -> str:
-    url = "http://localhost:3000/api/graphql"
-
-    if env == "local":
-        url = "http://localhost:3000/api/graphql"
-
-    if env == "staging":
-        url = "https://staging.dgidb.org/api/graphql"
-
-    if env == "production":
-        url = "https://dgidb.org/api/graphql"
-
-    return url
-
-
-base_url = __api_url("production")
+API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
 
 
 def _get_client(api_url: str) -> Client:
@@ -41,6 +25,7 @@ def get_drug(
     use_pandas: bool = True,
     immunotherapy: Optional[bool] = None,
     antineoplastic: Optional[bool] = None,
+    api_url: Optional[str] = None,
 ) -> pd.DataFrame | dict:
     """Perform a record look up in DGIdb for a drug of interest
 
@@ -48,6 +33,7 @@ def get_drug(
     :param use_pandas: boolean for whether pandas should be used to format response
     :param immunotherapy: filter option for results that are only immunotherapy
     :param antineoplastic: filter option for results that see antineoplastic use
+    :param api_url: API endpoint for GraphQL request
     :return: record page results for drug in either a dataframe or json object
     """
     if isinstance(terms, str):
@@ -94,7 +80,8 @@ def get_drug(
         }
         """
     )
-    client = _get_client(base_url)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
     result = client.execute(query, variable_values=params)
 
     if use_pandas is True:
@@ -102,11 +89,14 @@ def get_drug(
     return result
 
 
-def get_gene(terms: list | str, use_pandas: bool = True) -> pd.DataFrame | dict:
+def get_gene(
+    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
+) -> pd.DataFrame | dict:
     """Perform a record look up in DGIdb for a gene of interest
 
     :param terms: gene or genes for record lookup
     :param use_pandas: boolean for whether pandas should be used to format response
+    :param api_url: API endpoint for GraphQL request
     :return: record page results for gene in either a dataframe or json object
     """
     if isinstance(terms, str):
@@ -132,7 +122,8 @@ def get_gene(terms: list | str, use_pandas: bool = True) -> pd.DataFrame | dict:
         }
         """
     )
-    client = _get_client(base_url)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
     result = client.execute(query, variable_values={"names": terms})
 
     if use_pandas is True:
@@ -150,6 +141,7 @@ def get_interactions(
     pmid: Optional[int] = None,
     interaction_type: str | None = None,
     approved: str | None = None,
+    api_url: Optional[str] = None,
 ) -> pd.DataFrame | dict:
     """Perform an interaction look up for drugs or genes of interest
 
@@ -162,6 +154,7 @@ def get_interactions(
     :param pmid: filter option for specific PMID
     :param interaction_type: filter option for specific interaction types
     :param approved: filter option for approved interactions
+    :param api_url: API endpoint for GraphQL request
     :return: interaction results for terms in either a dataframe or a json object
     """
     if isinstance(terms, str):
@@ -265,7 +258,8 @@ def get_interactions(
         msg = "Search type must be specified using: search='drugs' or search='genes'"
         raise Exception(msg)
 
-    client = _get_client(base_url)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
     result = client.execute(query, variable_values=params)
 
     if use_pandas is True:
@@ -275,11 +269,14 @@ def get_interactions(
     return result
 
 
-def get_categories(terms: list | str, use_pandas: bool = True) -> pd.DataFrame | dict:
+def get_categories(
+    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
+) -> pd.DataFrame | dict:
     """Perform a category annotation lookup for genes of interest
 
     :param terms: Genes of interest for annotations
     :param use_pandas: boolean for whether pandas should be used to format a response
+    :param api_url: API endpoint for GraphQL request
     :return: category annotation results for genes formatted in a dataframe or a json object
     """
     if isinstance(terms, str):
@@ -301,7 +298,8 @@ def get_categories(terms: list | str, use_pandas: bool = True) -> pd.DataFrame |
         }
         """
     )
-    client = _get_client(base_url)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
     result = client.execute(query, variable_values={"names": terms})
 
     if use_pandas is True:
@@ -309,10 +307,11 @@ def get_categories(terms: list | str, use_pandas: bool = True) -> pd.DataFrame |
     return result
 
 
-def get_source(search: str = "all") -> dict:
+def get_source(search: str = "all", api_url: Optional[str] = None) -> dict:
     """Perform a source lookup for relevant aggregate sources
 
     :param search: string to denote type of source to lookup
+    :param api_url: API endpoint for GraphQL request
     :return: all sources of relevant type in a json object
     """
     valid_types = ["all", "drug", "gene", "interaction", "potentially_druggable"]
@@ -336,14 +335,16 @@ def get_source(search: str = "all") -> dict:
         }
         """
     )
-    client = _get_client(base_url)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
     params = {} if search.lower() == "all" else {"sourceType": search}
     return client.execute(query, variable_values=params)
 
 
-def get_gene_list() -> list:
+def get_gene_list(api_url: Optional[str] = None) -> list:
     """Get all gene names present in DGIdb
 
+    :param api_url: API endpoint for GraphQL request
     :return: a full list of genes present in dgidb
     """
     query = gql(
@@ -358,18 +359,22 @@ def get_gene_list() -> list:
         }
         """
     )
-    client = _get_client(base_url)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
     result = client.execute(query)
-    return result["genes"]
+    genes = result["genes"]["nodes"]
+    genes.sort(key=lambda i: i["name"])
+    return genes
 
 
 def get_drug_applications(
-    terms: list | str, use_pandas: bool = True
+    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
 ) -> pd.DataFrame | dict:
     """Perform a look up for ANDA/NDA applications for drug or drugs of interest
 
     :param terms: drug or drugs of interest
     :param use_pandas: boolean for whether to format response in DataFrame
+    :param api_url: API endpoint for GraphQL request
     :return: all ANDA/NDA applications for drugs of interest in json or DataFrame
     """
     if isinstance(terms, str):
@@ -389,7 +394,8 @@ def get_drug_applications(
         }
         """
     )
-    client = _get_client(base_url)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
     result = client.execute(query, variable_values={"names": terms})
 
     if use_pandas is True:
