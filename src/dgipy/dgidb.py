@@ -1,6 +1,6 @@
 """Provides methods for performing different searches in DGIdb"""
-from typing import Dict, List, Optional, Union
 import os
+from typing import Dict, List, Optional, Union
 
 import pandas as pd
 import requests
