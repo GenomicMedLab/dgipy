@@ -1,5 +1,5 @@
 """Provides methods for performing different searches in DGIdb"""
-from typing import Optional, Dict, Union, List
+from typing import Dict, List, Optional, Union
 
 import pandas as pd
 import requests
@@ -326,9 +326,7 @@ def get_source(search: str = "all") -> dict:
     """)
     client = _get_client(base_url)
     params = {} if search.lower() == "all" else {"sourceType": search}
-    result = client.execute(query, variable_values=params)
-
-    return result
+    return client.execute(query, variable_values=params)
 
 
 def get_gene_list() -> list:
