@@ -59,39 +59,41 @@ def get_drug(
     if antineoplastic is not None:
         params["antineoplastic"] = antineoplastic
 
-    query = gql("""
-    query getDrugs($names: [String!], $immunotherapy: Boolean, $antiNeoplastic: Boolean) {
-      drugs(
-        names: $names
-        immunotherapy: $immunotherapy
-        antiNeoplastic: $antiNeoplastic
-      ) {
-        nodes {
-          name
-          conceptId
-          drugAliases {
-            alias
-          }
-          drugAttributes {
-            name
-            value
-          }
-          antiNeoplastic
-          immunotherapy
-          approved
-          drugApprovalRatings {
-            rating
-            source {
-              sourceDbName
+    query = gql(
+        """
+        query getDrugs($names: [String!], $immunotherapy: Boolean, $antiNeoplastic: Boolean) {
+          drugs(
+            names: $names
+            immunotherapy: $immunotherapy
+            antiNeoplastic: $antiNeoplastic
+          ) {
+            nodes {
+              name
+              conceptId
+              drugAliases {
+                alias
+              }
+              drugAttributes {
+                name
+                value
+              }
+              antiNeoplastic
+              immunotherapy
+              approved
+              drugApprovalRatings {
+                rating
+                source {
+                  sourceDbName
+                }
+              }
+              drugApplications {
+                appNo
+              }
             }
           }
-          drugApplications {
-            appNo
-          }
         }
-      }
-    }
-    """)
+        """
+    )
     client = _get_client(base_url)
     result = client.execute(query, variable_values=params)
 
@@ -110,24 +112,26 @@ def get_gene(terms: list | str, use_pandas: bool = True) -> pd.DataFrame | dict:
     if isinstance(terms, str):
         terms = [terms]
 
-    query = gql("""
-    query getGenes($names: [String!]) {
-      genes(names: $names) {
-        nodes {
-          name
-          longName
-          conceptId
-          geneAliases {
-            alias
-          }
-          geneAttributes {
-            name
-            value
+    query = gql(
+        """
+        query getGenes($names: [String!]) {
+          genes(names: $names) {
+            nodes {
+              name
+              longName
+              conceptId
+              geneAliases {
+                alias
+              }
+              geneAttributes {
+                name
+                value
+              }
+            }
           }
         }
-      }
-    }
-    """)
+        """
+    )
     client = _get_client(base_url)
     result = client.execute(query, variable_values={"names": terms})
 
@@ -177,82 +181,86 @@ def get_interactions(
         params["approved"] = approved
 
     if search == "genes":
-        query = gql("""
-        query getInteractionsByGene($names: [String!], $sourceDbName: String, $pmid: Int, $interactionType: String) {
-          genes(
-            names: $names
-            sourceDbName: $sourceDbName
-            pmid: $pmid
-            interactionType: $interactionType
-          ) {
-            nodes {
-              name
-              longName
-              geneCategories {
-                name
-              }
-              interactions {
-                interactionAttributes {
+        query = gql(
+            """
+            query getInteractionsByGene($names: [String!], $sourceDbName: String, $pmid: Int, $interactionType: String) {
+              genes(
+                names: $names
+                sourceDbName: $sourceDbName
+                pmid: $pmid
+                interactionType: $interactionType
+              ) {
+                nodes {
                   name
-                  value
+                  longName
+                  geneCategories {
+                    name
+                  }
+                  interactions {
+                    interactionAttributes {
+                      name
+                      value
+                    }
+                    drug {
+                      name
+                      approved
+                    }
+                    interactionScore
+                    interactionClaims {
+                      publications {
+                        citation
+                        pmid
+                      }
+                      source {
+                        sourceDbName
+                      }
+                    }
+                  }
                 }
-                drug {
+              }
+            }
+            """
+        )
+    elif search == "drugs":
+        query = gql(
+            """
+            query getInteractionsByDrug($names: [String!], $immunotherapy: Boolean, $antineoplastic: Boolean, $sourceDbName: String, $pmid: Int, $interactionType: String, $approved: Boolean) {
+              drugs(
+                names: $names
+                immunotherapy: $immunotherapy
+                antiNeoplastic: $antineoplastic
+                sourceDbName: $sourceDbName
+                pmid: $pmid
+                interactionType: $interactionType
+                approved: $approved
+              ) {
+                nodes {
                   name
                   approved
-                }
-                interactionScore
-                interactionClaims {
-                  publications {
-                    citation
-                    pmid
-                  }
-                  source {
-                    sourceDbName
-                  }
-                }
-              }
-            }
-          }
-        }
-        """)
-    elif search == "drugs":
-        query = gql("""
-        query getInteractionsByDrug($names: [String!], $immunotherapy: Boolean, $antineoplastic: Boolean, $sourceDbName: String, $pmid: Int, $interactionType: String, $approved: Boolean) {
-          drugs(
-            names: $names
-            immunotherapy: $immunotherapy
-            antiNeoplastic: $antineoplastic
-            sourceDbName: $sourceDbName
-            pmid: $pmid
-            interactionType: $interactionType
-            approved: $approved
-          ) {
-            nodes {
-              name
-              approved
-              interactions {
-                interactionAttributes {
-                  name
-                  value
-                }
-                gene {
-                  name
-                }
-                interactionScore
-                interactionClaims {
-                  publications {
-                    citation
-                    pmid
-                  }
-                  source {
-                    sourceDbName
+                  interactions {
+                    interactionAttributes {
+                      name
+                      value
+                    }
+                    gene {
+                      name
+                    }
+                    interactionScore
+                    interactionClaims {
+                      publications {
+                        citation
+                        pmid
+                      }
+                      source {
+                        sourceDbName
+                      }
+                    }
                   }
                 }
               }
             }
-          }
-        }
-        """)
+            """
+        )
     else:
         msg = "Search type must be specified using: search='drugs' or search='genes'"
         raise Exception(msg)
@@ -277,20 +285,22 @@ def get_categories(terms: list | str, use_pandas: bool = True) -> pd.DataFrame |
     if isinstance(terms, str):
         terms = [terms]
 
-    query = gql("""
-    query getGeneCategories($names: [String!]) {
-      genes(names: $names) {
-        nodes {
-          name
-          longName
-          geneCategoriesWithSources {
-            name
-            sourceNames
+    query = gql(
+        """
+        query getGeneCategories($names: [String!]) {
+          genes(names: $names) {
+            nodes {
+              name
+              longName
+              geneCategoriesWithSources {
+                name
+                sourceNames
+              }
+            }
           }
         }
-      }
-    }
-    """)
+        """
+    )
     client = _get_client(base_url)
     result = client.execute(query, variable_values={"names": terms})
 
@@ -310,20 +320,22 @@ def get_source(search: str = "all") -> dict:
         msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
         raise Exception(msg)
 
-    query = gql("""
-    query getSources($sourceType: SourceTypeFilter) {
-      sources(sourceType: $sourceType) {
-        nodes {
-          fullName
-          sourceDbName
-          sourceDbVersion
-          drugClaimsCount
-          geneClaimsCount
-          interactionClaimsCount
+    query = gql(
+        """
+        query getSources($sourceType: SourceTypeFilter) {
+          sources(sourceType: $sourceType) {
+            nodes {
+              fullName
+              sourceDbName
+              sourceDbVersion
+              drugClaimsCount
+              geneClaimsCount
+              interactionClaimsCount
+            }
+          }
         }
-      }
-    }
-    """)
+        """
+    )
     client = _get_client(base_url)
     params = {} if search.lower() == "all" else {"sourceType": search}
     return client.execute(query, variable_values=params)
@@ -334,16 +346,18 @@ def get_gene_list() -> list:
 
     :return: a full list of genes present in dgidb
     """
-    query = gql("""
-    {
-      genes {
-        nodes {
-          name
-          conceptId
+    query = gql(
+        """
+        {
+          genes {
+            nodes {
+              name
+              conceptId
+            }
+          }
         }
-      }
-    }
-    """)
+        """
+    )
     client = _get_client(base_url)
     result = client.execute(query)
     return result["genes"]
@@ -361,18 +375,20 @@ def get_drug_applications(
     if isinstance(terms, str):
         terms = [terms]
 
-    query = gql("""
-    query getDrugApplications($names: [String!]) {
-      drugs(names: $names) {
-        nodes {
-          name
-          drugApplications {
-            appNo
+    query = gql(
+        """
+        query getDrugApplications($names: [String!]) {
+          drugs(names: $names) {
+            nodes {
+              name
+              drugApplications {
+                appNo
+              }
+            }
           }
         }
-      }
-    }
-    """)
+        """
+    )
     client = _get_client(base_url)
     result = client.execute(query, variable_values={"names": terms})
 
