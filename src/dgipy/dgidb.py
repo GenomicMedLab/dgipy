@@ -274,22 +274,29 @@ def get_categories(terms: list | str, use_pandas: bool = True) -> pd.DataFrame |
     :param use_pandas: boolean for whether pandas should be used to format a response
     :return: category annotation results for genes formatted in a dataframe or a json object
     """
-    if isinstance(terms, list):
-        terms = '","'.join(terms)
+    if isinstance(terms, str):
+        terms = [terms]
 
-    query = (
-        '{\ngenes(names: ["'
-        + terms.upper()
-        + '"]) {\nnodes{\nname\nlongName\ngeneCategoriesWithSources{\nname\nsourceNames\n}\n}\n}\n}'
-    )
-    r = requests.post(base_url, json={"query": query}, timeout=20)
+    query = gql("""
+    query getGeneCategories($names: [String!]) {
+      genes(names: $names) {
+        nodes {
+          name
+          longName
+          geneCategoriesWithSources {
+            name
+            sourceNames
+          }
+        }
+      }
+    }
+    """)
+    client = _get_client(base_url)
+    result = client.execute(query, variable_values={"names": terms})
 
     if use_pandas is True:
-        data = __process_gene_categories(r.json())
-    elif use_pandas is False:
-        data = r.json()
-
-    return data
+        return __process_gene_categories(result)
+    return result
 
 
 def get_source(search: str = "all") -> dict:
@@ -299,24 +306,29 @@ def get_source(search: str = "all") -> dict:
     :return: all sources of relevant type in a json object
     """
     valid_types = ["all", "drug", "gene", "interaction", "potentially_druggable"]
-
     if search.lower() not in valid_types:
         msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
         raise Exception(msg)
 
-    if search == "all":
-        query = "{\nsources {\nnodes {\nfullName\nsourceDbName\nsourceDbVersion\ndrugClaimsCount\ngeneClaimsCount\ninteractionClaimsCount\n}\n}\n}"
+    query = gql("""
+    query getSources($sourceType: SourceTypeFilter) {
+      sources(sourceType: $sourceType) {
+        nodes {
+          fullName
+          sourceDbName
+          sourceDbVersion
+          drugClaimsCount
+          geneClaimsCount
+          interactionClaimsCount
+        }
+      }
+    }
+    """)
+    client = _get_client(base_url)
+    params = {} if search.lower() == "all" else {"sourceType": search}
+    result = client.execute(query, variable_values=params)
 
-    else:
-        query = (
-            "{\nsources(sourceType: "
-            + search.upper()
-            + ") {\nnodes {\nfullName\nsourceDbName\nsourceDbVersion\ndrugClaimsCount\ngeneClaimsCount\ninteractionClaimsCount\n}\n}\n}"
-        )
-
-    r = requests.post(base_url, json={"query": query}, timeout=20)
-
-    return r.json()
+    return result
 
 
 def get_gene_list() -> list:
@@ -324,14 +336,19 @@ def get_gene_list() -> list:
 
     :return: a full list of genes present in dgidb
     """
-    query = "{\ngenes {\nnodes {\nname\n}\n}\n}"
-    r = requests.post(base_url, json={"query": query}, timeout=20)
-    gene_list = []
-    for match in r.json()["data"]["genes"]["nodes"]:
-        gene_name = match["name"]
-        gene_list.append(gene_name)
-    gene_list.sort()
-    return gene_list
+    query = gql("""
+    {
+      genes {
+        nodes {
+          name
+          conceptId
+        }
+      }
+    }
+    """)
+    client = _get_client(base_url)
+    result = client.execute(query)
+    return result["genes"]
 
 
 def get_drug_applications(
@@ -343,24 +360,28 @@ def get_drug_applications(
     :param use_pandas: boolean for whether to format response in DataFrame
     :return: all ANDA/NDA applications for drugs of interest in json or DataFrame
     """
-    if isinstance(terms, list):
-        terms = '","'.join(terms)
+    if isinstance(terms, str):
+        terms = [terms]
 
-    query = (
-        '{\ndrugs(names: ["'
-        + terms.upper()
-        + '"]) {\nnodes{\nname \ndrugApplications {\nappNo\n}\n}\n}\n}\n'
-    )
-
-    r = requests.post(base_url, json={"query": query}, timeout=20)
+    query = gql("""
+    query getDrugApplications($names: [String!]) {
+      drugs(names: $names) {
+        nodes {
+          name
+          drugApplications {
+            appNo
+          }
+        }
+      }
+    }
+    """)
+    client = _get_client(base_url)
+    result = client.execute(query, variable_values={"names": terms})
 
     if use_pandas is True:
-        data = __process_drug_applications(r.json())
-        data = __openfda_data(data)
-    elif use_pandas is False:
-        data = r.json()
-
-    return data
+        data = __process_drug_applications(result)
+        return __openfda_data(data)
+    return result
 
 
 def __process_drug(results: dict) -> pd.DataFrame:
@@ -443,7 +464,7 @@ def __process_gene_search(results: dict) -> pd.DataFrame:
     pmids_list = []
     # genecategories_list = []
 
-    for match in results["data"]["genes"]["nodes"]:
+    for match in results["genes"]["nodes"]:
         current_gene = match["name"]
         current_longname = match["longName"]
 
@@ -469,7 +490,7 @@ def __process_gene_search(results: dict) -> pd.DataFrame:
             list_string = []
             sub_list_string = []
             for claim in interaction["interactionClaims"]:
-                list_string.append(f"{claim['source']['fullName']}")
+                list_string.append(f"{claim['source']['sourceDbName']}")
                 sub_list_string = []
                 for publication in claim["publications"]:
                     sub_list_string.append(f"{publication['pmid']}")
@@ -495,7 +516,7 @@ def __process_gene_categories(results: dict) -> pd.DataFrame:
     sources_list = []
     longname_list = []
 
-    for match in results["data"]["genes"]["nodes"]:
+    for match in results["genes"]["nodes"]:
         current_gene = match["name"]
         current_longname = match["longName"]
 
@@ -522,7 +543,7 @@ def __process_drug_search(results: dict) -> pd.DataFrame:
     sources_list = []
     pmids_list = []
 
-    for match in results["data"]["drugs"]["nodes"]:
+    for match in results["drugs"]["nodes"]:
         current_drug = match["name"]
         current_approval = str(match["approved"])
 
@@ -541,7 +562,7 @@ def __process_drug_search(results: dict) -> pd.DataFrame:
             list_string = []
             sub_list_string = []
             for claim in interaction["interactionClaims"]:
-                list_string.append(f"{claim['source']['fullName']}")
+                list_string.append(f"{claim['source']['sourceDbName']}")
                 sub_list_string = []
                 for publication in claim["publications"]:
                     sub_list_string.append(f"{publication['pmid']}")
@@ -564,7 +585,7 @@ def __process_drug_applications(data: dict) -> pd.DataFrame:
     drug_list = []
     application_list = []
 
-    for node in data["data"]["drugs"]["nodes"]:
+    for node in data["drugs"]["nodes"]:
         current_drug = node["name"]
         for application in node["drugApplications"]:
             drug_list.append(current_drug)
