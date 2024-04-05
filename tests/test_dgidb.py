@@ -1,35 +1,56 @@
 import pandas as pd
+from pathlib import Path
 import pytest
 import requests_mock
 
-from dgipy.dgidb import get_interactions,get_categories,get_drug
+from dgipy.dgidb import get_interactions,get_categories,get_drug, get_gene
 
 
-def test_get_drugs():
-    term = "imatinib"
+def test_get_drugs(fixtures_dir: Path):
     terms = ["imatinib"]
-    # with requests_mock.Mocker() as m:
-    #     m.get("")
+    with requests_mock.Mocker() as m, (fixtures_dir / "get_drug_api_response.json").open() as json_response, (fixtures_dir / "get_drug_filtered_api_response.json").open() as filtered_json_response:
+        m.post("https://dgidb.org/api/graphql", text=json_response.read())
 
-    # Drug search builds a dataframe (with use_pandas default set to 'true')
-    query = "imatinib"
-    results = get_drug(query)
-    assert type(results) == type(pd.DataFrame())
+        results = get_drug(terms)
+        assert isinstance(results, pd.DataFrame), "Results object is a DataFrame"
+        assert len(results), "DataFrame is non-empty"
 
-    # Drug search does not return gene data
-    query = "XPO1"
-    results = get_drug(query)
-    assert (len(results)) == 0
+        results_with_added_fake = get_drug(terms + ["not-real"])
+        assert len(results_with_added_fake) == len(results), "Gracefully ignore non-existent search terms"
 
-    # Use pandas can be toggled to 'false' and returns dictionary response object
-    query = "imatinib"
-    results = get_drug(query, use_pandas=False)
-    assert type(results) != type(pd.DataFrame())
-    assert type(results) == type(dict())
+        m.post("https://dgidb.org/api/graphql", text="{\"data\": {\"drugs\": {\"nodes\": []}}}")
+        empty_results = get_drug("not-real")
+        assert len(empty_results) == 0, "Handles empty response"
+
+        filtered_results = get_drug(terms + ["metronidazole"], antineoplastic=True)
+        assert len(filtered_results), "DataFrame is non-empty"
+        assert filtered_results["drug"][0] == "IMATINIB"
+        assert results["antineoplastic"].all(), "All results are antineoplastics"
+
+        m.post("https://dgidb.org/api/graphql", text=filtered_json_response)
+        filtered_results = get_drug(terms + ["metronidazole"], antineoplastic=False)
+        assert len(filtered_results), "DataFrame is non-empty"
+        assert filtered_results["drug"][0] == "METRONIDAZOLE"
+
+
+def test_get_genes(fixtures_dir: Path):
+    terms = ["BRAF"]
+    with requests_mock.Mocker() as m, (fixtures_dir / "get_gene_api_response.json").open() as json_response:
+        m.post("https://dgidb.org/api/graphql", text=json_response.read())
+
+        results = get_gene(terms)
+        assert isinstance(results, pd.DataFrame), "Results object is a DataFrame"
+        assert len(results), "DataFrame is non-empty"
+
+        results_with_added_fake = get_gene(terms + ["not-real"])
+        assert len(results_with_added_fake) == len(results), "Gracefully ignore non-existent search terms"
+
+        m.post("https://dgidb.org/api/graphql", text="{\"data\": {\"genes\": {\"nodes\": []}}}")
+        empty_results = get_gene("not-real")
+        assert len(empty_results) == 0, "Handles empty response"
 
 
 def test_get_interactions():
-    """Test that interactions works correctly"""
     # Search types work correctly
     query = "braf"
     with pytest.raises(Exception) as excinfo:
