@@ -62,6 +62,7 @@ where = ["src"]
 addopts = "--cov=src --cov-report term-missing"
 testpaths = ["tests"]
 pythonpath = ["src"]
+markers = ["performance: tests that benchmark performance"]
 
 [tool.coverage.run]
 branch = true
