@@ -1,9 +1,9 @@
 """Provide basic test configuration and fixture root."""
 from io import TextIOWrapper
 from pathlib import Path
-import requests_mock
 
 import pytest
+import requests_mock
 
 
 def pytest_addoption(parser):
@@ -52,8 +52,9 @@ def set_up_graphql_mock(schema: str):
         )
         m.post(
             "https://dgidb.org/api/graphql",
-            additional_matcher=lambda r: "IntrospectionQuery" in r.json().get("query", ""),
+            additional_matcher=lambda r: "IntrospectionQuery"
+            in r.json().get("query", ""),
             text=schema,
         )
-    return _set_up_graphql_mock
 
+    return _set_up_graphql_mock

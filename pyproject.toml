@@ -69,7 +69,7 @@ branch = true
 
 [tool.ruff]
 src = ["src"]
-exclude = ["docs/source/conf.py","tests/test_dgidb.py","tests/test_graph_app.py"]
+exclude = ["docs/source/conf.py", "tests/test_graph_app.py"]
 lint.select = [
     "F",  # https://docs.astral.sh/ruff/rules/#pyflakes-f
     "E", "W",  # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
@@ -141,4 +141,9 @@ lint.ignore = [
 # ANN001 - missing-type-function-argument
 # ANN102 - missing-type-cls
 # ANN2 - missing-return-type
-"tests/*" = ["ANN001", "ANN102", "ANN2"]
+# D100 - undocumented-public-module
+# D101 - undocumented-public-class
+# D103 - undocumented-public-function
+# S101 - assert
+# B011 - assert-false
+"tests/*" = ["ANN001", "ANN102", "ANN2", "S101", "B011", "D100", "D101", "D103"]

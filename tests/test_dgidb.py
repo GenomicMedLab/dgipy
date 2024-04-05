@@ -6,7 +6,15 @@ import pandas as pd
 import pytest
 import requests_mock
 
-from dgipy.dgidb import get_categories, get_drug, get_drug_applications, get_gene, get_gene_list, get_interactions, get_source
+from dgipy.dgidb import (
+    get_categories,
+    get_drug,
+    get_drug_applications,
+    get_gene,
+    get_gene_list,
+    get_interactions,
+    get_source,
+)
 
 
 def test_get_drugs(fixtures_dir: Path, set_up_graphql_mock: Callable):
@@ -83,7 +91,9 @@ def test_get_interactions_by_genes(fixtures_dir: Path, set_up_graphql_mock: Call
         # multiple terms
         set_up_graphql_mock(m, multiple_genes_response)
         multiple_gene_results = get_interactions(["ereg", "braf"])
-        assert len(multiple_gene_results) > len(results), "Handles multiple genes at once"
+        assert len(multiple_gene_results) > len(
+            results
+        ), "Handles multiple genes at once"
 
         # empty response
         set_up_graphql_mock(m, StringIO('{"data": {"genes": {"nodes": []}}}'))
@@ -107,8 +117,12 @@ def test_get_interactions_by_drugs(fixtures_dir: Path, set_up_graphql_mock: Call
 
         # multiple terms
         set_up_graphql_mock(m, multiple_drugs_response)
-        multiple_gene_results = get_interactions(["sunitinib", "clonazepam"], search="drugs")
-        assert len(multiple_gene_results) > len(results), "Handles multiple drugs at once"
+        multiple_gene_results = get_interactions(
+            ["sunitinib", "clonazepam"], search="drugs"
+        )
+        assert len(multiple_gene_results) > len(
+            results
+        ), "Handles multiple drugs at once"
 
         # empty response
         set_up_graphql_mock(m, StringIO('{"data": {"drugs": {"nodes": []}}}'))
@@ -143,12 +157,17 @@ def test_get_sources(fixtures_dir: Path, set_up_graphql_mock: Callable):
         results = get_source("GENE")
         sources = results["sources"]["nodes"]
         assert len(sources) == 3, f"Incorrect # of sources: {len(sources)}"
-        assert {s["sourceDbName"] for s in sources} == {"NCBI", "HGNC", "Ensembl"}, "Contains correct sources"
+        assert {s["sourceDbName"] for s in sources} == {
+            "NCBI",
+            "HGNC",
+            "Ensembl",
+        }, "Contains correct sources"
 
 
 def test_get_gene_list(fixtures_dir: Path, set_up_graphql_mock: Callable):
     with requests_mock.Mocker() as m, (
-        fixtures_dir / "get_gene_list_response.json"  # this fixture is truncated from the real response
+        fixtures_dir
+        / "get_gene_list_response.json"  # this fixture is truncated from the real response
     ).open() as gene_list_response:
         set_up_graphql_mock(m, gene_list_response)
 
@@ -163,13 +182,16 @@ def test_get_drug_applications(fixtures_dir, set_up_graphql_mock: Callable):
         fixtures_dir / "get_drug_applications_drugsatfda_response.json"
     ).open() as drugsatfda_response:
         set_up_graphql_mock(m, drug_applications_response)
-        m.get("https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:%22NDA212099%22", text=drugsatfda_response.read())
+        m.get(
+            "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:%22NDA212099%22",
+            text=drugsatfda_response.read(),
+        )
         results = get_drug_applications(["DAROLUTAMIDE"])
         assert len(results) == 1
         assert results.iloc[0]["description"] == "NUBEQA: 300MG Prescription TABLET"
 
 
-@pytest.mark.performance
+@pytest.mark.performance()
 def test_get_interactions_benchmark(benchmark):
     """Skipped by default -- call pytest with `--performance` flag to run.
 
