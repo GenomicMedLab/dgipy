@@ -1,7 +1,31 @@
 import pandas as pd
 import pytest
+import requests_mock
 
 from dgipy.dgidb import get_interactions,get_categories,get_drug
+
+
+def test_get_drugs():
+    term = "imatinib"
+    terms = ["imatinib"]
+    # with requests_mock.Mocker() as m:
+    #     m.get("")
+
+    # Drug search builds a dataframe (with use_pandas default set to 'true')
+    query = "imatinib"
+    results = get_drug(query)
+    assert type(results) == type(pd.DataFrame())
+
+    # Drug search does not return gene data
+    query = "XPO1"
+    results = get_drug(query)
+    assert (len(results)) == 0
+
+    # Use pandas can be toggled to 'false' and returns dictionary response object
+    query = "imatinib"
+    results = get_drug(query, use_pandas=False)
+    assert type(results) != type(pd.DataFrame())
+    assert type(results) == type(dict())
 
 
 def test_get_interactions():
@@ -65,25 +89,6 @@ def test_get_categories():
     # Use pandas can be toggled to 'false' and returns a dictionary response object
     query = "imatinib"
     results = get_categories(query, use_pandas=False)
-    assert type(results) != type(pd.DataFrame())
-    assert type(results) == type(dict())
-
-
-def test_get_drugs():
-    """Test that drug profile works correctly"""
-    # Drug search builds a dataframe (with use_pandas default set to 'true')
-    query = "imatinib"
-    results = get_drug(query)
-    assert type(results) == type(pd.DataFrame())
-
-    # Drug search does not return gene data
-    query = "XPO1"
-    results = get_drug(query)
-    assert (len(results)) == 0
-
-    # Use pandas can be toggled to 'false' and returns dictionary response object
-    query = "imatinib"
-    results = get_drug(query, use_pandas=False)
     assert type(results) != type(pd.DataFrame())
     assert type(results) == type(dict())
 
