@@ -22,7 +22,9 @@ description = "Python wrapper for accessing an instance of DGIdb v5 database"
 license = {file = "LICENSE"}
 dependencies = [
     "pandas",
-    "gql[requests]"
+    "gql[requests]",
+    "dash",
+    "dash_bootstrap_components",
 ]
 dynamic = ["version"]
 
