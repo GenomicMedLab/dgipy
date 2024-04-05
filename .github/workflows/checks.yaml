@@ -17,7 +17,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python3 -m pip install ".[etl,test]"
+          python3 -m pip install ".[tests]"
 
       - name: Run tests
         run: python3 -m pytest tests/test_dgidb.py
