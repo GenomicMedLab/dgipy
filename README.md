@@ -77,6 +77,20 @@ Example usage:
 
     interaction_response_object = dgipy.get_interactions(genes, use_pandas=False)
 
+By default, `dgipy` will send requests to `https://dgidb.org/api/graphql`. This can optionally be overridden by setting the `DGIDB_API_URL` environment variable:
+
+```shell
+export DGIDB_API_URL=http://localhost:3000/api/graphql
+```
+
+It can also be specified directly in method calls:
+
+```python3
+from dgidb.dgipy import get_drug
+
+drugs = get_drug(["DABRAFENIB"], api_url="http://localhost:3000/api/graphql")
+```
+
 ## Graph App Functionality
 
 ### Setup

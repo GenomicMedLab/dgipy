@@ -1,55 +1,31 @@
 """Provides methods for performing different searches in DGIdb"""
+import os
+from typing import Dict, List, Optional, Union
+
 import pandas as pd
 import requests
+from gql import Client, gql
+from gql.transport.requests import RequestsHTTPTransport
+
+API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
 
 
-# TODO: learn how to implement global variables to reflect which API end point to use
-def __api_url(env: str = "local") -> str:
-    url = "http://localhost:3000/api/graphql"
+def _get_client(api_url: str) -> Client:
+    """Acquire GraphQL client.
 
-    if env == "local":
-        url = "http://localhost:3000/api/graphql"
-
-    if env == "staging":
-        url = "https://staging.dgidb.org/api/graphql"
-
-    if env == "production":
-        url = "https://dgidb.org/api/graphql"
-
-    return url
-
-
-base_url = __api_url("local")
-
-
-def format_filters(filter_dict: dict) -> str:
-    """Take a dictionary of filters from a query method and transform it into a string for get_ methods
-
-    :param filter_dict: a dictionary of supported filters. made during get_ methods
-    :return: a formatted string for GraphQL queries in get_ methods
+    :param api_url: endpoint to request data at
+    :return: GraphQL client
     """
-    filter_string = ""
-
-    for key in filter_dict:
-        if filter_dict[key] is not None:
-            value = (
-                str(filter_dict[key]).lower()
-                if isinstance(type(filter_dict[key]), bool)
-                else f'"{filter_dict[key]}"'
-            )
-            # TO DO: catch for PMID?
-            filter_string = filter_string + f", {key}: {value}"
-        else:
-            pass
-
-    return filter_string
+    transport = RequestsHTTPTransport(url=api_url)
+    return Client(transport=transport, fetch_schema_from_transport=True)
 
 
 def get_drug(
     terms: list | str,
     use_pandas: bool = True,
-    immunotherapy: str | None = None,
-    antineoplastic: str | None = None,
+    immunotherapy: Optional[bool] = None,
+    antineoplastic: Optional[bool] = None,
+    api_url: Optional[str] = None,
 ) -> pd.DataFrame | dict:
     """Perform a record look up in DGIdb for a drug of interest
 
@@ -57,69 +33,115 @@ def get_drug(
     :param use_pandas: boolean for whether pandas should be used to format response
     :param immunotherapy: filter option for results that are only immunotherapy
     :param antineoplastic: filter option for results that see antineoplastic use
+    :param api_url: API endpoint for GraphQL request
     :return: record page results for drug in either a dataframe or json object
     """
-    if isinstance(terms, list):
-        terms = '","'.join(terms)
+    if isinstance(terms, str):
+        terms = [terms]
 
-    filters = format_filters(
-        {"immunotherapy": immunotherapy, "antiNeoplastic": antineoplastic}
+    params: Dict[str, Union[bool, List]] = {"names": terms}
+    if immunotherapy is not None:
+        params["immunotherapy"] = immunotherapy
+    if antineoplastic is not None:
+        params["antineoplastic"] = antineoplastic
+
+    query = gql(
+        """
+        query getDrugs($names: [String!], $immunotherapy: Boolean, $antiNeoplastic: Boolean) {
+          drugs(
+            names: $names
+            immunotherapy: $immunotherapy
+            antiNeoplastic: $antiNeoplastic
+          ) {
+            nodes {
+              name
+              conceptId
+              drugAliases {
+                alias
+              }
+              drugAttributes {
+                name
+                value
+              }
+              antiNeoplastic
+              immunotherapy
+              approved
+              drugApprovalRatings {
+                rating
+                source {
+                  sourceDbName
+                }
+              }
+              drugApplications {
+                appNo
+              }
+            }
+          }
+        }
+        """
     )
-
-    query = (
-        '{\ndrugs(names: ["'
-        + terms.upper()
-        + '"]'
-        + filters
-        + ") {\nnodes{\nname\nconceptId\ndrugAliases {\nalias\n}\ndrugAttributes {\nname\nvalue\n}\nantiNeoplastic\nimmunotherapy\napproved\ndrugApprovalRatings {\nrating\nsource {\nsourceDbName\n}\n}\ndrugApplications {\nappNo\n}\n}\n}\n}\n"
-    )
-
-    r = requests.post(base_url, json={"query": query}, timeout=20)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    result = client.execute(query, variable_values=params)
 
     if use_pandas is True:
-        data = __process_drug(r.json())
-    elif use_pandas is False:
-        data = r.json()
-
-    return data
+        return __process_drug(result)
+    return result
 
 
-def get_gene(terms: list | str, use_pandas: bool = True) -> pd.DataFrame | dict:
+def get_gene(
+    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
+) -> pd.DataFrame | dict:
     """Perform a record look up in DGIdb for a gene of interest
 
     :param terms: gene or genes for record lookup
     :param use_pandas: boolean for whether pandas should be used to format response
+    :param api_url: API endpoint for GraphQL request
     :return: record page results for gene in either a dataframe or json object
     """
-    if isinstance(terms, list):
-        terms = '","'.join(terms)
+    if isinstance(terms, str):
+        terms = [terms]
 
-    query = (
-        '{\ngenes(names: ["'
-        + terms.upper()
-        + '"]) {\nnodes\n{name\nlongName\nconceptId\ngeneAliases {\nalias\n}\ngeneAttributes {\nname\nvalue\n}\n}\n}\n}'
+    query = gql(
+        """
+        query getGenes($names: [String!]) {
+          genes(names: $names) {
+            nodes {
+              name
+              longName
+              conceptId
+              geneAliases {
+                alias
+              }
+              geneAttributes {
+                name
+                value
+              }
+            }
+          }
+        }
+        """
     )
-
-    r = requests.post(base_url, json={"query": query}, timeout=20)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    result = client.execute(query, variable_values={"names": terms})
 
     if use_pandas is True:
-        data = __process_gene(r.json())
-    elif use_pandas is False:
-        data = r.json()
-
-    return data
+        return __process_gene(result)
+    return result
 
 
 def get_interactions(
     terms: list | str,
     search: str = "genes",
     use_pandas: bool = True,
-    immunotherapy: str | None = None,
-    antineoplastic: str | None = None,
-    sourcedbname: str | None = None,
-    pmid: str | None = None,
-    interactiontype: str | None = None,
+    immunotherapy: Optional[bool] = None,
+    antineoplastic: Optional[bool] = None,
+    source: str | None = None,
+    pmid: Optional[int] = None,
+    interaction_type: str | None = None,
     approved: str | None = None,
+    api_url: Optional[str] = None,
 ) -> pd.DataFrame | dict:
     """Perform an interaction look up for drugs or genes of interest
 
@@ -128,163 +150,258 @@ def get_interactions(
     :param use_pandas: boolean for whether pandas should be used to format response
     :param immunotherapy: filter option for results that are used in immunotherapy
     :param antineoplastic: filter option for results that are part of antineoplastic regimens
-    :param sourcedbname: filter option for specific databases of interest
-    :param pmid: filter option for specific PMIDs:
-    :param interactiontype: filter option for specific interaction types
+    :param source: filter option for specific database of interest
+    :param pmid: filter option for specific PMID
+    :param interaction_type: filter option for specific interaction types
     :param approved: filter option for approved interactions
+    :param api_url: API endpoint for GraphQL request
     :return: interaction results for terms in either a dataframe or a json object
     """
-    if isinstance(terms, list):
-        terms = '","'.join(terms)
+    if isinstance(terms, str):
+        terms = [terms]
+    params: Dict[str, Union[str, int, bool, List[str]]] = {"names": terms}
+    if immunotherapy is not None:
+        params["immunotherapy"] = immunotherapy
+    if antineoplastic is not None:
+        params["antiNeoplastic"] = antineoplastic
+    if source is not None:
+        params["sourceDbName"] = source
+    if pmid is not None:
+        params["pmid"] = pmid
+    if interaction_type is not None:
+        params["interactionType"] = interaction_type
+    if approved is not None:
+        params["approved"] = approved
 
     if search == "genes":
-        immunotherapy = None
-        antineoplastic = None
-
-    filters = format_filters(
-        {
-            "immunotherapy": immunotherapy,
-            "antiNeoplastic": antineoplastic,
-            "sourceDbName": sourcedbname,
-            "pmid": pmid,
-            "interactiontype": interactiontype,
-            "approved": approved,
-        }
-    )
-
-    if search == "genes":
-        query = (
-            '{\ngenes(names: ["'
-            + terms.upper()
-            + '"]'
-            + filters
-            + ") {\nnodes{\nname\nlongName\ngeneCategories{\nname\n}\ninteractions {\ninteractionAttributes {\nname\nvalue\n}\ndrug {\nname\napproved\n}\ninteractionScore\ninteractionClaims {\npublications {\npmid\ncitation\n}\nsource {\nfullName\nid\n}\n}\n}\n}\n}\n}"
+        query = gql(
+            """
+            query getInteractionsByGene($names: [String!], $sourceDbName: String, $pmid: Int, $interactionType: String) {
+              genes(
+                names: $names
+                sourceDbName: $sourceDbName
+                pmid: $pmid
+                interactionType: $interactionType
+              ) {
+                nodes {
+                  name
+                  longName
+                  geneCategories {
+                    name
+                  }
+                  interactions {
+                    interactionAttributes {
+                      name
+                      value
+                    }
+                    drug {
+                      name
+                      approved
+                    }
+                    interactionScore
+                    interactionClaims {
+                      publications {
+                        citation
+                        pmid
+                      }
+                      source {
+                        sourceDbName
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            """
         )
     elif search == "drugs":
-        query = (
-            '{\ndrugs(names: ["'
-            + terms.upper()
-            + '"]'
-            + filters
-            + ") {\nnodes{\nname\napproved\ninteractions {\ngene {\nname\n}\ninteractionAttributes {\nname\nvalue\n}\ninteractionScore\ninteractionClaims {\npublications {\npmid\ncitation\n}\nsource {\nfullName\nid\n}\n}\n}\n}\n}\n}"
+        query = gql(
+            """
+            query getInteractionsByDrug($names: [String!], $immunotherapy: Boolean, $antineoplastic: Boolean, $sourceDbName: String, $pmid: Int, $interactionType: String, $approved: Boolean) {
+              drugs(
+                names: $names
+                immunotherapy: $immunotherapy
+                antiNeoplastic: $antineoplastic
+                sourceDbName: $sourceDbName
+                pmid: $pmid
+                interactionType: $interactionType
+                approved: $approved
+              ) {
+                nodes {
+                  name
+                  approved
+                  interactions {
+                    interactionAttributes {
+                      name
+                      value
+                    }
+                    gene {
+                      name
+                    }
+                    interactionScore
+                    interactionClaims {
+                      publications {
+                        citation
+                        pmid
+                      }
+                      source {
+                        sourceDbName
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            """
         )
     else:
         msg = "Search type must be specified using: search='drugs' or search='genes'"
         raise Exception(msg)
 
-    r = requests.post(base_url, json={"query": query}, timeout=20)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    result = client.execute(query, variable_values=params)
 
     if use_pandas is True:
         if search == "genes":
-            data = __process_gene_search(r.json())
-        elif search == "drugs":
-            data = __process_drug_search(r.json())
-        else:
-            msg = (
-                "Search type must be specified using: search='drugs', or search='genes'"
-            )
-            raise Exception(msg)
-
-    elif use_pandas is False:
-        return r.json()
-
-    return data
+            return __process_gene_search(result)
+        return __process_drug_search(result)
+    return result
 
 
-def get_categories(terms: list | str, use_pandas: bool = True) -> pd.DataFrame | dict:
+def get_categories(
+    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
+) -> pd.DataFrame | dict:
     """Perform a category annotation lookup for genes of interest
 
     :param terms: Genes of interest for annotations
     :param use_pandas: boolean for whether pandas should be used to format a response
+    :param api_url: API endpoint for GraphQL request
     :return: category annotation results for genes formatted in a dataframe or a json object
     """
-    if isinstance(terms, list):
-        terms = '","'.join(terms)
+    if isinstance(terms, str):
+        terms = [terms]
 
-    query = (
-        '{\ngenes(names: ["'
-        + terms.upper()
-        + '"]) {\nnodes{\nname\nlongName\ngeneCategoriesWithSources{\nname\nsourceNames\n}\n}\n}\n}'
+    query = gql(
+        """
+        query getGeneCategories($names: [String!]) {
+          genes(names: $names) {
+            nodes {
+              name
+              longName
+              geneCategoriesWithSources {
+                name
+                sourceNames
+              }
+            }
+          }
+        }
+        """
     )
-    r = requests.post(base_url, json={"query": query}, timeout=20)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    result = client.execute(query, variable_values={"names": terms})
 
     if use_pandas is True:
-        data = __process_gene_categories(r.json())
-    elif use_pandas is False:
-        data = r.json()
-
-    return data
+        return __process_gene_categories(result)
+    return result
 
 
-def get_source(search: str = "all") -> dict:
+def get_source(search: str = "all", api_url: Optional[str] = None) -> dict:
     """Perform a source lookup for relevant aggregate sources
 
     :param search: string to denote type of source to lookup
+    :param api_url: API endpoint for GraphQL request
     :return: all sources of relevant type in a json object
     """
     valid_types = ["all", "drug", "gene", "interaction", "potentially_druggable"]
-
     if search.lower() not in valid_types:
         msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
         raise Exception(msg)
 
-    if search == "all":
-        query = "{\nsources {\nnodes {\nfullName\nsourceDbName\nsourceDbVersion\ndrugClaimsCount\ngeneClaimsCount\ninteractionClaimsCount\n}\n}\n}"
+    query = gql(
+        """
+        query getSources($sourceType: SourceTypeFilter) {
+          sources(sourceType: $sourceType) {
+            nodes {
+              fullName
+              sourceDbName
+              sourceDbVersion
+              drugClaimsCount
+              geneClaimsCount
+              interactionClaimsCount
+            }
+          }
+        }
+        """
+    )
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    params = {} if search.lower() == "all" else {"sourceType": search}
+    return client.execute(query, variable_values=params)
 
-    else:
-        query = (
-            "{\nsources(sourceType: "
-            + search.upper()
-            + ") {\nnodes {\nfullName\nsourceDbName\nsourceDbVersion\ndrugClaimsCount\ngeneClaimsCount\ninteractionClaimsCount\n}\n}\n}"
-        )
 
-    r = requests.post(base_url, json={"query": query}, timeout=20)
-
-    return r.json()
-
-
-def get_gene_list() -> list:
+def get_gene_list(api_url: Optional[str] = None) -> list:
     """Get all gene names present in DGIdb
 
+    :param api_url: API endpoint for GraphQL request
     :return: a full list of genes present in dgidb
     """
-    query = "{\ngenes {\nnodes {\nname\n}\n}\n}"
-    r = requests.post(base_url, json={"query": query}, timeout=20)
-    gene_list = []
-    for match in r.json()["data"]["genes"]["nodes"]:
-        gene_name = match["name"]
-        gene_list.append(gene_name)
-    gene_list.sort()
-    return gene_list
+    query = gql(
+        """
+        {
+          genes {
+            nodes {
+              name
+              conceptId
+            }
+          }
+        }
+        """
+    )
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    result = client.execute(query)
+    genes = result["genes"]["nodes"]
+    genes.sort(key=lambda i: i["name"])
+    return genes
 
 
 def get_drug_applications(
-    terms: list | str, use_pandas: bool = True
+    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
 ) -> pd.DataFrame | dict:
     """Perform a look up for ANDA/NDA applications for drug or drugs of interest
 
     :param terms: drug or drugs of interest
     :param use_pandas: boolean for whether to format response in DataFrame
+    :param api_url: API endpoint for GraphQL request
     :return: all ANDA/NDA applications for drugs of interest in json or DataFrame
     """
-    if isinstance(terms, list):
-        terms = '","'.join(terms)
+    if isinstance(terms, str):
+        terms = [terms]
 
-    query = (
-        '{\ndrugs(names: ["'
-        + terms.upper()
-        + '"]) {\nnodes{\nname \ndrugApplications {\nappNo\n}\n}\n}\n}\n'
+    query = gql(
+        """
+        query getDrugApplications($names: [String!]) {
+          drugs(names: $names) {
+            nodes {
+              name
+              drugApplications {
+                appNo
+              }
+            }
+          }
+        }
+        """
     )
-
-    r = requests.post(base_url, json={"query": query}, timeout=20)
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    result = client.execute(query, variable_values={"names": terms})
 
     if use_pandas is True:
-        data = __process_drug_applications(r.json())
-        data = __openfda_data(data)
-    elif use_pandas is False:
-        data = r.json()
-
-    return data
+        data = __process_drug_applications(result)
+        return __openfda_data(data)
+    return result
 
 
 def __process_drug(results: dict) -> pd.DataFrame:
@@ -298,7 +415,7 @@ def __process_drug(results: dict) -> pd.DataFrame:
     rating_list = []
     application_list = []
 
-    for match in results["data"]["drugs"]["nodes"]:
+    for match in results["drugs"]["nodes"]:
         drug_list.append(match["name"])
         concept_list.append(match["conceptId"])
         alias_list.append("|".join([alias["alias"] for alias in match["drugAliases"]]))
@@ -338,7 +455,7 @@ def __process_gene(results: dict) -> pd.DataFrame:
     concept_list = []
     attribute_list = []
 
-    for match in results["data"]["genes"]["nodes"]:
+    for match in results["genes"]["nodes"]:
         gene_list.append(match["name"])
         alias_list.append("|".join([alias["alias"] for alias in match["geneAliases"]]))
         current_attributes = [
@@ -367,7 +484,7 @@ def __process_gene_search(results: dict) -> pd.DataFrame:
     pmids_list = []
     # genecategories_list = []
 
-    for match in results["data"]["genes"]["nodes"]:
+    for match in results["genes"]["nodes"]:
         current_gene = match["name"]
         current_longname = match["longName"]
 
@@ -393,7 +510,7 @@ def __process_gene_search(results: dict) -> pd.DataFrame:
             list_string = []
             sub_list_string = []
             for claim in interaction["interactionClaims"]:
-                list_string.append(f"{claim['source']['fullName']}")
+                list_string.append(f"{claim['source']['sourceDbName']}")
                 sub_list_string = []
                 for publication in claim["publications"]:
                     sub_list_string.append(f"{publication['pmid']}")
@@ -419,7 +536,7 @@ def __process_gene_categories(results: dict) -> pd.DataFrame:
     sources_list = []
     longname_list = []
 
-    for match in results["data"]["genes"]["nodes"]:
+    for match in results["genes"]["nodes"]:
         current_gene = match["name"]
         current_longname = match["longName"]
 
@@ -446,7 +563,7 @@ def __process_drug_search(results: dict) -> pd.DataFrame:
     sources_list = []
     pmids_list = []
 
-    for match in results["data"]["drugs"]["nodes"]:
+    for match in results["drugs"]["nodes"]:
         current_drug = match["name"]
         current_approval = str(match["approved"])
 
@@ -465,7 +582,7 @@ def __process_drug_search(results: dict) -> pd.DataFrame:
             list_string = []
             sub_list_string = []
             for claim in interaction["interactionClaims"]:
-                list_string.append(f"{claim['source']['fullName']}")
+                list_string.append(f"{claim['source']['sourceDbName']}")
                 sub_list_string = []
                 for publication in claim["publications"]:
                     sub_list_string.append(f"{publication['pmid']}")
@@ -488,7 +605,7 @@ def __process_drug_applications(data: dict) -> pd.DataFrame:
     drug_list = []
     application_list = []
 
-    for node in data["data"]["drugs"]["nodes"]:
+    for node in data["drugs"]["nodes"]:
         current_drug = node["name"]
         for application in node["drugApplications"]:
             drug_list.append(current_drug)
