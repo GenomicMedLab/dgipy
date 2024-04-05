@@ -1,0 +1,119 @@
+{
+  "data": {
+    "genes": {
+      "nodes": [
+        {
+          "name": "EREG",
+          "longName": "epiregulin",
+          "geneCategories": [
+            {
+              "name": "DRUGGABLE GENOME"
+            },
+            {
+              "name": "GROWTH FACTOR"
+            },
+            {
+              "name": "KINASE"
+            }
+          ],
+          "interactions": [
+            {
+              "interactionAttributes": [],
+              "drug": {
+                "name": "CETUXIMAB",
+                "approved": true
+              },
+              "interactionScore": 0.3469414935062527,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "drug": {
+                "name": "FEPIXNEBART",
+                "approved": false
+              },
+              "interactionScore": 5.898005389606295,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TTD"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "drug": {
+                "name": "HUMAN CHORIONIC GONADOTROPIN",
+                "approved": true
+              },
+              "interactionScore": 1.241685345180272,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Shimada M et al., 2006, Paracrine and autocrine regulation of epidermal growth factor-like factors in cumulus oocyte complexes and granulosa cells: key roles for prostaglandin synthase 2 and progesterone receptor., Mol Endocrinol",
+                      "pmid": 16543407
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "NCI"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "drug": {
+                "name": "PANITUMUMAB",
+                "approved": true
+              },
+              "interactionScore": 0.6208426725901364,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Proepiregulin inhibitor"
+                },
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                }
+              ],
+              "drug": {
+                "name": "FEPIXNEBART",
+                "approved": false
+              },
+              "interactionScore": 5.898005389606295,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
