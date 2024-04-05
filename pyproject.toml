@@ -25,6 +25,8 @@ dependencies = [
     "gql[requests]",
     "dash",
     "dash_bootstrap_components",
+    "plotly",
+    "networkx[default]"
 ]
 dynamic = ["version"]
 
