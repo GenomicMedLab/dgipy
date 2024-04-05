@@ -1,5 +1,6 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
-from typing import List, Union, Tuple, Dict, Optional
+from typing import Dict, List, Optional, Tuple, Union
+
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, ctx, dash, dcc, html
 
@@ -98,7 +99,9 @@ def __update_plot(app: dash.Dash) -> None:
         [Output("graph", "data"), Output("network-graph", "figure")],
         Input("gene-dropdown", "value"),
     )
-    def update(selected_genes: Optional[List]) -> Tuple[Union[Dict, None], ng.go.Figure]:
+    def update(
+        selected_genes: Optional[List],
+    ) -> Tuple[Union[Dict, None], ng.go.Figure]:
         if selected_genes is not None:
             gene_interactions = dgidb.get_interactions(selected_genes)
             updated_graph = ng.create_network(gene_interactions, selected_genes)
@@ -112,7 +115,9 @@ def __update_selected_node(app: dash.Dash) -> None:
         Output("selected-node", "data"),
         [Input("network-graph", "click_data"), Input("gene-dropdown", "value")],
     )
-    def update(click_data: Optional[Dict], new_gene: Optional[List]) -> Union[str, Dict]:
+    def update(
+        click_data: Optional[Dict], new_gene: Optional[List]
+    ) -> Union[str, Dict]:
         if ctx.triggered_id == "gene-dropdown":
             return ""
         if click_data is not None and "points" in click_data:
@@ -151,7 +156,9 @@ def __update_edge_info(app: dash.Dash) -> None:
         State("graph", "data"),
     )
     def update(
-        selected_node: Union[str, Dict], selected_neighbor: Optional[str], graph: Optional[Dict]
+        selected_node: Union[str, Dict],
+        selected_neighbor: Optional[str],
+        graph: Optional[Dict],
     ) -> str:
         if selected_node == "":
             return "No Edge Selected"

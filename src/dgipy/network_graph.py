@@ -1,5 +1,5 @@
 """Provides functionality to create networkx graphs and pltoly figures for network visualization"""
-from typing import List, Dict
+from typing import Dict, List
 
 import networkx as nx
 import pandas as pd
