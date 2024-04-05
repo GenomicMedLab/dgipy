@@ -1,4 +1,5 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
+from typing import List, Union, Tuple, Dict, Optional
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, ctx, dash, dcc, html
 
@@ -25,7 +26,7 @@ def generate_app() -> dash.Dash:
     return app
 
 
-def __set_app_layout(app: dash.Dash, plot: ng.go.Figure, genes: list) -> None:
+def __set_app_layout(app: dash.Dash, plot: ng.go.Figure, genes: List) -> None:
     graph_display = dcc.Graph(
         id="network-graph", figure=plot, style={"width": "100%", "height": "800px"}
     )
@@ -97,7 +98,7 @@ def __update_plot(app: dash.Dash) -> None:
         [Output("graph", "data"), Output("network-graph", "figure")],
         Input("gene-dropdown", "value"),
     )
-    def update(selected_genes: None | list) -> tuple[dict | None, ng.go.Figure]:
+    def update(selected_genes: Optional[List]) -> Tuple[Union[Dict, None], ng.go.Figure]:
         if selected_genes is not None:
             gene_interactions = dgidb.get_interactions(selected_genes)
             updated_graph = ng.create_network(gene_interactions, selected_genes)
@@ -111,7 +112,7 @@ def __update_selected_node(app: dash.Dash) -> None:
         Output("selected-node", "data"),
         [Input("network-graph", "click_data"), Input("gene-dropdown", "value")],
     )
-    def update(click_data: None | dict, new_gene: None | list) -> str | dict:
+    def update(click_data: Optional[Dict], new_gene: Optional[List]) -> Union[str, Dict]:
         if ctx.triggered_id == "gene-dropdown":
             return ""
         if click_data is not None and "points" in click_data:
@@ -126,7 +127,7 @@ def __update_selected_node_display(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-node-text", "children"), Input("selected-node", "data")
     )
-    def update(selected_node: str | dict) -> str:
+    def update(selected_node: Union[str, Dict]) -> str:
         if selected_node != "":
             return selected_node["text"]
         return "No Node Selected"
@@ -137,7 +138,7 @@ def __update_neighbor_dropdown(app: dash.Dash) -> None:
         [Output("neighbor-dropdown", "options"), Output("neighbor-dropdown", "value")],
         Input("selected-node", "data"),
     )
-    def update(selected_node: str | dict) -> tuple[list, None]:
+    def update(selected_node: Union[str, Dict]) -> Tuple[List, None]:
         if selected_node != "" and selected_node["curveNumber"] != 1:
             return selected_node["customdata"], None
         return [], None
@@ -150,7 +151,7 @@ def __update_edge_info(app: dash.Dash) -> None:
         State("graph", "data"),
     )
     def update(
-        selected_node: str | dict, selected_neighbor: None | str, graph: None | dict
+        selected_node: Union[str, Dict], selected_neighbor: Optional[str], graph: Optional[Dict]
     ) -> str:
         if selected_node == "":
             return "No Edge Selected"
@@ -206,7 +207,7 @@ def __update_edge_info(app: dash.Dash) -> None:
         return "No Edge Selected"
 
 
-def __get_node_data_from_id(nodes: list, node_id: str) -> dict | None:
+def __get_node_data_from_id(nodes: List, node_id: str) -> Optional[Dict]:
     for node in nodes:
         if node["id"] == node_id:
             return node

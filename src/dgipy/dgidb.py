@@ -21,12 +21,12 @@ def _get_client(api_url: str) -> Client:
 
 
 def get_drug(
-    terms: list | str,
+    terms: Union[List, str],
     use_pandas: bool = True,
     immunotherapy: Optional[bool] = None,
     antineoplastic: Optional[bool] = None,
     api_url: Optional[str] = None,
-) -> pd.DataFrame | dict:
+) -> Union[pd.DataFrame, Dict]:
     """Perform a record look up in DGIdb for a drug of interest
 
     :param terms: drug or drugs for record lookup
@@ -90,8 +90,8 @@ def get_drug(
 
 
 def get_gene(
-    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
-) -> pd.DataFrame | dict:
+    terms: Union[List, str], use_pandas: bool = True, api_url: Optional[str] = None
+) -> Union[pd.DataFrame, Dict]:
     """Perform a record look up in DGIdb for a gene of interest
 
     :param terms: gene or genes for record lookup
@@ -132,17 +132,17 @@ def get_gene(
 
 
 def get_interactions(
-    terms: list | str,
+    terms: Union[List, str],
     search: str = "genes",
     use_pandas: bool = True,
     immunotherapy: Optional[bool] = None,
     antineoplastic: Optional[bool] = None,
-    source: str | None = None,
+    source: Optional[str] = None,
     pmid: Optional[int] = None,
-    interaction_type: str | None = None,
-    approved: str | None = None,
+    interaction_type: Optional[str] = None,
+    approved: Optional[str] = None,
     api_url: Optional[str] = None,
-) -> pd.DataFrame | dict:
+) -> Union[pd.DataFrame, Dict]:
     """Perform an interaction look up for drugs or genes of interest
 
     :param terms: drugs or genes for interaction look up
@@ -270,8 +270,8 @@ def get_interactions(
 
 
 def get_categories(
-    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
-) -> pd.DataFrame | dict:
+    terms: Union[List, str], use_pandas: bool = True, api_url: Optional[str] = None
+) -> Union[pd.DataFrame, Dict]:
     """Perform a category annotation lookup for genes of interest
 
     :param terms: Genes of interest for annotations
@@ -307,7 +307,7 @@ def get_categories(
     return result
 
 
-def get_source(search: str = "all", api_url: Optional[str] = None) -> dict:
+def get_source(search: str = "all", api_url: Optional[str] = None) -> Dict:
     """Perform a source lookup for relevant aggregate sources
 
     :param search: string to denote type of source to lookup
@@ -341,7 +341,7 @@ def get_source(search: str = "all", api_url: Optional[str] = None) -> dict:
     return client.execute(query, variable_values=params)
 
 
-def get_gene_list(api_url: Optional[str] = None) -> list:
+def get_gene_list(api_url: Optional[str] = None) -> List:
     """Get all gene names present in DGIdb
 
     :param api_url: API endpoint for GraphQL request
@@ -368,8 +368,8 @@ def get_gene_list(api_url: Optional[str] = None) -> list:
 
 
 def get_drug_applications(
-    terms: list | str, use_pandas: bool = True, api_url: Optional[str] = None
-) -> pd.DataFrame | dict:
+    terms: Union[List, str], use_pandas: bool = True, api_url: Optional[str] = None
+) -> Union[pd.DataFrame, Dict]:
     """Perform a look up for ANDA/NDA applications for drug or drugs of interest
 
     :param terms: drug or drugs of interest
@@ -404,7 +404,7 @@ def get_drug_applications(
     return result
 
 
-def __process_drug(results: dict) -> pd.DataFrame:
+def __process_drug(results: Dict) -> pd.DataFrame:
     drug_list = []
     concept_list = []
     alias_list = []
@@ -449,7 +449,7 @@ def __process_drug(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene(results: dict) -> pd.DataFrame:
+def __process_gene(results: Dict) -> pd.DataFrame:
     gene_list = []
     alias_list = []
     concept_list = []
@@ -473,7 +473,7 @@ def __process_gene(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene_search(results: dict) -> pd.DataFrame:
+def __process_gene_search(results: Dict) -> pd.DataFrame:
     interactionscore_list = []
     drugname_list = []
     approval_list = []
@@ -530,7 +530,7 @@ def __process_gene_search(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene_categories(results: dict) -> pd.DataFrame:
+def __process_gene_categories(results: Dict) -> pd.DataFrame:
     gene_list = []
     categories_list = []
     sources_list = []
@@ -554,7 +554,7 @@ def __process_gene_categories(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_drug_search(results: dict) -> pd.DataFrame:
+def __process_drug_search(results: Dict) -> pd.DataFrame:
     interactionscore_list = []
     genename_list = []
     approval_list = []
@@ -601,7 +601,7 @@ def __process_drug_search(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_drug_applications(data: dict) -> pd.DataFrame:
+def __process_drug_applications(data: Dict) -> pd.DataFrame:
     drug_list = []
     application_list = []
 
