@@ -20,7 +20,9 @@ classifiers = [
 requires-python = ">=3.8"
 description = "Python wrapper for accessing an instance of DGIdb v5 database"
 license = {file = "LICENSE"}
-dependencies = []
+dependencies = [
+    "gql[requests]"
+]
 dynamic = ["version"]
 
 [project.optional-dependencies]
