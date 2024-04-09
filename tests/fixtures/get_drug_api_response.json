@@ -1,0 +1,187 @@
+{
+  "data": {
+    "drugs": {
+      "nodes": [
+        {
+          "name": "IMATINIB",
+          "conceptId": "rxcui:282388",
+          "drugAliases": [
+            {
+              "alias": "IMATINIB"
+            },
+            {
+              "alias": "IMATINIB MESYLATE"
+            },
+            {
+              "alias": "CHEMBL:CHEMBL1642"
+            },
+            {
+              "alias": "CHEMBL1642"
+            },
+            {
+              "alias": "STI-571,CGP57148,CGP57148B"
+            },
+            {
+              "alias": "GLEEVEC"
+            },
+            {
+              "alias": "NCIT:C1687"
+            },
+            {
+              "alias": "STI 571"
+            },
+            {
+              "alias": "GLIVEC"
+            },
+            {
+              "alias": "STI-571"
+            },
+            {
+              "alias": "PA10804"
+            },
+            {
+              "alias": "DRUGBANK:DB00619"
+            },
+            {
+              "alias": "CHEMBL941"
+            },
+            {
+              "alias": "PUBCHEM.COMPOUND:123596"
+            },
+            {
+              "alias": "STI571"
+            },
+            {
+              "alias": "D0AZ3C"
+            },
+            {
+              "alias": "D0R6RU"
+            },
+            {
+              "alias": "NCIT:C62035"
+            }
+          ],
+          "drugAttributes": [
+            {
+              "name": "Year of Approval",
+              "value": "2001"
+            },
+            {
+              "name": "Drug Class",
+              "value": "Kinase Inhibitors"
+            },
+            {
+              "name": "Drug Class",
+              "value": "Antineoplastic Agents, Protein Kinase Inhibitors"
+            },
+            {
+              "name": "Drug Class",
+              "value": "Small Molecule"
+            },
+            {
+              "name": "Indication",
+              "value": "antineoplastic agent"
+            },
+            {
+              "name": "Drug Class",
+              "value": "MEK inhibitor"
+            },
+            {
+              "name": "Drug Class",
+              "value": "KIT inhibitor"
+            },
+            {
+              "name": "Drug Class",
+              "value": "BCR-ABL inhibitor 1st gen"
+            }
+          ],
+          "antiNeoplastic": true,
+          "immunotherapy": false,
+          "approved": true,
+          "drugApprovalRatings": [
+            {
+              "rating": "Prescribable",
+              "source": {
+                "sourceDbName": "RxNorm"
+              }
+            },
+            {
+              "rating": "Approved",
+              "source": {
+                "sourceDbName": "HemOnc"
+              }
+            },
+            {
+              "rating": "Prescription",
+              "source": {
+                "sourceDbName": "Drugs@FDA"
+              }
+            },
+            {
+              "rating": "Discontinued",
+              "source": {
+                "sourceDbName": "Drugs@FDA"
+              }
+            },
+            {
+              "rating": "Max Phase 4",
+              "source": {
+                "sourceDbName": "ChEMBL"
+              }
+            },
+            {
+              "rating": "Approved",
+              "source": {
+                "sourceDbName": "TdgClinicalTrial"
+              }
+            }
+          ],
+          "drugApplications": [
+            {
+              "appNo": "drugsatfda.anda:078340"
+            },
+            {
+              "appNo": "drugsatfda.anda:079179"
+            },
+            {
+              "appNo": "drugsatfda.anda:204285"
+            },
+            {
+              "appNo": "drugsatfda.anda:204644"
+            },
+            {
+              "appNo": "drugsatfda.anda:205990"
+            },
+            {
+              "appNo": "drugsatfda.anda:206547"
+            },
+            {
+              "appNo": "drugsatfda.anda:207495"
+            },
+            {
+              "appNo": "drugsatfda.anda:207586"
+            },
+            {
+              "appNo": "drugsatfda.anda:208302"
+            },
+            {
+              "appNo": "drugsatfda.anda:208429"
+            },
+            {
+              "appNo": "drugsatfda.anda:210658"
+            },
+            {
+              "appNo": "drugsatfda.anda:212135"
+            },
+            {
+              "appNo": "drugsatfda.anda:212773"
+            },
+            {
+              "appNo": "drugsatfda.nda:021588"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

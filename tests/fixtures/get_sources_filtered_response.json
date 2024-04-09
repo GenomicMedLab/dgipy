@@ -1,0 +1,32 @@
+{
+  "data": {
+    "sources": {
+      "nodes": [
+        {
+          "fullName": "NCBI Gene",
+          "sourceDbName": "NCBI",
+          "sourceDbVersion": "20230501",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 11301,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "HUGO Gene Nomenclature Committee",
+          "sourceDbName": "HGNC",
+          "sourceDbVersion": "20230501",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 11272,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Ensembl",
+          "sourceDbName": "Ensembl",
+          "sourceDbVersion": "109",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 11204,
+          "interactionClaimsCount": 0
+        }
+      ]
+    }
+  }
+}
