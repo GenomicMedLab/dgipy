@@ -1,0 +1,44 @@
+{
+  "data": {
+    "genes": {
+      "nodes": [
+        {
+          "name": "OR2AT4",
+          "conceptId": "hgnc:19620"
+        },
+        {
+          "name": "OR5B17",
+          "conceptId": "hgnc:15267"
+        },
+        {
+          "name": "RABEP2",
+          "conceptId": "hgnc:24817"
+        },
+        {
+          "name": "C6orf15",
+          "conceptId": "hgnc:13927"
+        },
+        {
+          "name": "PIK3C2A",
+          "conceptId": "hgnc:8971"
+        },
+        {
+          "name": "CAVIN2",
+          "conceptId": "hgnc:10690"
+        },
+        {
+          "name": "SQSTM1",
+          "conceptId": "hgnc:11280"
+        },
+        {
+          "name": "SEMA4B",
+          "conceptId": "hgnc:10730"
+        },
+        {
+          "name": "HYAL4",
+          "conceptId": "hgnc:5323"
+        }
+      ]
+    }
+  }
+}

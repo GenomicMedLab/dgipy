@@ -1,0 +1,73 @@
+{
+  "data": {
+    "genes": {
+      "nodes": [
+        {
+          "name": "EREG",
+          "longName": "epiregulin",
+          "conceptId": "hgnc:3443",
+          "geneAliases": [
+            {
+              "alias": "EPIREGULIN"
+            },
+            {
+              "alias": "ER"
+            },
+            {
+              "alias": "ENSEMBL:ENSG00000124882"
+            },
+            {
+              "alias": "NCBIGENE:2069"
+            },
+            {
+              "alias": "VEGA:OTTHUMG00000130005"
+            },
+            {
+              "alias": "ENA.EMBL:D30783"
+            },
+            {
+              "alias": "UNIPROT:O14944"
+            },
+            {
+              "alias": "REFSEQ:NM_001432"
+            },
+            {
+              "alias": "UCSC:UC003HIE.2"
+            },
+            {
+              "alias": "OMIM:602061"
+            },
+            {
+              "alias": "PUBMED:9337852"
+            },
+            {
+              "alias": "CCDS:CCDS3564"
+            },
+            {
+              "alias": "IUPHAR:4918"
+            },
+            {
+              "alias": "EPR"
+            },
+            {
+              "alias": "EP"
+            },
+            {
+              "alias": "CHEMBL:CHEMBL4662939"
+            },
+            {
+              "alias": "PROEPIREGULIN"
+            },
+            {
+              "alias": "CIVIC.GID:1737"
+            },
+            {
+              "alias": "T79157"
+            }
+          ],
+          "geneAttributes": []
+        }
+      ]
+    }
+  }
+}

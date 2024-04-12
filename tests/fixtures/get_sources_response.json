@@ -1,0 +1,368 @@
+{
+  "data": {
+    "sources": {
+      "nodes": [
+        {
+          "fullName": "Cancer Genome Interpreter",
+          "sourceDbName": "CGI",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 148,
+          "geneClaimsCount": 123,
+          "interactionClaimsCount": 368
+        },
+        {
+          "fullName": "OncoKB: A Precision Oncology Knowledge Base",
+          "sourceDbName": "OncoKB",
+          "sourceDbVersion": "23-July-2020",
+          "drugClaimsCount": 89,
+          "geneClaimsCount": 54,
+          "interactionClaimsCount": 148
+        },
+        {
+          "fullName": "The ChEMBL Bioactivity Database",
+          "sourceDbName": "ChEMBL",
+          "sourceDbVersion": "32",
+          "drugClaimsCount": 5659,
+          "geneClaimsCount": 1779,
+          "interactionClaimsCount": 16938
+        },
+        {
+          "fullName": "Oncomine Comprehensive Assay",
+          "sourceDbName": "Oncomine",
+          "sourceDbVersion": "v3",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 161,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "dGENE - The Druggable Gene List",
+          "sourceDbName": "dGene",
+          "sourceDbVersion": "27-Jun-2013",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 2257,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Clearity Foundation Clinical Trial",
+          "sourceDbName": "ClearityFoundationClinicalTrial",
+          "sourceDbVersion": "15-June-2013",
+          "drugClaimsCount": 114,
+          "geneClaimsCount": 93,
+          "interactionClaimsCount": 240
+        },
+        {
+          "fullName": "Catalogue Of Somatic Mutations In Cancer",
+          "sourceDbName": "COSMIC",
+          "sourceDbVersion": "4-Sep-2020",
+          "drugClaimsCount": 28,
+          "geneClaimsCount": 15,
+          "interactionClaimsCount": 37
+        },
+        {
+          "fullName": "Clearity Foundation Biomarkers",
+          "sourceDbName": "ClearityFoundationBiomarkers",
+          "sourceDbVersion": "26-July-2013",
+          "drugClaimsCount": 64,
+          "geneClaimsCount": 34,
+          "interactionClaimsCount": 163
+        },
+        {
+          "fullName": "PharmGKB - The Pharmacogenomics Knowledgebase",
+          "sourceDbName": "PharmGKB",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 1177,
+          "geneClaimsCount": 1448,
+          "interactionClaimsCount": 5300
+        },
+        {
+          "fullName": "Wikidata",
+          "sourceDbName": "Wikidata",
+          "sourceDbVersion": "2023-05-12",
+          "drugClaimsCount": 2634,
+          "geneClaimsCount": 0,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "DrugBank - Open Data Drug & Drug Target Database",
+          "sourceDbName": "DrugBank",
+          "sourceDbVersion": "5.1.9",
+          "drugClaimsCount": 7546,
+          "geneClaimsCount": 3981,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "RxNorm",
+          "sourceDbName": "RxNorm",
+          "sourceDbVersion": "2023-05-01",
+          "drugClaimsCount": 4544,
+          "geneClaimsCount": 0,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "HemOnc.org - A Free Hematology/Oncology Reference",
+          "sourceDbName": "HemOnc",
+          "sourceDbVersion": "2022-12-28",
+          "drugClaimsCount": 488,
+          "geneClaimsCount": 0,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "National Cancer Institute Thesaurus",
+          "sourceDbName": "NCIt",
+          "sourceDbVersion": "23.04d",
+          "drugClaimsCount": 7028,
+          "geneClaimsCount": 0,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "The druggable genome: an update (Russ & Lampel, 2005)",
+          "sourceDbName": "RussLampel",
+          "sourceDbVersion": "26-Jul-2011",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 3361,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Targeted Agents in Lung Cancer (Commentary, 2014)",
+          "sourceDbName": "TALC",
+          "sourceDbVersion": "12-May-2016",
+          "drugClaimsCount": 285,
+          "geneClaimsCount": 153,
+          "interactionClaimsCount": 602
+        },
+        {
+          "fullName": "The Druggable Genome: Evaluation of Drug Targets in Clinical Trials Suggests Major Shifts in Molecular Class and Indication (Rask-Andersen, Masuram, Schioth 2014)",
+          "sourceDbName": "TdgClinicalTrial",
+          "sourceDbVersion": "Jan-2014",
+          "drugClaimsCount": 2425,
+          "geneClaimsCount": 1024,
+          "interactionClaimsCount": 5071
+        },
+        {
+          "fullName": "Drug Target Commons",
+          "sourceDbName": "DTC",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 6290,
+          "geneClaimsCount": 1016,
+          "interactionClaimsCount": 23879
+        },
+        {
+          "fullName": "FDA Pharmacogenomic Biomarkers",
+          "sourceDbName": "FDA",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 289,
+          "geneClaimsCount": 89,
+          "interactionClaimsCount": 427
+        },
+        {
+          "fullName": "Foundation One",
+          "sourceDbName": "FoundationOneGenes",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 664,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Tempus xT",
+          "sourceDbName": "Tempus",
+          "sourceDbVersion": "11-November-2018",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 596,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "The druggable genome and support for target identification and validation in drug development (Hingorani & Casas, 2017)",
+          "sourceDbName": "HingoraniCasas",
+          "sourceDbVersion": "31-May-2017",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 4463,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Trends in the exploitation of novel drug targets (Rask-Andersen, et al., 2011)",
+          "sourceDbName": "TEND",
+          "sourceDbVersion": "01-Aug-2011",
+          "drugClaimsCount": 988,
+          "geneClaimsCount": 436,
+          "interactionClaimsCount": 2242
+        },
+        {
+          "fullName": "Therapeutic Target Database",
+          "sourceDbName": "TTD",
+          "sourceDbVersion": "2020.06.01",
+          "drugClaimsCount": 12410,
+          "geneClaimsCount": 2040,
+          "interactionClaimsCount": 15245
+        },
+        {
+          "fullName": "Guide to Pharmacology",
+          "sourceDbName": "GuideToPharmacology",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 0,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "The druggable genome (Hopkins & Groom, 2002)",
+          "sourceDbName": "HopkinsGroom",
+          "sourceDbVersion": "11-Sep-2012",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 2676,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "The Human Protein Atlas",
+          "sourceDbName": "HumanProteinAtlas",
+          "sourceDbVersion": "19.3",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 1325,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "My Cancer Genome",
+          "sourceDbName": "MyCancerGenome",
+          "sourceDbVersion": "20-Jun-2017",
+          "drugClaimsCount": 226,
+          "geneClaimsCount": 169,
+          "interactionClaimsCount": 821
+        },
+        {
+          "fullName": "Memorial Sloan Kettering IMPACT",
+          "sourceDbName": "MskImpact",
+          "sourceDbVersion": "May-2015",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 350,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Illuminating the Druggable Genome",
+          "sourceDbName": "IDG",
+          "sourceDbVersion": "15-July-2019",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 313,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "MyCancerGenome Clinical Trial",
+          "sourceDbName": "MyCancerGenomeClinicalTrial",
+          "sourceDbVersion": "30-Feburary-2014",
+          "drugClaimsCount": 82,
+          "geneClaimsCount": 82,
+          "interactionClaimsCount": 316
+        },
+        {
+          "fullName": "Database of Curated Mutations",
+          "sourceDbName": "DoCM",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 39,
+          "geneClaimsCount": 35,
+          "interactionClaimsCount": 76
+        },
+        {
+          "fullName": "NCI Cancer Gene Index",
+          "sourceDbName": "NCI",
+          "sourceDbVersion": "14-September-2017",
+          "drugClaimsCount": 1519,
+          "geneClaimsCount": 1045,
+          "interactionClaimsCount": 6231
+        },
+        {
+          "fullName": "The Gene Ontology",
+          "sourceDbName": "GO",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 3260,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "CIViC: Clinical Interpretation of Variants in Cancer",
+          "sourceDbName": "CIViC",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 416,
+          "geneClaimsCount": 278,
+          "interactionClaimsCount": 1083
+        },
+        {
+          "fullName": "The Jackson Laboratory Clinical Knowledgebase",
+          "sourceDbName": "JAX-CKB",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 741,
+          "geneClaimsCount": 50,
+          "interactionClaimsCount": 1822
+        },
+        {
+          "fullName": "Pharos",
+          "sourceDbName": "Pharos",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 6038,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "HUGO Gene Nomenclature Committee",
+          "sourceDbName": "HGNC",
+          "sourceDbVersion": "20230501",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 11272,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "NCBI Gene",
+          "sourceDbName": "NCBI",
+          "sourceDbVersion": "20230501",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 11301,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Ensembl",
+          "sourceDbName": "Ensembl",
+          "sourceDbVersion": "109",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 11204,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Cancer Commons",
+          "sourceDbName": "CancerCommons",
+          "sourceDbVersion": "25-Jul-2013",
+          "drugClaimsCount": 80,
+          "geneClaimsCount": 48,
+          "interactionClaimsCount": 109
+        },
+        {
+          "fullName": "Drugs@FDA",
+          "sourceDbName": "Drugs@FDA",
+          "sourceDbVersion": "2023-05-12",
+          "drugClaimsCount": 9233,
+          "geneClaimsCount": 0,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "ChemIDplus",
+          "sourceDbName": "ChemIDplus",
+          "sourceDbVersion": "2023-02-22",
+          "drugClaimsCount": 5879,
+          "geneClaimsCount": 0,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Caris Molecular Intelligence",
+          "sourceDbName": "CarisMolecularIntelligence",
+          "sourceDbVersion": "05-June-2023",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 608,
+          "interactionClaimsCount": 0
+        },
+        {
+          "fullName": "Bader Lab Genes",
+          "sourceDbName": "BaderLab",
+          "sourceDbVersion": "February 2014",
+          "drugClaimsCount": 0,
+          "geneClaimsCount": 48,
+          "interactionClaimsCount": 0
+        }
+      ]
+    }
+  }
+}

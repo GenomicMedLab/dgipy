@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "disclaimer": "Do not rely on openFDA to make decisions regarding medical care. While we make every effort to ensure that data is accurate, you should assume all results are unvalidated. We may limit or otherwise restrict your access to the API in line with our Terms of Service.",
+    "terms": "https://open.fda.gov/terms/",
+    "license": "https://open.fda.gov/license/",
+    "last_updated": "2024-04-02",
+    "results": {
+      "skip": 0,
+      "limit": 1,
+      "total": 1
+    }
+  },
+  "results": [
+    {
+      "submissions": [
+        {
+          "submission_type": "SUPPL",
+          "submission_number": "4",
+          "submission_status": "AP",
+          "submission_status_date": "20231013",
+          "review_priority": "STANDARD",
+          "submission_class_code": "LABELING",
+          "submission_class_code_description": "Labeling",
+          "application_docs": [
+            {
+              "id": "75732",
+              "url": "http://www.accessdata.fda.gov/drugsatfda_docs/label/2023/212099s004lbl.pdf",
+              "date": "20231016",
+              "type": "Label"
+            },
+            {
+              "id": "75780",
+              "url": "http://www.accessdata.fda.gov/drugsatfda_docs/appletter/2023/212099Orig1s004ltr.pdf",
+              "date": "20231016",
+              "type": "Letter"
+            }
+          ]
+        },
+        {
+          "submission_type": "SUPPL",
+          "submission_number": "2",
+          "submission_status": "AP",
+          "submission_status_date": "20220805",
+          "review_priority": "PRIORITY",
+          "submission_class_code": "EFFICACY",
+          "submission_class_code_description": "Efficacy",
+          "application_docs": [
+            {
+              "id": "71739",
+              "url": "https://www.accessdata.fda.gov/drugsatfda_docs/appletter/2022/212099Orig1s002ltr.pdf",
+              "date": "20220808",
+              "type": "Letter"
+            },
+            {
+              "id": "71775",
+              "url": "http://www.accessdata.fda.gov/drugsatfda_docs/label/2022/212099s002lbl.pdf",
+              "date": "20220811",
+              "type": "Label"
+            }
+          ]
+        },
+        {
+          "submission_type": "ORIG",
+          "submission_number": "1",
+          "submission_status": "AP",
+          "submission_status_date": "20190730",
+          "review_priority": "PRIORITY",
+          "submission_class_code": "TYPE 1",
+          "submission_class_code_description": "Type 1 - New Molecular Entity",
+          "application_docs": [
+            {
+              "id": "59518",
+              "url": "http://www.accessdata.fda.gov/drugsatfda_docs/label/2019/212099Orig1s000lbl.pdf",
+              "date": "20190731",
+              "type": "Label"
+            },
+            {
+              "id": "59521",
+              "url": "http://www.accessdata.fda.gov/drugsatfda_docs/appletter/2019/212099Orig1s000ltr.pdf",
+              "date": "20190731",
+              "type": "Letter"
+            },
+            {
+              "id": "59870",
+              "url": "http://www.accessdata.fda.gov/drugsatfda_docs/nda/2019/212099Orig1s000TOC.cfm",
+              "date": "20190829",
+              "type": "Review"
+            }
+          ]
+        },
+        {
+          "submission_type": "SUPPL",
+          "submission_number": "1",
+          "submission_status": "AP",
+          "submission_status_date": "20210107",
+          "review_priority": "PRIORITY",
+          "submission_class_code": "EFFICACY",
+          "submission_class_code_description": "Efficacy",
+          "application_docs": [
+            {
+              "id": "65871",
+              "url": "http://www.accessdata.fda.gov/drugsatfda_docs/appletter/2021/212099Orig1s001ltr.pdf",
+              "date": "20210108",
+              "type": "Letter"
+            },
+            {
+              "id": "65873",
+              "url": "http://www.accessdata.fda.gov/drugsatfda_docs/label/2021/212099s001lbl.pdf",
+              "date": "20210108",
+              "type": "Label"
+            }
+          ]
+        }
+      ],
+      "application_number": "NDA212099",
+      "sponsor_name": "BAYER HEALTHCARE",
+      "openfda": {
+        "application_number": [
+          "NDA212099"
+        ],
+        "brand_name": [
+          "NUBEQA"
+        ],
+        "generic_name": [
+          "DAROLUTAMIDE"
+        ],
+        "manufacturer_name": [
+          "Bayer HealthCare Pharmaceuticals Inc."
+        ],
+        "product_ndc": [
+          "50419-395"
+        ],
+        "product_type": [
+          "HUMAN PRESCRIPTION DRUG"
+        ],
+        "route": [
+          "ORAL"
+        ],
+        "substance_name": [
+          "DAROLUTAMIDE"
+        ],
+        "rxcui": [
+          "2180330",
+          "2180336"
+        ],
+        "spl_id": [
+          "78565601-df32-45a6-9d08-ac84738c8963"
+        ],
+        "spl_set_id": [
+          "1a7cb212-56e4-4b9d-a73d-bfee7fe4735e"
+        ],
+        "package_ndc": [
+          "50419-395-01",
+          "50419-395-72"
+        ],
+        "unii": [
+          "X05U0N2RCO"
+        ]
+      },
+      "products": [
+        {
+          "product_number": "001",
+          "reference_drug": "Yes",
+          "brand_name": "NUBEQA",
+          "active_ingredients": [
+            {
+              "name": "DAROLUTAMIDE",
+              "strength": "300MG"
+            }
+          ],
+          "reference_standard": "Yes",
+          "dosage_form": "TABLET",
+          "route": "ORAL",
+          "marketing_status": "Prescription"
+        }
+      ]
+    }
+  ]
+}

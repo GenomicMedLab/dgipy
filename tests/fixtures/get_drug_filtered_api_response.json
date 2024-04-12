@@ -1,0 +1,232 @@
+{
+  "data": {
+    "drugs": {
+      "nodes": [
+        {
+          "name": "METRONIDAZOLE HYDROCHLORIDE",
+          "conceptId": "rxcui:82047",
+          "drugAliases": [
+            {
+              "alias": "METRONIDAZOLE HYDROCHLORIDE"
+            },
+            {
+              "alias": "CHEMBL:CHEMBL1200869"
+            }
+          ],
+          "drugAttributes": [],
+          "antiNeoplastic": false,
+          "immunotherapy": false,
+          "approved": true,
+          "drugApprovalRatings": [
+            {
+              "rating": "Max Phase 4",
+              "source": {
+                "sourceDbName": "ChEMBL"
+              }
+            }
+          ],
+          "drugApplications": []
+        },
+        {
+          "name": "METRONIDAZOLE",
+          "conceptId": "rxcui:6922",
+          "drugAliases": [
+            {
+              "alias": "METRONIDAZOLE"
+            },
+            {
+              "alias": "DRUGBANK:DB00916"
+            },
+            {
+              "alias": "CHEMBL:CHEMBL137"
+            },
+            {
+              "alias": "CHEMBL137"
+            },
+            {
+              "alias": "NCIT:C651"
+            },
+            {
+              "alias": "D0A2ZX"
+            }
+          ],
+          "drugAttributes": [
+            {
+              "name": "Year of Approval",
+              "value": "1960"
+            }
+          ],
+          "antiNeoplastic": false,
+          "immunotherapy": false,
+          "approved": true,
+          "drugApprovalRatings": [
+            {
+              "rating": "Prescribable",
+              "source": {
+                "sourceDbName": "RxNorm"
+              }
+            },
+            {
+              "rating": "Approved",
+              "source": {
+                "sourceDbName": "HemOnc"
+              }
+            },
+            {
+              "rating": "Prescription",
+              "source": {
+                "sourceDbName": "Drugs@FDA"
+              }
+            },
+            {
+              "rating": "Discontinued",
+              "source": {
+                "sourceDbName": "Drugs@FDA"
+              }
+            },
+            {
+              "rating": "Max Phase 4",
+              "source": {
+                "sourceDbName": "ChEMBL"
+              }
+            }
+          ],
+          "drugApplications": [
+            {
+              "appNo": "drugsatfda.anda:070027"
+            },
+            {
+              "appNo": "drugsatfda.anda:070033"
+            },
+            {
+              "appNo": "drugsatfda.anda:070772"
+            },
+            {
+              "appNo": "drugsatfda.anda:076408"
+            },
+            {
+              "appNo": "drugsatfda.anda:077018"
+            },
+            {
+              "appNo": "drugsatfda.anda:077197"
+            },
+            {
+              "appNo": "drugsatfda.anda:077264"
+            },
+            {
+              "appNo": "drugsatfda.anda:077547"
+            },
+            {
+              "appNo": "drugsatfda.anda:077549"
+            },
+            {
+              "appNo": "drugsatfda.anda:077819"
+            },
+            {
+              "appNo": "drugsatfda.anda:078178"
+            },
+            {
+              "appNo": "drugsatfda.anda:079065"
+            },
+            {
+              "appNo": "drugsatfda.anda:079067"
+            },
+            {
+              "appNo": "drugsatfda.anda:090222"
+            },
+            {
+              "appNo": "drugsatfda.anda:090903"
+            },
+            {
+              "appNo": "drugsatfda.anda:203458"
+            },
+            {
+              "appNo": "drugsatfda.anda:203974"
+            },
+            {
+              "appNo": "drugsatfda.anda:204651"
+            },
+            {
+              "appNo": "drugsatfda.anda:205245"
+            },
+            {
+              "appNo": "drugsatfda.anda:205531"
+            },
+            {
+              "appNo": "drugsatfda.anda:206191"
+            },
+            {
+              "appNo": "drugsatfda.anda:206560"
+            },
+            {
+              "appNo": "drugsatfda.anda:208162"
+            },
+            {
+              "appNo": "drugsatfda.anda:208681"
+            },
+            {
+              "appNo": "drugsatfda.anda:209096"
+            },
+            {
+              "appNo": "drugsatfda.anda:209794"
+            },
+            {
+              "appNo": "drugsatfda.anda:211786"
+            },
+            {
+              "appNo": "drugsatfda.anda:212435"
+            },
+            {
+              "appNo": "drugsatfda.anda:212646"
+            },
+            {
+              "appNo": "drugsatfda.anda:213648"
+            },
+            {
+              "appNo": "drugsatfda.anda:215794"
+            },
+            {
+              "appNo": "drugsatfda.anda:216692"
+            },
+            {
+              "appNo": "drugsatfda.nda:018657"
+            },
+            {
+              "appNo": "drugsatfda.nda:018890"
+            },
+            {
+              "appNo": "drugsatfda.nda:018900"
+            },
+            {
+              "appNo": "drugsatfda.nda:019737"
+            },
+            {
+              "appNo": "drugsatfda.nda:020208"
+            },
+            {
+              "appNo": "drugsatfda.nda:020334"
+            },
+            {
+              "appNo": "drugsatfda.nda:020531"
+            },
+            {
+              "appNo": "drugsatfda.nda:020743"
+            },
+            {
+              "appNo": "drugsatfda.nda:020901"
+            },
+            {
+              "appNo": "drugsatfda.nda:021789"
+            },
+            {
+              "appNo": "drugsatfda.nda:021806"
+            },
+            {
+              "appNo": "drugsatfda.nda:205223"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

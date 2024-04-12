@@ -1,0 +1,2111 @@
+{
+  "data": {
+    "drugs": {
+      "nodes": [
+        {
+          "name": "SUNITINIB",
+          "approved": true,
+          "interactions": [
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Lung cancer"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Melanoma"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Thymic Carcinoma"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Thyroid Cancer"
+                },
+                {
+                  "name": "Clinical Trial Name",
+                  "value": "Sutent"
+                },
+                {
+                  "name": "Novel Drug Target",
+                  "value": "Established target"
+                },
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Vascular endothelial growth factor receptor inhibitor"
+                }
+              ],
+              "gene": {
+                "name": "KDR"
+              },
+              "interactionScore": 0.131163944913409,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenome"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TALC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TTD"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Choi HE et al., 2011, BRN-103, a novel nicotinamide derivative, inhibits VEGF-induced angiogenesis and proliferation in human umbilical vein endothelial cells., Bioorg Med Chem Lett",
+                      "pmid": 21963305
+                    },
+                    {
+                      "citation": "Perspicace E et al., 2013, Design, synthesis and biological evaluation of new classes of thieno[3,2-d]pyrimidinone and thieno[1,2,3]triazine as inhibitor of vascular endothelial growth factor receptor-2 (VEGFR-2)., Eur J Med Chem",
+                      "pmid": 23583911
+                    },
+                    {
+                      "citation": "Iwata H et al., 2011, Biochemical characterization of a novel type-II VEGFR2 kinase inhibitor: comparison of binding to non-phosphorylated and phosphorylated VEGFR2., Bioorg Med Chem",
+                      "pmid": 21885287
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "DTC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TdgClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Platelet-derived growth factor receptor inhibitor"
+                },
+                {
+                  "name": "Clinical Trial Name",
+                  "value": "Sutent"
+                },
+                {
+                  "name": "Novel Drug Target",
+                  "value": "Established target"
+                }
+              ],
+              "gene": {
+                "name": "PDGFRB"
+              },
+              "interactionScore": 0.1838021070168166,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Quek R et al., 2009, Gastrointestinal stromal tumor: a clinical overview., Hematol Oncol Clin North Am",
+                      "pmid": 19248971
+                    },
+                    {
+                      "citation": "Mendel DB et al., 2003, In vivo antitumor activity of SU11248, a novel tyrosine kinase inhibitor targeting vascular endothelial growth factor and platelet-derived growth factor receptors: determination of a pharmacokinetic/pharmacodynamic relationship., Clin Cancer Res",
+                      "pmid": 12538485
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TALC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TdgClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenome"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Approval Status",
+                  "value": "preclinical"
+                },
+                {
+                  "name": "Pathway",
+                  "value": "activation"
+                },
+                {
+                  "name": "Variant Effect",
+                  "value": "gain-of-function"
+                },
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Tyrosine-protein kinase receptor RET inhibitor"
+                },
+                {
+                  "name": "Clinical Trial Name",
+                  "value": "Sutent"
+                },
+                {
+                  "name": "Novel Drug Target",
+                  "value": "Established target"
+                },
+                {
+                  "name": "Indication",
+                  "value": "pheochromocytoma"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "predicted - sensitive"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Case Reports/Case Series"
+                },
+                {
+                  "name": "Evidence Type",
+                  "value": "Actionable"
+                },
+                {
+                  "name": "Indication",
+                  "value": "lung non-small cell carcinoma"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Clinical Study"
+                },
+                {
+                  "name": "Indication",
+                  "value": "lung adenocarcinoma"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "no benefit"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Clinical Study - Cohort"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "RET__."
+                },
+                {
+                  "name": "Alteration",
+                  "value": "RET__TPCN1"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "RET:C634W,M918T"
+                }
+              ],
+              "gene": {
+                "name": "RET"
+              },
+              "interactionScore": 0.6622321840961454,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "O'Kane GM et al., 2019, A phase 2 trial of sunitinib in patients with progressive paraganglioma or pheochromocytoma: the SNIPP trial., Br J Cancer",
+                      "pmid": 31105270
+                    },
+                    {
+                      "citation": "Cooper AJ et al., 2020, Identification of a RAS-activating TMEM87A-RASGRF1 Fusion in an Exceptional Responder to Sunitinib with Non-Small Cell Lung Cancer., Clin Cancer Res",
+                      "pmid": 32312893
+                    },
+                    {
+                      "citation": "Gautschi O et al., 2017, Targeting RET in Patients With RET-Rearranged Lung Cancers: Results From the Global, Multicenter RET Registry., J Clin Oncol",
+                      "pmid": 28447912
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "JAX-CKB"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CGI"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenome"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Quek R et al., 2009, Gastrointestinal stromal tumor: a clinical overview., Hematol Oncol Clin North Am",
+                      "pmid": 19248971
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TdgClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Lam ET et al., 2010, Phase II clinical trial of sorafenib in metastatic medullary thyroid cancer., J Clin Oncol",
+                      "pmid": 20368568
+                    },
+                    {
+                      "citation": "Kloos RT et al., 2009, Phase II trial of sorafenib in metastatic thyroid cancer., J Clin Oncol",
+                      "pmid": 19255327
+                    },
+                    {
+                      "citation": "Egawa S et al., 1998, Genotype-phenotype correlation of patients with multiple endocrine neoplasia type 2 in Japan., Jpn J Clin Oncol",
+                      "pmid": 9839497
+                    },
+                    {
+                      "citation": "Carr LL et al., 2010, Phase II study of daily sunitinib in FDG-PET-positive, iodine-refractory differentiated thyroid cancer and metastatic medullary carcinoma of the thyroid with functional imaging correlation., Clin Cancer Res",
+                      "pmid": 20847059
+                    },
+                    {
+                      "citation": "Wells SA Jr et al., 2012, Vandetanib in patients with locally advanced or metastatic medullary thyroid cancer: a randomized, double-blind phase III trial., J Clin Oncol",
+                      "pmid": 22025146
+                    },
+                    {
+                      "citation": "Frisk T et al., 2001, CGH alterations in medullary thyroid carcinomas in relation to the RET M918T mutation and clinical outcome., Int J Oncol",
+                      "pmid": 11351254
+                    },
+                    {
+                      "citation": "Sherman SI, 2011, Targeted therapies for thyroid tumors., Mod Pathol",
+                      "pmid": 21455200
+                    },
+                    {
+                      "citation": "Gupta-Abramson V et al., 2008, Phase II trial of sorafenib in advanced thyroid cancer., J Clin Oncol",
+                      "pmid": 18541894
+                    },
+                    {
+                      "citation": "Coxon A et al., 2012, Anti-tumor activity of motesanib in a medullary thyroid cancer model., J Endocrinol Invest",
+                      "pmid": 21422803
+                    },
+                    {
+                      "citation": "MacConaill LE et al., 2014, Prospective enterprise-level molecular genotyping of a cohort of cancer patients., J Mol Diagn",
+                      "pmid": 25157968
+                    },
+                    {
+                      "citation": "Wells SA Jr et al., 2010, Vandetanib for the treatment of patients with locally advanced or metastatic hereditary medullary thyroid cancer., J Clin Oncol",
+                      "pmid": 20065189
+                    },
+                    {
+                      "citation": "Santoro M et al., 1998, Molecular biology of the MEN2 gene., J Intern Med",
+                      "pmid": 9681850
+                    },
+                    {
+                      "citation": "Vitagliano D et al., 2010, The tyrosine kinase inhibitor ZD6474 blocks proliferation of RET mutant medullary thyroid carcinoma cells., Endocr Relat Cancer",
+                      "pmid": 20943719
+                    },
+                    {
+                      "citation": "Couto JP et al., 2012, AZD1480 blocks growth and tumorigenesis of RET- activated thyroid cancer cell lines., PLoS One",
+                      "pmid": 23056499
+                    },
+                    {
+                      "citation": "Elisei R et al., 2008, Prognostic significance of somatic RET oncogene mutations in sporadic medullary thyroid cancer: a 10-year follow-up study., J Clin Endocrinol Metab",
+                      "pmid": 18073307
+                    },
+                    {
+                      "citation": "Verbeek HH et al., 2011, The effects of four different tyrosine kinase inhibitors on medullary and papillary thyroid cancer cells., J Clin Endocrinol Metab",
+                      "pmid": 21470995
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "DoCM"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TALC"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Kim DW et al., 2006, An orally administered multitarget tyrosine kinase inhibitor, SU11248, is a novel potent inhibitor of thyroid oncogenic RET/papillary thyroid cancer kinases., J Clin Endocrinol Metab",
+                      "pmid": 16849418
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "NCI"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Tyrosine-protein kinase receptor FLT3 inhibitor"
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                },
+                {
+                  "name": "Indication",
+                  "value": "myeloid neoplasm"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "sensitive"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Guideline"
+                },
+                {
+                  "name": "Evidence Type",
+                  "value": "Actionable"
+                },
+                {
+                  "name": "Combination Therapy",
+                  "value": "Cytarabine + Daunorubicin + Sunitinib"
+                },
+                {
+                  "name": "Indication",
+                  "value": "acute myeloid leukemia"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Phase Ib/II"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "resistant"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical - Cell culture"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Advanced Solid Tumor"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "decreased response"
+                },
+                {
+                  "name": "Indication",
+                  "value": "hematologic cancer"
+                },
+                {
+                  "name": "Combination Therapy",
+                  "value": "Sorafenib + Sunitinib"
+                },
+                {
+                  "name": "Indication",
+                  "value": "chronic myelomonocytic leukemia"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "predicted - resistant"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Case Reports/Case Series"
+                },
+                {
+                  "name": "Clinical Trial Name",
+                  "value": "Sutent"
+                },
+                {
+                  "name": "Novel Drug Target",
+                  "value": "Established target"
+                }
+              ],
+              "gene": {
+                "name": "FLT3"
+              },
+              "interactionScore": 0.1482904472747141,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "COSMIC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TALC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TdgClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "von Bubnoff N et al., 2009, FMS-like tyrosine kinase 3-internal tandem duplication tyrosine kinase inhibitors display a nonoverlapping profile of resistance mutations in vitro., Cancer Res",
+                      "pmid": 19318574
+                    },
+                    {
+                      "citation": "Schittenhelm MM et al., 2006, FLT3 K663Q is a novel AML-associated oncogenic kinase: Determination of biochemical properties and sensitivity to Sunitinib (SU11248)., Leukemia",
+                      "pmid": 16990784
+                    },
+                    {
+                      "citation": "Fiedler W et al., 2015, A phase I/II study of sunitinib and intensive chemotherapy in patients over 60 years of age with acute myeloid leukaemia and activating FLT3 mutations., Br J Haematol",
+                      "pmid": 25818407
+                    },
+                    {
+                      "citation": "Albers C et al., 2013, The secondary FLT3-ITD F691L mutation induces resistance to AC220 in FLT3-ITD+ AML but retains in vitro sensitivity to PKC412 and Sunitinib., Leukemia",
+                      "pmid": 23392356
+                    },
+                    {
+                      "citation": "Williams AB et al., 2013, Mutations of FLT3/ITD confer resistance to multiple tyrosine kinase inhibitors., Leukemia",
+                      "pmid": 22858906
+                    },
+                    {
+                      "citation": "von Bubnoff N et al., 2010, Identification of a secondary FLT3/A848P mutation in a patient with FLT3-ITD-positive blast phase CMML and response to sunitinib and sorafenib., Leukemia",
+                      "pmid": 20520641
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "JAX-CKB"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenome"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Alteration",
+                  "value": "KIT::wildtype:."
+                },
+                {
+                  "name": "Alteration",
+                  "value": "KIT:449-514,550-592,627-664,664-714,788-828"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "KIT:550-592,627-664"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "KIT:H697Y"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "KIT:Y553N"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "KIT:550-592"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "KIT:788-828"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "KIT:amp"
+                },
+                {
+                  "name": "Clinical Trial Name",
+                  "value": "Sutent"
+                },
+                {
+                  "name": "Novel Drug Target",
+                  "value": "Established target"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Advanced Solid Tumor"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "sensitive"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical - Cell culture"
+                },
+                {
+                  "name": "Evidence Type",
+                  "value": "Actionable"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "no benefit"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "resistant"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical"
+                },
+                {
+                  "name": "Indication",
+                  "value": "mast cell neoplasm"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "predicted - sensitive"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "decreased response"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical - Cell line xenograft"
+                },
+                {
+                  "name": "Indication",
+                  "value": "acute myeloid leukemia"
+                },
+                {
+                  "name": "Indication",
+                  "value": "melanoma"
+                },
+                {
+                  "name": "Indication",
+                  "value": "gastrointestinal stromal tumor"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical - Biochemical"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical - Pdx"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical - Patient cell culture"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "predicted - resistant"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Clinical Study - Cohort"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Guideline"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "preclinical"
+                },
+                {
+                  "name": "Variant Effect",
+                  "value": "gain-of-function"
+                },
+                {
+                  "name": "Pathway",
+                  "value": "activation"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "case report"
+                },
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Stem cell growth factor receptor inhibitor"
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01306045"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Lung cancer"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Purpose: KIT or PDGFRA gene mutations will receive a drug called sunitinib, which inhibits some proteins that are thought to be key factors in the development and progression of some cancers, including kidney cancer."
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT00577382"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Melanoma"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Purpose: SU011248 is a protein-tyrosine kinase inhibitor and acts as a c-kit inhibitor drug."
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Thymic Carcinoma"
+                }
+              ],
+              "gene": {
+                "name": "KIT"
+              },
+              "interactionScore": 0.7281488135316414,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Hodi FS et al., 2008, Major response to imatinib mesylate in KIT-mutated melanoma., J Clin Oncol",
+                      "pmid": 18421059
+                    },
+                    {
+                      "citation": "Minor DR et al., 2012, Sunitinib therapy for melanoma patients with KIT mutations., Clin Cancer Res",
+                      "pmid": 22261812
+                    },
+                    {
+                      "citation": "Guo J et al., 2011, Phase II, open-label, single-arm trial of imatinib mesylate in patients with metastatic melanoma harboring c-Kit mutation or amplification., J Clin Oncol",
+                      "pmid": 21690468
+                    },
+                    {
+                      "citation": "Carvajal RD et al., 2011, KIT as a therapeutic target in metastatic melanoma., JAMA",
+                      "pmid": 21642685
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "CGI"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenome"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "OncoKB"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Quek R et al., 2009, Gastrointestinal stromal tumor: a clinical overview., Hematol Oncol Clin North Am",
+                      "pmid": 19248971
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TALC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TdgClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Girard N et al., 2009, Comprehensive genomic analysis reveals clinically relevant molecular distinctions between thymic carcinomas and thymomas., Clin Cancer Res",
+                      "pmid": 19861435
+                    },
+                    {
+                      "citation": "Rossi V et al., 2013, When a thymic carcinoma \"becomes\" a GIST., Lung Cancer",
+                      "pmid": 23375402
+                    },
+                    {
+                      "citation": "Schirosi L et al., 2012, Activating c-KIT mutations in a subset of thymic carcinoma and response to different c-KIT inhibitors., Ann Oncol",
+                      "pmid": 22357254
+                    },
+                    {
+                      "citation": "Buti S et al., 2011, Impressive response with imatinib in a heavily pretreated patient with metastatic c-KIT mutated thymic carcinoma., J Clin Oncol",
+                      "pmid": 21969494
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "DoCM"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Todd JR et al., 2013, Secondary c-Kit mutations confer acquired resistance to RTK inhibitors in c-Kit mutant melanoma cells., Pigment Cell Melanoma Res",
+                      "pmid": 23582185
+                    },
+                    {
+                      "citation": "Casali PG et al., 2022, Gastrointestinal stromal tumours: ESMO-EURACAN-GENTURIS Clinical Practice Guidelines for diagnosis, treatment and follow-up., Ann Oncol",
+                      "pmid": 34560242
+                    },
+                    {
+                      "citation": "Garner AP et al., 2014, Ponatinib inhibits polyclonal drug-resistant KIT oncoproteins and shows therapeutic potential in heavily pretreated gastrointestinal stromal tumor (GIST) patients., Clin Cancer Res",
+                      "pmid": 25239608
+                    },
+                    {
+                      "citation": "Liu J et al., 2022, Nintedanib overcomes drug resistance from upregulation of FGFR signalling and imatinib-induced KIT mutations in gastrointestinal stromal tumours., Mol Oncol",
+                      "pmid": 35194937
+                    },
+                    {
+                      "citation": "Banks E et al., 2020, Discovery and pharmacological characterization of AZD3229, a potent KIT/PDGFRα inhibitor for treatment of gastrointestinal stromal tumors., Sci Transl Med",
+                      "pmid": 32350132
+                    },
+                    {
+                      "citation": "Reichardt P et al., 2016, Correlation of KIT and PDGFRA mutational status with clinical benefit in patients with gastrointestinal stromal tumor treated with sunitinib in a worldwide treatment-use trial., BMC Cancer",
+                      "pmid": 26772734
+                    },
+                    {
+                      "citation": "Fornasarig M et al., 2020, A Novel Kindred with Familial Gastrointestinal Stromal Tumors Caused by a Rare KIT Germline Mutation (N655K): Clinico-Pathological Presentation and TKI Sensitivity., J Pers Med",
+                      "pmid": 33212994
+                    },
+                    {
+                      "citation": "Zhao J et al., 2014, Flumatinib, a selective inhibitor of BCR-ABL/PDGFR/KIT, effectively overcomes drug resistance of certain KIT mutants., Cancer Sci",
+                      "pmid": 24205792
+                    },
+                    {
+                      "citation": "Carlino MS et al., 2014, Resistance to c-Kit inhibitors in melanoma: insights for future therapies., Oncoscience",
+                      "pmid": 25594040
+                    },
+                    {
+                      "citation": "Na YS et al., 2017, Establishment and characterization of patient-derived xenograft models of gastrointestinal stromal tumor resistant to standard tyrosine kinase inhibitors., Oncotarget",
+                      "pmid": 29100343
+                    },
+                    {
+                      "citation": "Xu J et al., 2019, Inhibition of N822K T>A mutation-induced constitutive c-KIT activation in AML cells triggers apoptotic and autophagic pathways leading to death., Int J Med Sci",
+                      "pmid": 31217744
+                    },
+                    {
+                      "citation": "Gajiwala KS et al., 2009, KIT kinase mutants show unique mechanisms of drug resistance to imatinib and sunitinib in gastrointestinal stromal tumor patients., Proc Natl Acad Sci U S A",
+                      "pmid": 19164557
+                    },
+                    {
+                      "citation": "Iida K et al., 2021, Identification and Therapeutic Targeting of GPR20, Selectively Expressed in Gastrointestinal Stromal Tumors, with DS-6157a, a First-in-Class Antibody-Drug Conjugate., Cancer Discov",
+                      "pmid": 33579785
+                    },
+                    {
+                      "citation": "Girard N et al., 2009, Comprehensive genomic analysis reveals clinically relevant molecular distinctions between thymic carcinomas and thymomas., Clin Cancer Res",
+                      "pmid": 19861435
+                    },
+                    {
+                      "citation": "Smith BD et al., 2019, Ripretinib (DCC-2618) Is a Switch Control Kinase Inhibitor of a Broad Spectrum of Oncogenic and Drug-Resistant KIT and PDGFRA Variants., Cancer Cell",
+                      "pmid": 31085175
+                    },
+                    {
+                      "citation": "Heinrich MC et al., 2008, Primary and secondary kinase genotypes correlate with the biological and clinical activity of sunitinib in imatinib-resistant gastrointestinal stromal tumor., J Clin Oncol",
+                      "pmid": 18955458
+                    },
+                    {
+                      "citation": "Liu F et al., 2019, Axitinib overcomes multiple imatinib resistant cKIT mutations including the gatekeeper mutation T670I in gastrointestinal stromal tumors., Ther Adv Med Oncol",
+                      "pmid": 31205508
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "JAX-CKB"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "COSMIC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Clinical Trial Name",
+                  "value": "Sutent"
+                },
+                {
+                  "name": "Novel Drug Target",
+                  "value": "Established target"
+                },
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Vascular endothelial growth factor receptor inhibitor"
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Lung cancer"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Melanoma"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Thymic Carcinoma"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Thyroid Cancer"
+                }
+              ],
+              "gene": {
+                "name": "FLT4"
+              },
+              "interactionScore": 0.1662971444437865,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TdgClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Quek R et al., 2009, Gastrointestinal stromal tumor: a clinical overview., Hematol Oncol Clin North Am",
+                      "pmid": 19248971
+                    },
+                    {
+                      "citation": "Ravegnini G et al., 2017, An exploratory association of polymorphisms in angiogenesis-related genes with susceptibility, clinical response and toxicity in gastrointestinal stromal tumors receiving sunitinib after imatinib failure., Angiogenesis",
+                      "pmid": 27896475
+                    },
+                    {
+                      "citation": "Garcia-Donas J et al., 2011, Single nucleotide polymorphism associations with response and toxic effects in patients with advanced renal-cell carcinoma treated with first-line sunitinib: a multicentre, observational, prospective study., Lancet Oncol",
+                      "pmid": 22015057
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TALC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "EWSR1"
+              },
+              "interactionScore": 0.7760533407376704,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "VEGFC"
+              },
+              "interactionScore": 0.1724562979417045,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "POR"
+              },
+              "interactionScore": 0.344912595883409,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Kloth JSL et al., 2018, Genetic polymorphisms as predictive biomarker of survival in patients with gastrointestinal stromal tumors treated with sunitinib., Pharmacogenomics J",
+                      "pmid": 28117434
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Alteration",
+                  "value": "PDGFRA::wildtype:."
+                },
+                {
+                  "name": "Alteration",
+                  "value": "PDGFRA:552-596,631-668,814-854"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "PDGFRA:over"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "PDGFRA:D842V"
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01306045"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Lung cancer"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Purpose: KIT or PDGFRA gene mutations will receive a drug called sunitinib, which inhibits some proteins that are thought to be key factors in the development and progression of some cancers, including kidney cancer."
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "late trials, preclinical"
+                },
+                {
+                  "name": "Pathway",
+                  "value": "activation"
+                },
+                {
+                  "name": "Variant Effect",
+                  "value": "gain-of-function"
+                },
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Platelet-derived growth factor receptor inhibitor"
+                },
+                {
+                  "name": "Clinical Trial Name",
+                  "value": "Sutent"
+                },
+                {
+                  "name": "Novel Drug Target",
+                  "value": "Established target"
+                }
+              ],
+              "gene": {
+                "name": "PDGFRA"
+              },
+              "interactionScore": 0.5173688938251136,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Prenen H et al., 2006, Efficacy of the kinase inhibitor SU11248 against gastrointestinal stromal tumor mutants refractory to imatinib mesylate., Clin Cancer Res",
+                      "pmid": 16638875
+                    },
+                    {
+                      "citation": "Cassier PA et al., 2012, Outcome of patients with platelet-derived growth factor receptor alpha-mutated gastrointestinal stromal tumors in the tyrosine kinase inhibitor era., Clin Cancer Res",
+                      "pmid": 22718859
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "CGI"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "COSMIC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TdgClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Debiec-Rychter M et al., 2005, Mechanisms of resistance to imatinib mesylate in gastrointestinal stromal tumors and activity of the PKC412 inhibitor against imatinib-resistant mutants., Gastroenterology",
+                      "pmid": 15685537
+                    },
+                    {
+                      "citation": "Hirota S et al., 2003, Gain-of-function mutations of platelet-derived growth factor receptor alpha gene in gastrointestinal stromal tumors., Gastroenterology",
+                      "pmid": 12949711
+                    },
+                    {
+                      "citation": "Prenen H et al., 2006, Efficacy of the kinase inhibitor SU11248 against gastrointestinal stromal tumor mutants refractory to imatinib mesylate., Clin Cancer Res",
+                      "pmid": 16638875
+                    },
+                    {
+                      "citation": "Heinrich MC et al., 2006, Molecular correlates of imatinib resistance in gastrointestinal stromal tumors., J Clin Oncol",
+                      "pmid": 16954519
+                    },
+                    {
+                      "citation": "Corless CL et al., 2005, PDGFRA mutations in gastrointestinal stromal tumors: frequency, spectrum and in vitro sensitivity to imatinib., J Clin Oncol",
+                      "pmid": 15928335
+                    },
+                    {
+                      "citation": "Heinrich MC et al., 2012, Crenolanib inhibits the drug-resistant PDGFRA D842V mutation associated with imatinib-resistant gastrointestinal stromal tumors., Clin Cancer Res",
+                      "pmid": 22745105
+                    },
+                    {
+                      "citation": "MacConaill LE et al., 2014, Prospective enterprise-level molecular genotyping of a cohort of cancer patients., J Mol Diagn",
+                      "pmid": 25157968
+                    },
+                    {
+                      "citation": "Yoo C et al., 2016, Efficacy of Imatinib in Patients with Platelet-Derived Growth Factor Receptor Alpha-Mutated Gastrointestinal Stromal Tumors., Cancer Res Treat",
+                      "pmid": 26130666
+                    },
+                    {
+                      "citation": "Cassier PA et al., 2012, Outcome of patients with platelet-derived growth factor receptor alpha-mutated gastrointestinal stromal tumors in the tyrosine kinase inhibitor era., Clin Cancer Res",
+                      "pmid": 22718859
+                    },
+                    {
+                      "citation": "Heinrich MC et al., 2003, Kinase mutations and imatinib response in patients with metastatic gastrointestinal stromal tumor., J Clin Oncol",
+                      "pmid": 14645423
+                    },
+                    {
+                      "citation": "Lasota J et al., 2004, A great majority of GISTs with PDGFRA mutations represent gastric tumors of low or no malignant potential., Lab Invest",
+                      "pmid": 15146165
+                    },
+                    {
+                      "citation": "Dewaele B et al., 2008, Activity of dasatinib, a dual SRC/ABL kinase inhibitor, and IPI-504, a heat shock protein 90 inhibitor, against gastrointestinal stromal tumor-associated PDGFRAD842V mutation., Clin Cancer Res",
+                      "pmid": 18794084
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "DoCM"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                }
+              ],
+              "gene": {
+                "name": "PDGFA"
+              },
+              "interactionScore": 0.7760533407376704,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "FGFR2"
+              },
+              "interactionScore": 0.01916181088241161,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "VEGFA"
+              },
+              "interactionScore": 0.1217338573706149,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Dornbusch J et al., 2016, Evaluation of polymorphisms in angiogenesis-related genes as predictive and prognostic markers for sunitinib-treated metastatic renal cell carcinoma patients., J Cancer Res Clin Oncol",
+                      "pmid": 26935927
+                    },
+                    {
+                      "citation": "Eechoute K et al., 2012, Polymorphisms in endothelial nitric oxide synthase (eNOS) and vascular endothelial growth factor (VEGF) predict sunitinib-induced hypertension., Clin Pharmacol Ther",
+                      "pmid": 22948895
+                    },
+                    {
+                      "citation": "Ravegnini G et al., 2017, An exploratory association of polymorphisms in angiogenesis-related genes with susceptibility, clinical response and toxicity in gastrointestinal stromal tumors receiving sunitinib after imatinib failure., Angiogenesis",
+                      "pmid": 27896475
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                }
+              ],
+              "gene": {
+                "name": "PDGFB"
+              },
+              "interactionScore": 0.5173688938251136,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Indication",
+                  "value": "gastrointestinal stromal tumor"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "resistant"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical - Pdx"
+                },
+                {
+                  "name": "Evidence Type",
+                  "value": "Actionable"
+                }
+              ],
+              "gene": {
+                "name": "PTEN"
+              },
+              "interactionScore": 0.02140836802034952,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Na YS et al., 2017, Establishment and characterization of patient-derived xenograft models of gastrointestinal stromal tumor resistant to standard tyrosine kinase inhibitors., Oncotarget",
+                      "pmid": 29100343
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "JAX-CKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "NR1I2"
+              },
+              "interactionScore": 0.05445988356053827,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Narjoz C et al., 2015, Role of the lean body mass and of pharmacogenetic variants on the pharmacokinetics and pharmacodynamics of sunitinib in cancer patients., Invest New Drugs",
+                      "pmid": 25344452
+                    },
+                    {
+                      "citation": "van der Veldt AA et al., 2011, Genetic polymorphisms associated with a prolonged progression-free survival in patients with metastatic renal cell cancer treated with sunitinib., Clin Cancer Res",
+                      "pmid": 21097692
+                    },
+                    {
+                      "citation": "Beuselinck B et al., 2014, Efflux pump ABCB1 single nucleotide polymorphisms and dose reductions in patients with metastatic renal cell carcinoma treated with sunitinib., Acta Oncol",
+                      "pmid": 24874929
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "CYP1A1"
+              },
+              "interactionScore": 0.1149708652944696,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "van Erp NP et al., 2009, Pharmacogenetic pathway analysis for determination of sunitinib-induced toxicity., J Clin Oncol",
+                      "pmid": 19667267
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "PTPRB"
+              },
+              "interactionScore": 0.5173688938251136,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "NR1I3"
+              },
+              "interactionScore": 0.2586844469125568,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "De Mattia E et al., 2016, Pregnane X receptor, constitutive androstane receptor and hepatocyte nuclear factors as emerging players in cancer precision medicine., Pharmacogenomics",
+                      "pmid": 27561454
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                }
+              ],
+              "gene": {
+                "name": "PDGFC"
+              },
+              "interactionScore": 1.55210668147534,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "SLCO1B3"
+              },
+              "interactionScore": 0.1478196839500324,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Kloth JSL et al., 2018, Genetic polymorphisms as predictive biomarker of survival in patients with gastrointestinal stromal tumors treated with sunitinib., Pharmacogenomics J",
+                      "pmid": 28117434
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                }
+              ],
+              "gene": {
+                "name": "PDGFD"
+              },
+              "interactionScore": 0.7760533407376704,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Alteration",
+                  "value": "HIF1A:over"
+                }
+              ],
+              "gene": {
+                "name": "HIF1A"
+              },
+              "interactionScore": 0.01077851862135653,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CGI"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Indication",
+                  "value": "breast cancer"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "predicted - sensitive"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Phase II"
+                },
+                {
+                  "name": "Evidence Type",
+                  "value": "Actionable"
+                }
+              ],
+              "gene": {
+                "name": "FGFR1"
+              },
+              "interactionScore": 0.01437135816180871,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "JAX-CKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "BAP1"
+              },
+              "interactionScore": 0.1940133351844176,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "NOS3"
+              },
+              "interactionScore": 0.1241685345180272,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Choi HE et al., 2011, BRN-103, a novel nicotinamide derivative, inhibits VEGF-induced angiogenesis and proliferation in human umbilical vein endothelial cells., Bioorg Med Chem Lett",
+                      "pmid": 21963305
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "DTC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "KDM5C"
+              },
+              "interactionScore": 0.7760533407376704,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Alteration",
+                  "value": "MKI67:over"
+                }
+              ],
+              "gene": {
+                "name": "MKI67"
+              },
+              "interactionScore": 1.55210668147534,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CGI"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Alteration",
+                  "value": "CA9:over"
+                }
+              ],
+              "gene": {
+                "name": "CA9"
+              },
+              "interactionScore": 0.1940133351844176,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CGI"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "HMOX1"
+              },
+              "interactionScore": 0.1724562979417045,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "PTPN12"
+              },
+              "interactionScore": 0.5173688938251136,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Indication",
+                  "value": "renal cell carcinoma"
+                },
+                {
+                  "name": "Response Type",
+                  "value": "predicted - sensitive"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Phase I"
+                },
+                {
+                  "name": "Evidence Type",
+                  "value": "Actionable"
+                },
+                {
+                  "name": "Combination Therapy",
+                  "value": "Sunitinib + Trametinib"
+                },
+                {
+                  "name": "Indication",
+                  "value": "kidney cancer"
+                },
+                {
+                  "name": "Approval Status",
+                  "value": "Preclinical - Pdx"
+                },
+                {
+                  "name": "Combination Therapy",
+                  "value": "Sorafenib,Sunitinib,Bevacizumab,Axitinib"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "VHL:."
+                }
+              ],
+              "gene": {
+                "name": "VHL"
+              },
+              "interactionScore": 0.2586844469125568,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Bridgeman VL et al., 2016, Preclinical Evidence That Trametinib Enhances the Response to Antiangiogenic Tyrosine Kinase Inhibitors in Renal Cell Carcinoma., Mol Cancer Ther",
+                      "pmid": 26487278
+                    },
+                    {
+                      "citation": "Jonasch E et al., 2011, Pilot trial of sunitinib therapy in patients with von Hippel-Lindau disease., Ann Oncol",
+                      "pmid": 22105611
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "JAX-CKB"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CGI"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Macrophage colony stimulating factor receptor inhibitor"
+                }
+              ],
+              "gene": {
+                "name": "CSF1R"
+              },
+              "interactionScore": 0.05543238148126217,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "PBRM1"
+              },
+              "interactionScore": 0.1293422234562784,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Clinical Trial Name",
+                  "value": "Sutent"
+                },
+                {
+                  "name": "Novel Drug Target",
+                  "value": "Established target"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Thymic Carcinoma"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Thyroid Cancer"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Melanoma"
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "Lung cancer"
+                },
+                {
+                  "name": "Indication",
+                  "value": "Detailed description: Sunitinib is an orally available inhibitor of vascular endothelial growth factor (VEGFR), platelet-derived growth factor (PDGF), cytokine receptor (c-KIT), and receptor tyrosine kinase (FLT-3) activity."
+                },
+                {
+                  "name": "Cancer Type",
+                  "value": "GIST"
+                },
+                {
+                  "name": "Clinical Trial ID",
+                  "value": "NCT01286896"
+                },
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Vascular endothelial growth factor receptor inhibitor"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "VEGFR2:over"
+                },
+                {
+                  "name": "Alteration",
+                  "value": "VEGFR1:over"
+                }
+              ],
+              "gene": {
+                "name": "FLT1"
+              },
+              "interactionScore": 0.1847746049375405,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Dornbusch J et al., 2013, Analyses of potential predictive markers and survival data for a response to sunitinib in patients with metastatic renal cell carcinoma., PLoS One",
+                      "pmid": 24086736
+                    },
+                    {
+                      "citation": "Terakawa T et al., 2013, Expression level of vascular endothelial growth factor receptor-2 in radical nephrectomy specimens as a prognostic predictor in patients with metastatic renal cell carcinoma treated with sunitinib., Urol Oncol",
+                      "pmid": 21478036
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "CGI"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "ChEMBL"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TALC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TdgClinicalTrial"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TEND"
+                  }
+                },
+                {
+                  "publications": [
+                    {
+                      "citation": "Perspicace E et al., 2013, Design, synthesis and biological evaluation of new classes of thieno[3,2-d]pyrimidinone and thieno[1,2,3]triazine as inhibitor of vascular endothelial growth factor receptor-2 (VEGFR-2)., Eur J Med Chem",
+                      "pmid": 23583911
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "DTC"
+                  }
+                },
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "MyCancerGenomeClinicalTrial"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "CYP3A4"
+              },
+              "interactionScore": 0.007031060844735405,
+              "interactionClaims": [
+                {
+                  "publications": [
+                    {
+                      "citation": "Adams VR et al., 2007, Sunitinib malate for the treatment of metastatic renal cell carcinoma and gastrointestinal stromal tumors., Clin Ther",
+                      "pmid": 17825686
+                    },
+                    {
+                      "citation": "Diekstra MH et al., 2017, Sunitinib-induced hypertension in CYP3A4 rs4646437 A-allele carriers with metastatic renal cell carcinoma., Pharmacogenomics J",
+                      "pmid": 26810136
+                    },
+                    {
+                      "citation": "Diekstra MH et al., 2014, Association analysis of genetic polymorphisms in genes related to sunitinib pharmacokinetics, specifically clearance of sunitinib and SU12662., Clin Pharmacol Ther",
+                      "pmid": 24566734
+                    }
+                  ],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "CXCL8"
+              },
+              "interactionScore": 0.0189281302618944,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "PharmGKB"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "gene": {
+                "name": "YES1"
+              },
+              "interactionScore": 0.007462051353246831,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "DTC"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
