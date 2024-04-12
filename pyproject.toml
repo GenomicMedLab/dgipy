@@ -23,7 +23,6 @@ requires-python = ">=3.8"
 description = "Python wrapper for accessing an instance of DGIdb v5 database"
 license = {file = "LICENSE"}
 dependencies = [
-<<<<<<< HEAD
     "pandas~=2.2.1",
     "dash",
     "dash-bootstrap-components",
