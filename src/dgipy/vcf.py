@@ -1,6 +1,7 @@
 """Provides methods for annotating VCF with DGIdb data"""
 
 import contextlib
+from itertools import groupby
 
 import pandas as pd
 import pysam
@@ -12,6 +13,47 @@ import dgipy
 # /Users/mjc014/Documents/docs/papers/DGIpy/vcf_annotation/HG001_GRCh38_1_22_v4.2.1_benchmark.vcf.gz
 
 
+# TODO: Probably need another class as a wrapper object rather than putting it all in a list
+# Class would have analogous display methods but also allow access to individual GeneResults
+class GeneResult:
+    """A gene result from original VCF
+
+    Attributes
+    ----------
+    gene : str
+        The name of the gene
+    records : list
+        The mapped records from original VCF
+    interactions : pd.DataFrame
+        The interactions obtained from DGIdb
+
+    Methods
+    -------
+    search_interactions(gene: str) -> pd.DataFrame
+        Search drug-gene interactions for given gene in DGIdb
+
+    """
+
+    def __init__(self, data: list) -> None:
+        """Initialize a gene with a name, VCF records, and drug-gene interactions"""
+        # TODO: handle genes without names, 'novel transript'
+        try:
+            self.gene = data[0]["name"]
+        except:
+            self.gene = "None"
+
+        self.records = data
+        self.interactions = self.search_interactions(self.gene)
+
+    def search_interactions(self, gene: str) -> pd.DataFrame:
+        """Search drug-gene interactions for given gene in DGIdb
+
+        :param gene: the name of the gene
+        :return: Dataframe of drug-gene interactions
+        """
+        return dgipy.get_interactions(gene)
+
+
 def annotate(filepath: str, contig: str) -> pd.DataFrame:
     """Map chr,pos pairs from a VCF file to human genes and search DGIdb for drug-gene interactions
 
@@ -20,16 +62,20 @@ def annotate(filepath: str, contig: str) -> pd.DataFrame:
     :return: Dataframe of drug-gene interactions
     """
     # Open VCF file
-    records = __process_vcf(filepath, contig)
+    records = _process_vcf(filepath, contig)
     # Grab records & relevant info (params: chr7)
-    mapped = __ensembl_map(records)
+    mapped = _ensembl_map(records)  # TODO: modularize mapping
+    # Group records with like-genes
+    grouped = _group_by_name(mapped)
+    # Instance each gene set as a class
+    vcf_results = []
+    for gene in grouped:
+        vcf_results.append(GeneResult(grouped[gene]))
 
-    # Map (TODO: modularize)
-
-    return __query_dgidb(mapped)
+    return vcf_results
 
 
-def __process_vcf(filepath: str, contig: str) -> list:
+def _process_vcf(filepath: str, contig: str) -> list:
     """Grab relevant data for mapping and mutations from starting VCF
 
     :param filepath: link to valid VCF file
@@ -54,7 +100,7 @@ def __process_vcf(filepath: str, contig: str) -> list:
     return records
 
 
-def __get_gene_by_position(chromosome: str, position: str) -> list:
+def _get_gene_by_position(chromosome: str, position: str) -> list:
     """Map chr,pos pair to genome via ensembl
 
     :param chromosome: specified chromosome (i.e. chr7)
@@ -74,16 +120,16 @@ def __get_gene_by_position(chromosome: str, position: str) -> list:
     return response.json()
 
 
-def __ensembl_map(records: list) -> list:
+def _ensembl_map(records: list) -> list:
     """Take VCF input and map to ensembl
 
     :param records: list of records pulled from VCF
     :return: list of mapped genes
     """
     results = []
-    # TO DO: Allow custom slice selection as data sets can be huge, current 0:1500 for time purposes
+    # TODO: Allow custom slice selection as data sets can be huge, current 0:1500 or 0:150 for time purposes
     for record in tqdm(records[0:1500]):
-        gene_info = __get_gene_by_position(record["chromosome"], record["pos"])
+        gene_info = _get_gene_by_position(record["chromosome"], record["pos"])
 
         if type(gene_info) is None:
             continue
@@ -91,32 +137,29 @@ def __ensembl_map(records: list) -> list:
         for info in gene_info:
             entry = {}
             if info["feature_type"] == "gene":
-                with contextlib.suppress(KeyError):
+                with contextlib.suppress(KeyError):  # TODO: handle genes without names
                     entry["name"] = info["external_name"]
 
                 entry["desc"] = info["description"]
                 entry["gene_id"] = info["gene_id"]
+                entry.update(record)
                 results.append(entry)
 
     return results
 
 
-def __query_dgidb(results: list) -> pd.DataFrame:
-    """Search interactions from mapped ensembl results
+def _group_by_name(data: list, default_name: str = "Unknown") -> dict:
+    """Take list of records and group to dict by gene name
 
-    :param results: list of mapped records
-    :return: dataframe of interaction results
+    :param data: list of records
+    :param default_name: name of gene if none found
+    :return: dict of records grouped by gene name
     """
-    genes = []
-    for result in results:
-        with contextlib.suppress(
-            AttributeError
-        ):  # TODO: handle cases where there is no name better
-            genes.append(result["name"])
+    sorted_data = sorted(data, key=lambda x: x.get("name", default_name))
 
-    genes = list(set(genes))
-
-    # TODO: link original loc / mutation / ref / alt to the interaction result (in one DF?)
-
-    # interactions = interactions[interactions['approval'].str.contains('True')]
-    return dgipy.get_interactions(genes)
+    return {
+        key: list(group)
+        for key, group in groupby(
+            sorted_data, key=lambda x: x.get("name", default_name)
+        )
+    }
