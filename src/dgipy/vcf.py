@@ -10,7 +10,8 @@ from tqdm import tqdm
 
 import dgipy
 
-# /Users/mjc014/Documents/docs/papers/DGIpy/vcf_annotation/HG001_GRCh38_1_22_v4.2.1_benchmark.vcf.gz
+# Sample usage: import vcf
+#               data = vcf.annotate('link/to/file',chr='chr#')
 
 
 # TODO: Probably need another class as a wrapper object rather than putting it all in a list
