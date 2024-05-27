@@ -186,6 +186,7 @@ def get_interactions(
                 nodes {
                   name
                   longName
+                  conceptId
                   geneCategories {
                     name
                   }
@@ -197,6 +198,7 @@ def get_interactions(
                     drug {
                       name
                       approved
+                      conceptId
                     }
                     interactionScore
                     interactionClaims {
@@ -230,6 +232,7 @@ def get_interactions(
                 nodes {
                   name
                   approved
+                  conceptId
                   interactions {
                     interactionAttributes {
                       name
@@ -237,6 +240,7 @@ def get_interactions(
                     }
                     gene {
                       name
+                      conceptId
                     }
                     interactionScore
                     interactionClaims {
@@ -482,11 +486,14 @@ def __process_gene_search(results: Dict) -> pd.DataFrame:
     longname_list = []
     sources_list = []
     pmids_list = []
+    gene_concept_id_list = []
+    drug_concept_id_list = []
     # genecategories_list = []
 
     for match in results["genes"]["nodes"]:
         current_gene = match["name"]
         current_longname = match["longName"]
+        current_gene_concept_id = match["conceptId"]
 
         # TO DO: Evaluate if categories should be returned as part of interactions search. Seems useful but also redundant?
         # list_string = []
@@ -498,8 +505,10 @@ def __process_gene_search(results: Dict) -> pd.DataFrame:
             gene_list.append(current_gene)
             # genecategories_list.append(current_genecategories)
             longname_list.append(current_longname)
+            gene_concept_id_list.append(current_gene_concept_id)
             drugname_list.append(interaction["drug"]["name"])
             approval_list.append(str(interaction["drug"]["approved"]))
+            drug_concept_id_list.append(interaction["drug"]["conceptId"])
             interactionscore_list.append(interaction["interactionScore"])
 
             list_string = []
@@ -527,6 +536,8 @@ def __process_gene_search(results: Dict) -> pd.DataFrame:
         interaction_attributes=interactionattributes_list,
         source=sources_list,
         pmid=pmids_list,
+        gene_concept_id=gene_concept_id_list,
+        drug_concept_id=drug_concept_id_list,
     )
 
 
@@ -562,16 +573,21 @@ def __process_drug_search(results: Dict) -> pd.DataFrame:
     drug_list = []
     sources_list = []
     pmids_list = []
+    gene_concept_id_list = []
+    drug_concept_id_list = []
 
     for match in results["drugs"]["nodes"]:
         current_drug = match["name"]
         current_approval = str(match["approved"])
+        current_drug_concept_id = match["conceptId"]
 
         for interaction in match["interactions"]:
             drug_list.append(current_drug)
             genename_list.append(interaction["gene"]["name"])
             interactionscore_list.append(interaction["interactionScore"])
             approval_list.append(current_approval)
+            drug_concept_id_list.append(current_drug_concept_id)
+            gene_concept_id_list.append(interaction["gene"]["conceptId"])
 
             list_string = []
             for attribute in interaction["interactionAttributes"]:
@@ -598,6 +614,8 @@ def __process_drug_search(results: Dict) -> pd.DataFrame:
         interaction_attributes=interactionattributes_list,
         source=sources_list,
         pmid=pmids_list,
+        gene_concept_id=gene_concept_id_list,
+        drug_concept_id=drug_concept_id_list,
     )
 
 
