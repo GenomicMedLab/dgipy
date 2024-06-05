@@ -7,6 +7,7 @@ import pandas as pd
 import pysam
 import requests
 from tqdm import tqdm
+from pathlib import Path
 
 import dgipy
 
@@ -18,21 +19,6 @@ import dgipy
 # Class would have analogous display methods but also allow access to individual GeneResults
 class GeneResult:
     """A gene result from original VCF
-
-    Attributes
-    ----------
-    gene : str
-        The name of the gene
-    records : list
-        The mapped records from original VCF
-    interactions : pd.DataFrame
-        The interactions obtained from DGIdb
-
-    Methods
-    -------
-    search_interactions(gene: str) -> pd.DataFrame
-        Search drug-gene interactions for given gene in DGIdb
-
     """
 
     def __init__(self, data: list) -> None:
@@ -91,13 +77,17 @@ class GeneResult:
         return dgipy.get_categories(gene)
 
 
-def annotate(filepath: str, contig: str) -> pd.DataFrame:
+def annotate(filepath: Path, contig: str) -> pd.DataFrame:
     """Map chr,pos pairs from a VCF file to human genes and search DGIdb for drug-gene interactions
 
     :param filepath: link to a valid VCF file
     :param contig: specified chromosome (i.e. chr7)
     :return: Dataframe of drug-gene interactions
     """
+
+    if not isinstance(filepath, Path):
+        raise ValueError("Filepath argument must be a valid pathlib.Path object")
+
     # Open VCF file
     records = _process_vcf(filepath, contig)
     # Grab records & relevant info (params: chr7)
@@ -112,7 +102,7 @@ def annotate(filepath: str, contig: str) -> pd.DataFrame:
     return vcf_results
 
 
-def _process_vcf(filepath: str, contig: str) -> list:
+def _process_vcf(filepath: Path, contig: str) -> list:
     """Grab relevant data for mapping and mutations from starting VCF
 
     :param filepath: link to valid VCF file
@@ -120,7 +110,7 @@ def _process_vcf(filepath: str, contig: str) -> list:
     :return: List of record dicts
 
     """
-    file = pysam.TabixFile(filepath)
+    file = pysam.TabixFile(str(filepath.absolute()))
 
     records = []
     for record in tqdm(file.fetch(contig)):
