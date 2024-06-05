@@ -59,8 +59,7 @@ Source = "https://github.com/genomicmedlab/dgipy"
 requires = ["setuptools>=64", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.dynamic]
-version = {attr = "dgipy.version.__version__"}
+[tools.setuptools_scm]
 
 [tool.setuptools.packages.find]
 where = ["src"]
