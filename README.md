@@ -22,7 +22,7 @@ python3 -m pip install dgipy
 Methods in `dgipy.dgidb` send pre-defined queries with user-supplied parameters to the DGIdb GraphQL API endpoint. Response objects can optionally be returned as Pandas dataframes for readability and ease of use, or retained as the raw GraphQL responses by setting the `use_pandas` argument to `False`.
 
 ```python
-from dgipy.dgidb import get_drug
+from dgipy import get_drug
 
 # get a dataframe including drug name, identifier/aliases, molecular attributes, and regulatory data
 response = get_drug(["sunitinib", "trastuzumab", "not-a-real-drug"])
@@ -40,15 +40,11 @@ Similar methods are provided for looking up genes and drug-gene interactions.
 
 ### Setup
 
-dgipy must be imported from dgidb first:
-
-    import dgipy
-
-To generate and run the app, run the following command:
-
-    app = dgipy.generate_app()
-    if __name__ == '__main__':
-        app.run_server()
+```pycon
+>>> from dgipy.dashboard import generate_app
+>>> app = generate_app()
+>>> app.run_server()
+```
 
 Once the server is running, The dash app can be viewed at its default URL 'http://127.0.0.1:8050/'
 

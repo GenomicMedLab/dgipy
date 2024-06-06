@@ -1,0 +1,12 @@
+query getSources($sourceType: SourceTypeFilter) {
+  sources(sourceType: $sourceType) {
+    nodes {
+      fullName
+      sourceDbName
+      sourceDbVersion
+      drugClaimsCount
+      geneClaimsCount
+      interactionClaimsCount
+    }
+  }
+}

@@ -1,0 +1,32 @@
+query getDrugs($names: [String!], $immunotherapy: Boolean, $antiNeoplastic: Boolean) {
+  drugs(
+    names: $names
+    immunotherapy: $immunotherapy
+    antiNeoplastic: $antiNeoplastic
+  ) {
+    nodes {
+      name
+      conceptId
+      drugAliases {
+        alias
+      }
+      drugAttributes {
+        name
+        value
+      }
+      antiNeoplastic
+      immunotherapy
+      approved
+      drugApprovalRatings {
+        rating
+        source {
+          sourceDbName
+        }
+      }
+      drugApplications {
+        appNo
+      }
+    }
+  }
+}
+
