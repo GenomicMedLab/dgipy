@@ -1,0 +1,36 @@
+query getInteractionsByDrug($names: [String!], $immunotherapy: Boolean, $antineoplastic: Boolean, $sourceDbName: String, $pmid: Int, $interactionType: String, $approved: Boolean) {
+  drugs(
+    names: $names
+    immunotherapy: $immunotherapy
+    antiNeoplastic: $antineoplastic
+    sourceDbName: $sourceDbName
+    pmid: $pmid
+    interactionType: $interactionType
+    approved: $approved
+  ) {
+    nodes {
+      name
+      approved
+      interactions {
+        interactionAttributes {
+          name
+          value
+        }
+        gene {
+          name
+        }
+        interactionScore
+        interactionClaims {
+          publications {
+            citation
+            pmid
+          }
+          source {
+            sourceDbName
+          }
+        }
+      }
+    }
+  }
+}
+

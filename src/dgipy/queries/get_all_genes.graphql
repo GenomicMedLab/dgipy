@@ -1,0 +1,8 @@
+{
+  genes {
+    nodes {
+      name
+      conceptId
+    }
+  }
+}
