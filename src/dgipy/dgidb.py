@@ -301,7 +301,7 @@ def get_interactions(
         with (QUERY_DIR / "get_interactions_by_gene.graphql").open() as f:
             query = gql(f.read())
     elif search == "drugs":
-        with (QUERY_DIR / "get_interactions_by_drug").open() as f:
+        with (QUERY_DIR / "get_interactions_by_drug.graphql").open() as f:
             query = gql(f.read())
     else:
         msg = "Search type must be specified using: search='drugs' or search='genes'"
