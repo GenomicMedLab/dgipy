@@ -1,0 +1,1 @@
+"""Construct graph application dashboard."""
