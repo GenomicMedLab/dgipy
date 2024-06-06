@@ -11,14 +11,14 @@ from pathlib import Path
 
 import dgipy
 
-# Sample usage: import vcf
-#               data = vcf.annotate('link/to/file',chr='chr#')
-
-
 # TODO: Probably need another class as a wrapper object rather than putting it all in a list
 # Class would have analogous display methods but also allow access to individual GeneResults
 class GeneResult:
     """A gene result from original VCF
+    .. code-block:: python
+        import vcf
+        # Provide path to VCF file and specify chromosome
+        data = vcf.annotate('link/to/file',chr='chr#')
     """
 
     def __init__(self, data: list) -> None:
@@ -110,18 +110,22 @@ def _process_vcf(filepath: Path, contig: str) -> list:
     :return: List of record dicts
 
     """
+    # TODO: Add support for pysam.VariantFile
+    # https://pysam.readthedocs.io/en/latest/usage.html#working-with-vcf-bcf-formatted-files
+
     file = pysam.TabixFile(str(filepath.absolute()))
 
     records = []
     for record in tqdm(file.fetch(contig)):
         fields = record.split("\t")
-        entry = {}
-        entry["chromosome"] = fields[0]
-        entry["pos"] = fields[1]
-        entry["ref"] = fields[3]
-        entry["alt"] = fields[4]
-        entry["qual"] = fields[5]
-        entry["filter"] = fields[6]
+        entry = {
+            "chromosome": fields[0],
+            "pos": fields[1],
+            "ref": fields[3],
+            "alt": fields[4],
+            "qual": fields[5],
+            "filter": fields[6]
+        }
         records.append(entry)
 
     return records
@@ -134,11 +138,10 @@ def _get_gene_by_position(chromosome: str, position: str) -> list:
     :param position: genomic coordinate
     :return: genomic info for specified coordinate
     """
-    server = "https://rest.ensembl.org"
-    ext = f"/overlap/region/human/{chromosome}:{position}-{position}?feature=gene"
-
+    
+    url = f"https://rest.ensembl.org/overlap/region/human/{chromosome}:{position}-{position}?feature=gene"
     headers = {"Content-Type": "application/json"}
-    response = requests.get(f"{server}{ext}", headers=headers, timeout=10)
+    response = requests.get(f"{url}", headers=headers, timeout=10)
 
     if not response.ok:
         response.raise_for_status()
