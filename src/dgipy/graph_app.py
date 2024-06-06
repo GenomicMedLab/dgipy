@@ -1,4 +1,5 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
+
 from typing import Dict, List, Optional, Tuple, Union
 
 import dash_bootstrap_components as dbc

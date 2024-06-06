@@ -125,7 +125,7 @@ def _process_vcf(filepath: Path, contig: str) -> list:
             "ref": fields[3],
             "alt": fields[4],
             "qual": fields[5],
-            "filter": fields[6]
+            "filter": fields[6],
         }
         records.append(entry)
 

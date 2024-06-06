@@ -1,4 +1,5 @@
 """Provides methods for performing different searches in DGIdb"""
+
 import os
 from typing import Dict, List, Optional, Union
 
