@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 from dash import Input, Output, State, ctx, dash, dcc, html
 
 from dgipy import dgidb
-from dgipy import network_graph as ng
+from dgipy.network import network_graph as ng
 
 
 def generate_app() -> dash.Dash:
