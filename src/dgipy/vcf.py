@@ -2,14 +2,15 @@
 
 import contextlib
 from itertools import groupby
+from pathlib import Path
 
 import pandas as pd
 import pysam
 import requests
 from tqdm import tqdm
-from pathlib import Path
 
 import dgipy
+
 
 # TODO: Probably need another class as a wrapper object rather than putting it all in a list
 # Class would have analogous display methods but also allow access to individual GeneResults
@@ -84,9 +85,9 @@ def annotate(filepath: Path, contig: str) -> pd.DataFrame:
     :param contig: specified chromosome (i.e. chr7)
     :return: Dataframe of drug-gene interactions
     """
-
     if not isinstance(filepath, Path):
-        raise ValueError("Filepath argument must be a valid pathlib.Path object")
+        msg = "Filepath argument must be a valid pathlib.Path object"
+        raise ValueError(msg)
 
     # Open VCF file
     records = _process_vcf(filepath, contig)
@@ -138,7 +139,6 @@ def _get_gene_by_position(chromosome: str, position: str) -> list:
     :param position: genomic coordinate
     :return: genomic info for specified coordinate
     """
-    
     url = f"https://rest.ensembl.org/overlap/region/human/{chromosome}:{position}-{position}?feature=gene"
     headers = {"Content-Type": "application/json"}
     response = requests.get(f"{url}", headers=headers, timeout=10)
