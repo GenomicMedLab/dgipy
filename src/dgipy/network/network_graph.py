@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 PLOTLY_SEED = 7
 
 
-def __initalize_network(interactions: pd.DataFrame, selected_genes: List) -> nx.Graph:
+def _initalize_network(interactions: pd.DataFrame, selected_genes: List) -> nx.Graph:
     interactions_graph = nx.Graph()
     graphed_genes = set()
     for index in interactions.index:
@@ -56,7 +56,7 @@ def create_network(interactions: pd.DataFrame, selected_genes: List) -> nx.Graph
     :param selected_genes: List containing genes used to query interaction data
     :return: a networkx graph of drug-gene interactions
     """
-    interactions_graph = __initalize_network(interactions, selected_genes)
+    interactions_graph = _initalize_network(interactions, selected_genes)
     __add_node_attributes(interactions_graph)
     return interactions_graph
 
@@ -78,8 +78,8 @@ def generate_plotly(graph: nx.Graph) -> go.Figure:
     if graph is not None:
         pos = nx.spring_layout(graph, seed=PLOTLY_SEED)
 
-        trace_nodes = __create_trace_nodes(graph, pos)
-        trace_edges = __create_trace_edges(graph, pos)
+        trace_nodes = _create_trace_nodes(graph, pos)
+        trace_edges = _create_trace_edges(graph, pos)
 
         fig.add_trace(trace_edges[0])
         fig.add_trace(trace_edges[1])
@@ -89,7 +89,7 @@ def generate_plotly(graph: nx.Graph) -> go.Figure:
     return fig
 
 
-def __create_trace_nodes(graph: nx.Graph, pos: Dict) -> List:
+def _create_trace_nodes(graph: nx.Graph, pos: Dict) -> List:
     nodes_by_group = {
         "cyan": {
             "node_x": [],
@@ -155,7 +155,7 @@ def __create_trace_nodes(graph: nx.Graph, pos: Dict) -> List:
     return trace_nodes
 
 
-def __create_trace_edges(graph: nx.Graph, pos: Dict) -> go.Scatter:
+def _create_trace_edges(graph: nx.Graph, pos: Dict) -> go.Scatter:
     edge_x = []
     edge_y = []
 
