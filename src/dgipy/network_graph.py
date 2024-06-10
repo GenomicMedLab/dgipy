@@ -1,7 +1,5 @@
 """Provides functionality to create networkx graphs and pltoly figures for network visualization"""
 
-from typing import Dict, List
-
 import networkx as nx
 import pandas as pd
 import plotly.graph_objects as go
@@ -9,7 +7,7 @@ import plotly.graph_objects as go
 PLOTLY_SEED = 7
 
 
-def __initalize_network(interactions: pd.DataFrame, selected_genes: List) -> nx.Graph:
+def __initalize_network(interactions: pd.DataFrame, selected_genes: list) -> nx.Graph:
     interactions_graph = nx.Graph()
     graphed_genes = set()
     for index in interactions.index:
@@ -50,7 +48,7 @@ def __add_node_attributes(interactions_graph: nx.Graph) -> None:
         interactions_graph.nodes[node]["node_size"] = set_size
 
 
-def create_network(interactions: pd.DataFrame, selected_genes: List) -> nx.Graph:
+def create_network(interactions: pd.DataFrame, selected_genes: list) -> nx.Graph:
     """Create a networkx graph representing interactions between genes and drugs
 
     :param interactions: DataFrame containing drug-gene interaction data
@@ -90,7 +88,7 @@ def generate_plotly(graph: nx.Graph) -> go.Figure:
     return fig
 
 
-def __create_trace_nodes(graph: nx.Graph, pos: Dict) -> List:
+def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
     nodes_by_group = {
         "cyan": {
             "node_x": [],
@@ -156,7 +154,7 @@ def __create_trace_nodes(graph: nx.Graph, pos: Dict) -> List:
     return trace_nodes
 
 
-def __create_trace_edges(graph: nx.Graph, pos: Dict) -> go.Scatter:
+def __create_trace_edges(graph: nx.Graph, pos: dict) -> go.Scatter:
     edge_x = []
     edge_y = []
 
@@ -200,7 +198,7 @@ def __create_trace_edges(graph: nx.Graph, pos: Dict) -> go.Scatter:
     return trace_edges, i_trace_edges
 
 
-def generate_json(graph: nx.Graph) -> Dict:
+def generate_json(graph: nx.Graph) -> dict:
     """Generate a JSON representation of a networkx graph
 
     :param graph: networkx graph to be formatted as a JSON
