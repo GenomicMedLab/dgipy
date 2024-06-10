@@ -31,51 +31,18 @@ class GeneResult:
             self.gene = "None"
 
         self.records = data
-        self.interactions = self.search_interactions(self.gene)
+        self.interactions = dgipy.get_interactions(self.gene)
 
         # TODO: handle app searches with blank lists [], currently FDA resource hangs for awhile?
         if not list(self.interactions["drug"].values):
             self.applications = "None"
         else:
-            self.applications = self.search_applications(
+            self.applications = dgipy.get_drug_applications(
                 list(self.interactions["drug"].values)
             )
 
-        self.gene_info = self.grab_gene_info(self.gene)
-        self.categories = self.grab_categories(self.gene)
-
-    # TODO: These can probably just be simpilifed to direct assignment during __init__ but might be useful this way too
-    def search_interactions(self, gene: str) -> pd.DataFrame:
-        """Search drug-gene interactions for given gene in DGIdb
-
-        :param gene: the name of the gene
-        :return: Dataframe of drug-gene interactions
-        """
-        return dgipy.get_interactions(gene)
-
-    def search_applications(self, drugs: list) -> pd.DataFrame:
-        """Search for drug applications for interaction drugs in DGIdb
-
-        :param drugs: list of drugs from interaction results
-        :return: Dataframe of FDA applications
-        """
-        return dgipy.get_drug_applications(drugs)
-
-    def grab_gene_info(self, gene: str) -> pd.DataFrame:
-        """Grab gene information from DGIdb
-
-        :param gene: gene name
-        :return: Dataframe of gene information
-        """
-        return dgipy.get_gene(gene)
-
-    def grab_categories(self, gene: str) -> pd.DataFrame:
-        """Grab gene categories from DGIdb
-
-        :param gene: gene name
-        :return: Dataframe of gene categories
-        """
-        return dgipy.get_categories(gene)
+        self.gene_info = dgipy.get_gene(self.gene)
+        self.categories = dgipy.get_categories(self.gene)
 
 
 def annotate(filepath: Path, contig: str) -> pd.DataFrame:
