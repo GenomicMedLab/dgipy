@@ -1,4 +1,5 @@
 """Python wrapper for accessing an instance of DGIdb v5 database"""
+
 from .dgidb import (
     get_categories,
     get_drug,
