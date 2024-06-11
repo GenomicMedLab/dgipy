@@ -150,3 +150,5 @@ pytest.ini
 .idea/
 .vim/
 *.swp
+.vscode
+.python-version
