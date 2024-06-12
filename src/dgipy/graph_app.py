@@ -33,7 +33,7 @@ def __set_app_layout(app: dash.Dash, plot: ng.go.Figure, genes: list) -> None:
 
     genes_dropdown_display = dcc.Dropdown(
         id="gene-dropdown",
-        options=[{"label": gene, "value": gene} for gene in genes],
+        options=[{"label": gene["name"], "value": gene["name"]} for gene in genes],
         multi=True,
     )
 
