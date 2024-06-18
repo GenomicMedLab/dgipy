@@ -1,5 +1,3 @@
-from typing import List, Union
-
 import pandas as pd
 from kgx.graph.nx_graph import NxGraph
 from kgx.validator import Validator
@@ -7,7 +5,7 @@ from kgx.validator import Validator
 from dgipy import dgidb
 
 
-def get_kgx_network_graph(terms: Union[List, str], search: str = "genes"):
+def get_kgx_network_graph(terms: list | str, search: str = "genes") -> NxGraph:
     interactions = dgidb.get_interactions(terms, search)
     interactions["gene_concept_id"] = interactions["gene_concept_id"].apply(
         __fix_conceptid_prefix
@@ -26,17 +24,23 @@ def get_kgx_network_graph(terms: Union[List, str], search: str = "genes"):
     return network_graph
 
 
-def __fix_conceptid_prefix(concept_id: str):
-    prefix_rules = {"CHEMBL": "CHEMBL.MECHANISM", "IUPHAR.LIGAND": "IUPHAR.FAMILY"}
+def __fix_conceptid_prefix(concept_id: str) -> str:
+    # Consult https://github.com/biolink/biolink-model/blob/master/biolink-model.yaml
+    # for a list of valid prefixes
+    prefix_rules = {
+        "CHEMBL": "CHEMBL.MECHANISM",
+        "IUPHAR.LIGAND": "IUPHAR.FAMILY",
+        "NCBIGENE": "NCBIGene"
+    }
     concept_id = concept_id.upper()
     prefix = concept_id.split(":")[0]
-    id = concept_id.split(":")[1]
+    suffix = concept_id.split(":")[1]
     if prefix in prefix_rules:
-        return prefix_rules[prefix] + ":" + id
+        return prefix_rules[prefix] + ":" + suffix
     return concept_id
 
 
-def __initalize_network(interactions: pd.DataFrame, terms: List, search: str) -> NxGraph:
+def __initalize_network(interactions: pd.DataFrame, terms: list, search: str) -> NxGraph:
     interactions_graph = NxGraph()
     if search == "genes":
         graphed_genes = set()
@@ -66,7 +70,7 @@ def __initalize_network(interactions: pd.DataFrame, terms: List, search: str) ->
             )
         ungraphed_genes = list(set(terms).difference(graphed_genes))
         gene_data = dgidb.get_gene(ungraphed_genes)
-        id_dict = dict(zip(gene_data["gene"],gene_data["concept_id"]))
+        id_dict = dict(zip(gene_data["gene"], gene_data["concept_id"], strict=False))
         for gene in ungraphed_genes:
             interactions_graph.add_node(id_dict[gene], id=gene, category=[])
     elif search == "drugs":
@@ -97,7 +101,7 @@ def __initalize_network(interactions: pd.DataFrame, terms: List, search: str) ->
             )
         ungraphed_drugs = list(set(terms).difference(graphed_drugs))
         drug_data = dgidb.get_drug(ungraphed_drugs)
-        id_dict = dict(zip(drug_data["drug"],drug_data["concept_id"]))
+        id_dict = dict(zip(drug_data["drug"], drug_data["concept_id"], strict=False))
         for drug in ungraphed_drugs:
             interactions_graph.add_node(id_dict[drug], id=drug, category=[])
     return interactions_graph
