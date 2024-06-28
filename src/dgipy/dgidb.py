@@ -367,6 +367,32 @@ def get_gene_list(api_url: str | None = None) -> list:
     return genes
 
 
+def get_drug_list(api_url: str | None = None) -> list:
+    """Get all drug names present in DGIdb
+
+    :param api_url: API endpoint for GraphQL request
+    :return: a full list of drugs present in dgidb
+    """
+    query = gql(
+        """
+        {
+          drugs {
+            nodes {
+              name
+              conceptId
+            }
+          }
+        }
+        """
+    )
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    result = client.execute(query)
+    drugs = result["drugs"]["nodes"]
+    drugs.sort(key=lambda i: i["name"])
+    return drugs
+
+
 def get_drug_applications(
     terms: list | str, use_pandas: bool = True, api_url: str | None = None
 ) -> pd.DataFrame | dict:

@@ -7,11 +7,17 @@ import plotly.graph_objects as go
 PLOTLY_SEED = 7
 
 
-def __initalize_network(interactions: pd.DataFrame, selected_genes: list) -> nx.Graph:
+def __initalize_network(
+    interactions: pd.DataFrame, terms: list, search_mode: str
+) -> nx.Graph:
     interactions_graph = nx.Graph()
-    graphed_genes = set()
+    graphed_terms = set()
+
     for index in interactions.index:
-        graphed_genes.add(interactions["gene"][index])
+        if search_mode == "genes":
+            graphed_terms.add(interactions["gene"][index])
+        if search_mode == "drugs":
+            graphed_terms.add(interactions["drug"][index])
         interactions_graph.add_node(interactions["gene"][index], isGene=True)
         interactions_graph.add_node(interactions["drug"][index], isGene=False)
         interactions_graph.add_edge(
@@ -24,9 +30,13 @@ def __initalize_network(interactions: pd.DataFrame, selected_genes: list) -> nx.
             source=interactions["source"][index],
             pmid=interactions["pmid"][index],
         )
-    ungraphed_genes = set(selected_genes).difference(graphed_genes)
-    for gene in ungraphed_genes:
-        interactions_graph.add_node(gene, isGene=True)
+
+    graphed_terms = set(terms).difference(graphed_terms)
+    for term in graphed_terms:
+        if search_mode == "genes":
+            interactions_graph.add_node(term, isGene=True)
+        if search_mode == "drugs":
+            interactions_graph.add_node(term, isGene=False)
     return interactions_graph
 
 
@@ -48,14 +58,17 @@ def __add_node_attributes(interactions_graph: nx.Graph) -> None:
         interactions_graph.nodes[node]["node_size"] = set_size
 
 
-def create_network(interactions: pd.DataFrame, selected_genes: list) -> nx.Graph:
+def create_network(
+    interactions: pd.DataFrame, terms: list, search_mode: str
+) -> nx.Graph:
     """Create a networkx graph representing interactions between genes and drugs
 
     :param interactions: DataFrame containing drug-gene interaction data
-    :param selected_genes: List containing genes used to query interaction data
+    :param terms: List containing terms used to query interaction data
+    :param search_mode: String indicating whether query was gene-focused or drug-focused
     :return: a networkx graph of drug-gene interactions
     """
-    interactions_graph = __initalize_network(interactions, selected_genes)
+    interactions_graph = __initalize_network(interactions, terms, search_mode)
     __add_node_attributes(interactions_graph)
     return interactions_graph
 
