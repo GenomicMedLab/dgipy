@@ -40,20 +40,40 @@ def __initalize_network(
     return interactions_graph
 
 
-def __add_node_attributes(interactions_graph: nx.Graph) -> None:
+def __add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None:
     for node in interactions_graph.nodes:
         is_gene = interactions_graph.nodes[node]["isGene"]
-        if is_gene:
-            set_color = "cyan"
-            set_size = 10
-        else:
-            degree = interactions_graph.degree[node]
-            if degree > 1:
-                set_color = "orange"
-                set_size = 7
+        degree = interactions_graph.degree[node]
+        if search_mode == "genes":
+            if is_gene:    
+                if degree > 1:
+                    set_color = "cyan"
+                    set_size = 10
+                else:
+                    set_color = "blue"
+                    set_size = 10
             else:
-                set_color = "red"
-                set_size = 7
+                if degree > 1:
+                    set_color = "orange"
+                    set_size = 7
+                else:
+                    set_color = "red"
+                    set_size = 7
+        if search_mode == "drugs":
+            if is_gene:    
+                if degree > 1:
+                    set_color = "cyan"
+                    set_size = 7
+                else:
+                    set_color = "blue"
+                    set_size = 7
+            else:
+                if degree > 1:
+                    set_color = "orange"
+                    set_size = 10
+                else:
+                    set_color = "red"
+                    set_size = 10
         interactions_graph.nodes[node]["node_color"] = set_color
         interactions_graph.nodes[node]["node_size"] = set_size
 
@@ -69,7 +89,7 @@ def create_network(
     :return: a networkx graph of drug-gene interactions
     """
     interactions_graph = __initalize_network(interactions, terms, search_mode)
-    __add_node_attributes(interactions_graph)
+    __add_node_attributes(interactions_graph, search_mode)
     return interactions_graph
 
 
@@ -110,7 +130,7 @@ def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
             "node_color": [],
             "node_size": [],
             "neighbors": [],
-            "legend_name": "genes",
+            "legend_name": "multi-degree genes",
         },
         "orange": {
             "node_x": [],
@@ -130,6 +150,15 @@ def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
             "neighbors": [],
             "legend_name": "single-degree drugs",
         },
+        "blue": {
+            "node_x": [],
+            "node_y": [],
+            "node_text": [],
+            "node_color": [],
+            "node_size": [],
+            "neighbors": [],
+            "legend_name": "single-degree genes",
+        }
     }
 
     for node in graph.nodes():
