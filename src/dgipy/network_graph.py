@@ -158,7 +158,7 @@ def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
             "node_size": [],
             "neighbors": [],
             "legend_name": "single-degree genes",
-        }
+        },
     }
 
     for node in graph.nodes():
