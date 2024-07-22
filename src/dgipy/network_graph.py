@@ -45,7 +45,7 @@ def __add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> Non
         is_gene = interactions_graph.nodes[node]["isGene"]
         degree = interactions_graph.degree[node]
         if search_mode == "genes":
-            if is_gene:    
+            if is_gene:
                 if degree > 1:
                     set_color = "cyan"
                     set_size = 10
@@ -60,7 +60,7 @@ def __add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> Non
                     set_color = "red"
                     set_size = 7
         if search_mode == "drugs":
-            if is_gene:    
+            if is_gene:
                 if degree > 1:
                     set_color = "cyan"
                     set_size = 7
