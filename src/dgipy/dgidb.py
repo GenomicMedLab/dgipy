@@ -502,9 +502,10 @@ def __process_gene_search(results: dict) -> pd.DataFrame:
             approval_list.append(str(interaction["drug"]["approved"]))
             interactionscore_list.append(interaction["interactionScore"])
 
-            list_string = []
-            for attribute in interaction["interactionAttributes"]:
-                list_string.append(f"{attribute['name']}: {attribute['value']}")
+            list_string = [
+                f"{attribute['name']}: {attribute['value']}"
+                for attribute in interaction["interactionAttributes"]
+            ]
             interactionattributes_list.append(" | ".join(list_string))
 
             list_string = []
@@ -573,10 +574,10 @@ def __process_drug_search(results: dict) -> pd.DataFrame:
             interactionscore_list.append(interaction["interactionScore"])
             approval_list.append(current_approval)
 
-            list_string = []
-            for attribute in interaction["interactionAttributes"]:
-                list_string.append(f"{attribute['name']}: {attribute['value']}")
-
+            list_string = [
+                f"{attribute['name']}: {attribute['value']}"
+                for attribute in interaction["interactionAttributes"]
+            ]
             interactionattributes_list.append("| ".join(list_string))
 
             list_string = []
