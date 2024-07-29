@@ -4,7 +4,7 @@ import os
 
 import pandas as pd
 import requests
-from gql import Client, gql
+from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
 
 import dgipy.queries as queries
@@ -154,7 +154,9 @@ def get_categories(
 
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(queries.get_gene_categories.query, variable_values={"names": terms})
+    result = client.execute(
+        queries.get_gene_categories.query, variable_values={"names": terms}
+    )
 
     if use_pandas is True:
         return __process_gene_categories(result)
@@ -208,7 +210,9 @@ def get_drug_applications(
 
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(queries.get_drug_applications.query, variable_values={"names": terms})
+    result = client.execute(
+        queries.get_drug_applications.query, variable_values={"names": terms}
+    )
 
     if use_pandas is True:
         data = __process_drug_applications(result)

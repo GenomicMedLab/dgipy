@@ -8,17 +8,20 @@ Individual query loader classes provide ``gql`` queries via a ``.query`` propert
 DocumentNode at 0:545
 """
 from importlib import resources
+
 from gql import gql
+from graphql import DocumentNode
 
 
 class _LazyQueryLoader:
+    """Provide lazy loading functionality for query access."""
 
-    def __init__(self, query_name: str):
+    def __init__(self, query_name: str) -> None:
         self.query_name = query_name
         self._query = None
 
     @property
-    def query(self):
+    def query(self) -> DocumentNode:
         if self._query is None:
             with resources.open_text(__name__, f"{self.query_name}.graphql") as f:
                 self._query = gql(f.read())
