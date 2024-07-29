@@ -7,6 +7,7 @@ Individual query loader classes provide ``gql`` queries via a ``.query`` propert
 >>> get_drugs.query
 DocumentNode at 0:545
 """
+
 from importlib import resources
 
 from gql import gql
@@ -26,6 +27,7 @@ class _LazyQueryLoader:
             with resources.open_text(__name__, f"{self.query_name}.graphql") as f:
                 self._query = gql(f.read())
         return self._query
+
 
 get_all_genes = _LazyQueryLoader("get_all_genes")
 get_drug_applications = _LazyQueryLoader("get_drug_applications")
