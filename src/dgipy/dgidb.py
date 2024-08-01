@@ -4,8 +4,10 @@ import os
 
 import pandas as pd
 import requests
-from gql import Client, gql
+from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
+
+import dgipy.queries as queries
 
 API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
 
@@ -45,44 +47,9 @@ def get_drug(
     if antineoplastic is not None:
         params["antineoplastic"] = antineoplastic
 
-    query = gql(
-        """
-        query getDrugs($names: [String!], $immunotherapy: Boolean, $antiNeoplastic: Boolean) {
-          drugs(
-            names: $names
-            immunotherapy: $immunotherapy
-            antiNeoplastic: $antiNeoplastic
-          ) {
-            nodes {
-              name
-              conceptId
-              drugAliases {
-                alias
-              }
-              drugAttributes {
-                name
-                value
-              }
-              antiNeoplastic
-              immunotherapy
-              approved
-              drugApprovalRatings {
-                rating
-                source {
-                  sourceDbName
-                }
-              }
-              drugApplications {
-                appNo
-              }
-            }
-          }
-        }
-        """
-    )
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(query, variable_values=params)
+    result = client.execute(queries.get_drugs.query, variable_values=params)
 
     if use_pandas is True:
         return __process_drug(result)
@@ -102,29 +69,9 @@ def get_gene(
     if isinstance(terms, str):
         terms = [terms]
 
-    query = gql(
-        """
-        query getGenes($names: [String!]) {
-          genes(names: $names) {
-            nodes {
-              name
-              longName
-              conceptId
-              geneAliases {
-                alias
-              }
-              geneAttributes {
-                name
-                value
-              }
-            }
-          }
-        }
-        """
-    )
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(query, variable_values={"names": terms})
+    result = client.execute(queries.get_genes.query, variable_values={"names": terms})
 
     if use_pandas is True:
         return __process_gene(result)
@@ -174,86 +121,9 @@ def get_interactions(
         params["approved"] = approved
 
     if search == "genes":
-        query = gql(
-            """
-            query getInteractionsByGene($names: [String!], $sourceDbName: String, $pmid: Int, $interactionType: String) {
-              genes(
-                names: $names
-                sourceDbName: $sourceDbName
-                pmid: $pmid
-                interactionType: $interactionType
-              ) {
-                nodes {
-                  name
-                  longName
-                  geneCategories {
-                    name
-                  }
-                  interactions {
-                    interactionAttributes {
-                      name
-                      value
-                    }
-                    drug {
-                      name
-                      approved
-                    }
-                    interactionScore
-                    interactionClaims {
-                      publications {
-                        citation
-                        pmid
-                      }
-                      source {
-                        sourceDbName
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            """
-        )
+        query = queries.get_interactions_by_gene.query
     elif search == "drugs":
-        query = gql(
-            """
-            query getInteractionsByDrug($names: [String!], $immunotherapy: Boolean, $antineoplastic: Boolean, $sourceDbName: String, $pmid: Int, $interactionType: String, $approved: Boolean) {
-              drugs(
-                names: $names
-                immunotherapy: $immunotherapy
-                antiNeoplastic: $antineoplastic
-                sourceDbName: $sourceDbName
-                pmid: $pmid
-                interactionType: $interactionType
-                approved: $approved
-              ) {
-                nodes {
-                  name
-                  approved
-                  interactions {
-                    interactionAttributes {
-                      name
-                      value
-                    }
-                    gene {
-                      name
-                    }
-                    interactionScore
-                    interactionClaims {
-                      publications {
-                        citation
-                        pmid
-                      }
-                      source {
-                        sourceDbName
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            """
-        )
+        query = queries.get_interactions_by_drug.query
     else:
         msg = "Search type must be specified using: search='drugs' or search='genes'"
         raise Exception(msg)
@@ -282,25 +152,11 @@ def get_categories(
     if isinstance(terms, str):
         terms = [terms]
 
-    query = gql(
-        """
-        query getGeneCategories($names: [String!]) {
-          genes(names: $names) {
-            nodes {
-              name
-              longName
-              geneCategoriesWithSources {
-                name
-                sourceNames
-              }
-            }
-          }
-        }
-        """
-    )
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(query, variable_values={"names": terms})
+    result = client.execute(
+        queries.get_gene_categories.query, variable_values={"names": terms}
+    )
 
     if use_pandas is True:
         return __process_gene_categories(result)
@@ -319,26 +175,10 @@ def get_source(search: str = "all", api_url: str | None = None) -> dict:
         msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
         raise Exception(msg)
 
-    query = gql(
-        """
-        query getSources($sourceType: SourceTypeFilter) {
-          sources(sourceType: $sourceType) {
-            nodes {
-              fullName
-              sourceDbName
-              sourceDbVersion
-              drugClaimsCount
-              geneClaimsCount
-              interactionClaimsCount
-            }
-          }
-        }
-        """
-    )
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
     params = {} if search.lower() == "all" else {"sourceType": search}
-    return client.execute(query, variable_values=params)
+    return client.execute(queries.get_sources.query, variable_values=params)
 
 
 def get_gene_list(api_url: str | None = None) -> list:
@@ -347,21 +187,9 @@ def get_gene_list(api_url: str | None = None) -> list:
     :param api_url: API endpoint for GraphQL request
     :return: a full list of genes present in dgidb
     """
-    query = gql(
-        """
-        {
-          genes {
-            nodes {
-              name
-              conceptId
-            }
-          }
-        }
-        """
-    )
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(query)
+    result = client.execute(queries.get_all_genes.query)
     genes = result["genes"]["nodes"]
     genes.sort(key=lambda i: i["name"])
     return genes
@@ -380,23 +208,11 @@ def get_drug_applications(
     if isinstance(terms, str):
         terms = [terms]
 
-    query = gql(
-        """
-        query getDrugApplications($names: [String!]) {
-          drugs(names: $names) {
-            nodes {
-              name
-              drugApplications {
-                appNo
-              }
-            }
-          }
-        }
-        """
-    )
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(query, variable_values={"names": terms})
+    result = client.execute(
+        queries.get_drug_applications.query, variable_values={"names": terms}
+    )
 
     if use_pandas is True:
         data = __process_drug_applications(result)
