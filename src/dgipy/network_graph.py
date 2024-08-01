@@ -132,7 +132,7 @@ def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
 
     trace_nodes = []
 
-    for _, node in nodes_by_group.items():
+    for node in nodes_by_group.values():
         trace_group = go.Scatter(
             x=node["node_x"],
             y=node["node_y"],

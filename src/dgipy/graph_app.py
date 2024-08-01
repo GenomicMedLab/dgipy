@@ -114,7 +114,7 @@ def __update_selected_node(app: dash.Dash) -> None:
         Output("selected-node", "data"),
         [Input("network-graph", "click_data"), Input("gene-dropdown", "value")],
     )
-    def update(click_data: dict | None, new_gene: list | None) -> str | dict:
+    def update(click_data: dict | None, new_gene: list | None) -> str | dict:  # noqa: ARG001
         if ctx.triggered_id == "gene-dropdown":
             return ""
         if click_data is not None and "points" in click_data:

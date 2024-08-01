@@ -1,4 +1,5 @@
 """Provide basic test configuration and fixture root."""
+
 from io import TextIOWrapper
 from pathlib import Path
 
