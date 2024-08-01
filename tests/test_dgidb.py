@@ -18,11 +18,13 @@ from dgipy.dgidb import (
 
 
 def test_get_drugs(fixtures_dir: Path, set_up_graphql_mock: Callable):
-    with requests_mock.Mocker() as m, (
-        fixtures_dir / "get_drug_api_response.json"
-    ).open() as json_response, (
-        fixtures_dir / "get_drug_filtered_api_response.json"
-    ).open() as filtered_json_response:
+    with (
+        requests_mock.Mocker() as m,
+        (fixtures_dir / "get_drug_api_response.json").open() as json_response,
+        (
+            fixtures_dir / "get_drug_filtered_api_response.json"
+        ).open() as filtered_json_response,
+    ):
         set_up_graphql_mock(m, json_response)
 
         results = get_drug(["Imatinib"])
@@ -54,9 +56,10 @@ def test_get_drugs(fixtures_dir: Path, set_up_graphql_mock: Callable):
 
 
 def test_get_genes(fixtures_dir: Path, set_up_graphql_mock: Callable):
-    with requests_mock.Mocker() as m, (
-        fixtures_dir / "get_gene_api_response.json"
-    ).open() as json_response:
+    with (
+        requests_mock.Mocker() as m,
+        (fixtures_dir / "get_gene_api_response.json").open() as json_response,
+    ):
         set_up_graphql_mock(m, json_response)
 
         results = get_gene(["ereg"])
@@ -75,11 +78,15 @@ def test_get_genes(fixtures_dir: Path, set_up_graphql_mock: Callable):
 
 
 def test_get_interactions_by_genes(fixtures_dir: Path, set_up_graphql_mock: Callable):
-    with requests_mock.Mocker() as m, (
-        fixtures_dir / "get_interactions_by_genes_response.json"
-    ).open() as genes_response, (
-        fixtures_dir / "get_interactions_by_multiple_genes_response.json"
-    ).open() as multiple_genes_response:
+    with (
+        requests_mock.Mocker() as m,
+        (
+            fixtures_dir / "get_interactions_by_genes_response.json"
+        ).open() as genes_response,
+        (
+            fixtures_dir / "get_interactions_by_multiple_genes_response.json"
+        ).open() as multiple_genes_response,
+    ):
         set_up_graphql_mock(m, genes_response)
         results = get_interactions(["ereg"])
         assert isinstance(results, pd.DataFrame), "Results object is a DataFrame"
@@ -102,11 +109,15 @@ def test_get_interactions_by_genes(fixtures_dir: Path, set_up_graphql_mock: Call
 
 
 def test_get_interactions_by_drugs(fixtures_dir: Path, set_up_graphql_mock: Callable):
-    with requests_mock.Mocker() as m, (
-        fixtures_dir / "get_interactions_by_drugs_response.json"
-    ).open() as drugs_response, (
-        fixtures_dir / "get_interactions_by_multiple_drugs_response.json"
-    ).open() as multiple_drugs_response:
+    with (
+        requests_mock.Mocker() as m,
+        (
+            fixtures_dir / "get_interactions_by_drugs_response.json"
+        ).open() as drugs_response,
+        (
+            fixtures_dir / "get_interactions_by_multiple_drugs_response.json"
+        ).open() as multiple_drugs_response,
+    ):
         set_up_graphql_mock(m, drugs_response)
         results = get_interactions(["sunitinib"], search="drugs")
         assert isinstance(results, pd.DataFrame), "Results object is a DataFrame"
@@ -131,9 +142,10 @@ def test_get_interactions_by_drugs(fixtures_dir: Path, set_up_graphql_mock: Call
 
 
 def test_get_categories(fixtures_dir: Path, set_up_graphql_mock: Callable):
-    with requests_mock.Mocker() as m, (
-        fixtures_dir / "get_categories_response.json"
-    ).open() as categories_response:
+    with (
+        requests_mock.Mocker() as m,
+        (fixtures_dir / "get_categories_response.json").open() as categories_response,
+    ):
         set_up_graphql_mock(m, categories_response)
         results = get_categories("BRAF")
         assert len(results), "Results are non-empty"
@@ -143,11 +155,13 @@ def test_get_categories(fixtures_dir: Path, set_up_graphql_mock: Callable):
 
 
 def test_get_sources(fixtures_dir: Path, set_up_graphql_mock: Callable):
-    with requests_mock.Mocker() as m, (
-        fixtures_dir / "get_sources_response.json"
-    ).open() as sources_response, (
-        fixtures_dir / "get_sources_filtered_response.json"
-    ).open() as filtered_sources_response:
+    with (
+        requests_mock.Mocker() as m,
+        (fixtures_dir / "get_sources_response.json").open() as sources_response,
+        (
+            fixtures_dir / "get_sources_filtered_response.json"
+        ).open() as filtered_sources_response,
+    ):
         set_up_graphql_mock(m, sources_response)
         results = get_source()
         sources = results["sources"]["nodes"]
@@ -165,10 +179,13 @@ def test_get_sources(fixtures_dir: Path, set_up_graphql_mock: Callable):
 
 
 def test_get_gene_list(fixtures_dir: Path, set_up_graphql_mock: Callable):
-    with requests_mock.Mocker() as m, (
-        fixtures_dir
-        / "get_gene_list_response.json"  # this fixture is truncated from the real response
-    ).open() as gene_list_response:
+    with (
+        requests_mock.Mocker() as m,
+        (
+            fixtures_dir
+            / "get_gene_list_response.json"  # this fixture is truncated from the real response
+        ).open() as gene_list_response,
+    ):
         set_up_graphql_mock(m, gene_list_response)
 
         results = get_gene_list()
@@ -176,11 +193,15 @@ def test_get_gene_list(fixtures_dir: Path, set_up_graphql_mock: Callable):
 
 
 def test_get_drug_applications(fixtures_dir, set_up_graphql_mock: Callable):
-    with requests_mock.Mocker() as m, (
-        fixtures_dir / "get_drug_applications_response.json"
-    ).open() as drug_applications_response, (
-        fixtures_dir / "get_drug_applications_drugsatfda_response.json"
-    ).open() as drugsatfda_response:
+    with (
+        requests_mock.Mocker() as m,
+        (
+            fixtures_dir / "get_drug_applications_response.json"
+        ).open() as drug_applications_response,
+        (
+            fixtures_dir / "get_drug_applications_drugsatfda_response.json"
+        ).open() as drugsatfda_response,
+    ):
         set_up_graphql_mock(m, drug_applications_response)
         m.get(
             "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:%22NDA212099%22",

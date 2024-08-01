@@ -18,8 +18,9 @@ class GeneResult:
     """A gene result from original VCF
     .. code-block:: python
         import vcf
+
         # Provide path to VCF file and specify chromosome
-        data = vcf.annotate('link/to/file',chr='chr#')
+        data = vcf.annotate("link/to/file", chr="chr#")
     """
 
     def __init__(self, data: list) -> None:
@@ -63,11 +64,7 @@ def annotate(filepath: Path, contig: str) -> pd.DataFrame:
     # Group records with like-genes
     grouped = _group_by_name(mapped)
     # Instance each gene set as a class
-    vcf_results = []
-    for gene in grouped:
-        vcf_results.append(GeneResult(grouped[gene]))
-
-    return vcf_results
+    return [GeneResult(grouped[gene]) for gene in grouped]
 
 
 def _process_vcf(filepath: Path, contig: str) -> list:
