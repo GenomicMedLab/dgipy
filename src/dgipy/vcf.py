@@ -108,7 +108,7 @@ def _get_gene_by_position(chromosome: str, position: str) -> list:
     """
     url = f"https://rest.ensembl.org/overlap/region/human/{chromosome}:{position}-{position}?feature=gene"
     headers = {"Content-Type": "application/json"}
-    response = requests.get(f"{url}", headers=headers, timeout=10)
+    response = requests.get(f"{url}", headers=headers, timeout=20)
 
     if not response.ok:
         response.raise_for_status()
@@ -125,8 +125,11 @@ def _ensembl_map(records: list) -> list:
     """
     results = []
     # TODO: Allow custom slice selection as data sets can be huge, currently slicing 0:1500 or 0:150 for time purposes
-    for record in tqdm(records[0:1500]):
-        gene_info = _get_gene_by_position(record["chromosome"], record["pos"])
+    for record in tqdm(records[150:1500]):
+        try:
+            gene_info = _get_gene_by_position(record["chromosome"], record["pos"])
+        except:
+            continue
 
         if type(gene_info) is None:
             continue
