@@ -1,0 +1,8 @@
+{
+  drugs {
+    nodes {
+      name
+      conceptId
+    }
+  }
+}

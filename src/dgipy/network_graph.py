@@ -7,11 +7,17 @@ import plotly.graph_objects as go
 PLOTLY_SEED = 7
 
 
-def __initalize_network(interactions: pd.DataFrame, selected_genes: list) -> nx.Graph:
+def __initalize_network(
+    interactions: pd.DataFrame, terms: list, search_mode: str
+) -> nx.Graph:
     interactions_graph = nx.Graph()
-    graphed_genes = set()
+    graphed_terms = set()
+
     for index in interactions.index:
-        graphed_genes.add(interactions["gene"][index])
+        if search_mode == "genes":
+            graphed_terms.add(interactions["gene"][index])
+        if search_mode == "drugs":
+            graphed_terms.add(interactions["drug"][index])
         interactions_graph.add_node(interactions["gene"][index], isGene=True)
         interactions_graph.add_node(interactions["drug"][index], isGene=False)
         interactions_graph.add_edge(
@@ -24,39 +30,66 @@ def __initalize_network(interactions: pd.DataFrame, selected_genes: list) -> nx.
             source=interactions["source"][index],
             pmid=interactions["pmid"][index],
         )
-    ungraphed_genes = set(selected_genes).difference(graphed_genes)
-    for gene in ungraphed_genes:
-        interactions_graph.add_node(gene, isGene=True)
+
+    graphed_terms = set(terms).difference(graphed_terms)
+    for term in graphed_terms:
+        if search_mode == "genes":
+            interactions_graph.add_node(term, isGene=True)
+        if search_mode == "drugs":
+            interactions_graph.add_node(term, isGene=False)
     return interactions_graph
 
 
-def __add_node_attributes(interactions_graph: nx.Graph) -> None:
+def __add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None:
     for node in interactions_graph.nodes:
         is_gene = interactions_graph.nodes[node]["isGene"]
-        if is_gene:
-            set_color = "cyan"
-            set_size = 10
-        else:
-            degree = interactions_graph.degree[node]
-            if degree > 1:
-                set_color = "orange"
-                set_size = 7
+        degree = interactions_graph.degree[node]
+        if search_mode == "genes":
+            if is_gene:
+                if degree > 1:
+                    set_color = "cyan"
+                    set_size = 10
+                else:
+                    set_color = "blue"
+                    set_size = 10
             else:
-                set_color = "red"
-                set_size = 7
+                if degree > 1:
+                    set_color = "orange"
+                    set_size = 7
+                else:
+                    set_color = "red"
+                    set_size = 7
+        if search_mode == "drugs":
+            if is_gene:
+                if degree > 1:
+                    set_color = "cyan"
+                    set_size = 7
+                else:
+                    set_color = "blue"
+                    set_size = 7
+            else:
+                if degree > 1:
+                    set_color = "orange"
+                    set_size = 10
+                else:
+                    set_color = "red"
+                    set_size = 10
         interactions_graph.nodes[node]["node_color"] = set_color
         interactions_graph.nodes[node]["node_size"] = set_size
 
 
-def create_network(interactions: pd.DataFrame, selected_genes: list) -> nx.Graph:
+def create_network(
+    interactions: pd.DataFrame, terms: list, search_mode: str
+) -> nx.Graph:
     """Create a networkx graph representing interactions between genes and drugs
 
     :param interactions: DataFrame containing drug-gene interaction data
-    :param selected_genes: List containing genes used to query interaction data
+    :param terms: List containing terms used to query interaction data
+    :param search_mode: String indicating whether query was gene-focused or drug-focused
     :return: a networkx graph of drug-gene interactions
     """
-    interactions_graph = __initalize_network(interactions, selected_genes)
-    __add_node_attributes(interactions_graph)
+    interactions_graph = __initalize_network(interactions, terms, search_mode)
+    __add_node_attributes(interactions_graph, search_mode)
     return interactions_graph
 
 
@@ -97,7 +130,7 @@ def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
             "node_color": [],
             "node_size": [],
             "neighbors": [],
-            "legend_name": "genes",
+            "legend_name": "multi-degree genes",
         },
         "orange": {
             "node_x": [],
@@ -117,6 +150,15 @@ def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
             "neighbors": [],
             "legend_name": "single-degree drugs",
         },
+        "blue": {
+            "node_x": [],
+            "node_y": [],
+            "node_text": [],
+            "node_color": [],
+            "node_size": [],
+            "neighbors": [],
+            "legend_name": "single-degree genes",
+        },
     }
 
     for node in graph.nodes():
@@ -132,7 +174,7 @@ def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
 
     trace_nodes = []
 
-    for node in nodes_by_group.values():
+    for _, node in nodes_by_group.items():  # noqa: PERF102
         trace_group = go.Scatter(
             x=node["node_x"],
             y=node["node_y"],
