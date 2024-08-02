@@ -30,6 +30,7 @@ class _LazyQueryLoader:
 
 
 get_all_genes = _LazyQueryLoader("get_all_genes")
+get_all_drugs = _LazyQueryLoader("get_all_drugs")
 get_drug_applications = _LazyQueryLoader("get_drug_applications")
 get_drugs = _LazyQueryLoader("get_drugs")
 get_gene_categories = _LazyQueryLoader("get_gene_categories")
@@ -41,6 +42,7 @@ get_sources = _LazyQueryLoader("get_sources")
 
 __all__ = [
     "get_all_genes",
+    "get_all_drugs",
     "get_drug_applications",
     "get_drugs",
     "get_gene_categories",
