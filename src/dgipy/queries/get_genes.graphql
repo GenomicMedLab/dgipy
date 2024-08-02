@@ -1,0 +1,16 @@
+query getGenes($names: [String!]) {
+  genes(names: $names) {
+    nodes {
+      name
+      longName
+      conceptId
+      geneAliases {
+        alias
+      }
+      geneAttributes {
+        name
+        value
+      }
+    }
+  }
+}
