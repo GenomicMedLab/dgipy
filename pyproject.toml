@@ -27,7 +27,8 @@ dependencies = [
     "plotly",
     "networkx[default]",
     "requests",
-    "gql[requests]"
+    "gql[requests]",
+    "dash_cytoscape"
 ]
 dynamic = ["version"]
 
