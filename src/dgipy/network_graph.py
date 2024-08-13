@@ -31,7 +31,7 @@ def initalize_network(interactions: pd.DataFrame, terms: list, search_mode: str)
             approval=interactions["approval"][index],
             score=interactions["score"][index],
             attributes=interactions["interaction_attributes"][index],
-            source=interactions["source"][index],
+            sourcedata=interactions["source"][index],
             pmid=interactions["pmid"][index],
         )
 

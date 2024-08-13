@@ -25,10 +25,10 @@ def generate_app() -> dash.Dash:
     __set_app_layout(app)
     __update_cytoscape(app)
     __update_terms_dropdown(app, genes, drugs)
-    __update_selected_node(app)
-    __update_selected_node_text(app)
+    __update_selected_element(app)
+    __update_selected_element_text(app)
     __update_neighbors_dropdown(app)
-    #__update_edge_info(app)
+    __update_edge_info(app)
 
     return app
 
@@ -92,8 +92,8 @@ def __set_app_layout(app: dash.Dash) -> None:
         id="terms-dropdown", optionHeight=75, multi=True, value=[]
     )
 
-    selected_node_text = dcc.Markdown(
-        id="selected-node-text", children="No Node Selected"
+    selected_element_text = dcc.Markdown(
+        id="selected-element-text", children="No Element Selected"
     )
 
     neighbors_dropdown = dcc.Dropdown(id="neighbors-dropdown", multi=False)
@@ -105,7 +105,7 @@ def __set_app_layout(app: dash.Dash) -> None:
     app.layout = html.Div(
         [
             # Variables
-            dcc.Store(id="selected-node", data=""),
+            dcc.Store(id="selected-element", data=""),
             dcc.Store(id="graph"),
             # Layout
             dbc.Row(
@@ -141,7 +141,7 @@ def __set_app_layout(app: dash.Dash) -> None:
                                 dbc.CardBody(
                                     [
                                         html.H4("Selected Node/Edge:"),
-                                        html.P(selected_node_text),
+                                        html.P(selected_element_text),
                                         html.H4("Selected Edge Info:"),
                                         html.P(selected_edge_info),
                                     ]
@@ -184,27 +184,30 @@ def __update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
         return None
 
 
-def __update_selected_node(app: dash.Dash) -> None:
+def __update_selected_element(app: dash.Dash) -> None:
     @app.callback(
-        Output("selected-node", "data"),
-        [Input("cytoscape-figure", "tapNode"), Input("terms-dropdown", "value")],
+        Output("selected-element", "data"),
+        [Input("cytoscape-figure", "tapNode"), Input("cytoscape-figure", "tapEdge"), Input("terms-dropdown", "value")],
     )
-    def update(tapNode: dict | None, new_gene: list | None) -> str | dict:  # noqa: N803
-        if ctx.triggered_id == "terms-dropdown":
-            return ""
-        if tapNode is not None:
-            print(tapNode)
-            return tapNode
+    def update(tapNode: dict | None, tapEdge: dict | None, termsDropdown: list | None) -> str | dict:  # noqa: N803
+        if ctx.triggered_prop_ids:
+            dash_trigger = next(iter(ctx.triggered_prop_ids.keys()))
+            if dash_trigger == "terms-dropdown.value":
+                return ""
+            if dash_trigger == "cytoscape-figure.tapNode" and tapNode is not None:
+                return tapNode
+            if dash_trigger == "cytoscape-figure.tapEdge" and tapEdge is not None:
+                return tapEdge
         return dash.no_update
 
 
-def __update_selected_node_text(app: dash.Dash) -> None:
+def __update_selected_element_text(app: dash.Dash) -> None:
     @app.callback(
-        Output("selected-node-text", "children"), Input("selected-node", "data")
+        Output("selected-element-text", "children"), Input("selected-element", "data")
     )
-    def update(selected_node: str | dict) -> str:
-        if selected_node != "":
-            return selected_node["data"]["id"]
+    def update(selected_element: str | dict) -> str:
+        if selected_element != "":
+            return selected_element["data"]["id"]
         return "No Node Selected"
 
 
@@ -214,14 +217,16 @@ def __update_neighbors_dropdown(app: dash.Dash) -> None:
             Output("neighbors-dropdown", "options"),
             Output("neighbors-dropdown", "value"),
         ],
-        Input("selected-node", "data"),
+        Input("selected-element", "data")
     )
-    def update(selected_node: str | dict) -> tuple[list, None]:
-        if selected_node != "" and selected_node["data"]["node_degree"] != 1:
-            neighbor_list = []
-            for edge in selected_node["edgesData"]:
-                neighbor_list.append(edge["source"])
-            print(neighbor_list)
+    def update(selected_element: str | dict) -> tuple[list, None]:
+        if selected_element != "" and selected_element["group"] == "nodes" and selected_element["data"]["node_degree"] != 1:
+            neighbor_set = set()
+            for edge in selected_element["edgesData"]:
+                neighbor_set.add(edge["target"])
+                neighbor_set.add(edge["source"])
+                neighbor_set.remove(selected_element["data"]["id"])
+            neighbor_list = list(neighbor_set)
             return neighbor_list, None
         return [], None
 
@@ -229,70 +234,42 @@ def __update_neighbors_dropdown(app: dash.Dash) -> None:
 def __update_edge_info(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-edge-info", "children"),
-        [Input("selected-node", "data"), Input("neighbors-dropdown", "value")],
-        State("graph", "data"),
+        [Input("selected-element", "data"), Input("neighbors-dropdown", "value")]
     )
     def update(
-        selected_node: str | dict,
-        selected_neighbor: str | None,
-        graph: dict | None,
+        selected_element: str | dict,
+        selected_neighbor: str | None
     ) -> str:
-        if selected_node == "":
+        if selected_element == "":
             return "No Edge Selected"
-        if selected_node["curveNumber"] == 1:
-            selected_data = __get_node_data_from_id(
-                graph["links"], selected_node["text"]
-            )
+
+        edge_info = None
+        if selected_element["group"] == "nodes" and selected_neighbor is not None:
+            edge_name = None
+            if selected_element["data"]["isGene"]:
+                edge_name = selected_element["data"]["id"] + " - " + selected_neighbor
+            else:
+                edge_name = selected_neighbor + " - " + selected_element["data"]["id"]
+            for edge in selected_element["edgesData"]:
+                if edge["id"] == edge_name:
+                    edge_info = edge
+                    break
+        if selected_element["group"] == "edges":
+            edge_info = selected_element["data"]
+
+        if (selected_element["group"] == "nodes" and selected_neighbor is not None) or selected_element["group"] == "edges":
             return (
                 "ID: "
-                + str(selected_data["id"])
+                + str(edge_info["id"])
                 + "\n\nApproval: "
-                + str(selected_data["approval"])
+                + str(edge_info["approval"])
                 + "\n\nScore: "
-                + str(selected_data["score"])
+                + str(edge_info["score"])
                 + "\n\nAttributes: "
-                + str(selected_data["attributes"])
+                + str(edge_info["attributes"])
                 + "\n\nSource: "
-                + str(selected_data["source"])
+                + str(edge_info["source"])
                 + "\n\nPmid: "
-                + str(selected_data["pmid"])
-            )
-        if selected_neighbor is not None:
-            edge_node_id = None
-            selected_node_is_gene = __get_node_data_from_id(
-                graph["nodes"], selected_node["text"]
-            )["isGene"]
-            selected_neighbor_is_gene = __get_node_data_from_id(
-                graph["nodes"], selected_neighbor
-            )["isGene"]
-            if selected_node_is_gene == selected_neighbor_is_gene:
-                return dash.no_update
-            if selected_node_is_gene:
-                edge_node_id = selected_node["text"] + " - " + selected_neighbor
-            elif selected_neighbor_is_gene:
-                edge_node_id = selected_neighbor + " - " + selected_node["text"]
-            selected_data = __get_node_data_from_id(graph["links"], edge_node_id)
-            if selected_data is None:
-                return dash.no_update
-            return (
-                "ID: "
-                + str(selected_data["id"])
-                + "\n\nApproval: "
-                + str(selected_data["approval"])
-                + "\n\nScore: "
-                + str(selected_data["score"])
-                + "\n\nAttributes: "
-                + str(selected_data["attributes"])
-                + "\n\nSource: "
-                + str(selected_data["source"])
-                + "\n\nPmid: "
-                + str(selected_data["pmid"])
+                + str(edge_info["pmid"])
             )
         return "No Edge Selected"
-
-
-def __get_node_data_from_id(nodes: list, node_id: str) -> dict | None:
-    for node in nodes:
-        if node["id"] == node_id:
-            return node
-    return None
