@@ -1,0 +1,12 @@
+query getGeneCategories($names: [String!]) {
+  genes(names: $names) {
+    nodes {
+      name
+      longName
+      geneCategoriesWithSources {
+        name
+        sourceNames
+      }
+    }
+  }
+}
