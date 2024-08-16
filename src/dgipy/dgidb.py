@@ -219,7 +219,12 @@ def get_drug_applications(
         return __openfda_data(data)
     return result
 
-def get_clinical_trials(terms): # TODO: Better error handling for new_row?
+def get_clinical_trials(terms: str | list) -> pd.DataFrame: # TODO: Better error handling for new_row?, use_pandas=False
+    """Perform a look up for clinical trials data for drug or drugs of interest
+
+    :param terms: drug or drugs of interest
+    :return: all clinical trials data for drugs of interest in a DataFrame
+    """
     base_url = "https://clinicaltrials.gov/api/v2/studies?format=json"
     rows_list = []
 
@@ -232,9 +237,9 @@ def get_clinical_trials(terms): # TODO: Better error handling for new_row?
         try:
             r = requests.get(full_uri, timeout=20)
         except requests.exceptions.Timeout:
-            print(f"Timeout occured for {drug}")
+            print(f"Timeout occured for {drug}") # noqa: T201
         except requests.exceptions.RequestException as e:
-            print(f"Request exception for {drug}: {e}")
+            print(f"Request exception for {drug}: {e}") # noqa: T201
         if r.status_code == 200:
 
             data = r.json()
