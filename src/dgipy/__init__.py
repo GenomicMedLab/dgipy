@@ -21,5 +21,5 @@ __all__ = [
     "get_gene_list",
     "get_drug_applications",
     "generate_app",
-    "get_clinical_trials"
+    "get_clinical_trials",
 ]

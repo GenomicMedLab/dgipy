@@ -219,7 +219,10 @@ def get_drug_applications(
         return __openfda_data(data)
     return result
 
-def get_clinical_trials(terms: str | list) -> pd.DataFrame: # TODO: Better error handling for new_row?, use_pandas=False
+
+def get_clinical_trials(
+    terms: str | list,
+) -> pd.DataFrame:  # TODO: Better error handling for new_row?, use_pandas=False
     """Perform a look up for clinical trials data for drug or drugs of interest
 
     :param terms: drug or drugs of interest
@@ -233,37 +236,50 @@ def get_clinical_trials(terms: str | list) -> pd.DataFrame: # TODO: Better error
 
     for drug in terms:
         intr_url = f"&query.intr={drug}"
-        full_uri = base_url + intr_url # TODO: + cond_url + term_url
+        full_uri = base_url + intr_url  # TODO: + cond_url + term_url
         try:
             r = requests.get(full_uri, timeout=20)
         except requests.exceptions.Timeout:
-            print(f"Timeout occured for {drug}") # noqa: T201
+            print(f"Timeout occured for {drug}")  # noqa: T201
         except requests.exceptions.RequestException as e:
-            print(f"Request exception for {drug}: {e}") # noqa: T201
+            print(f"Request exception for {drug}: {e}")  # noqa: T201
         if r.status_code == 200:
-
             data = r.json()
 
             for study in data["studies"]:
                 new_row = {}
                 new_row["search_term"] = drug
-                new_row["trial_id"] = study["protocolSection"]["identificationModule"]["nctId"]
-                new_row["brief"] = study["protocolSection"]["identificationModule"]["briefTitle"]
-                new_row["study_type"] = study["protocolSection"]["designModule"]["studyType"]
+                new_row["trial_id"] = study["protocolSection"]["identificationModule"][
+                    "nctId"
+                ]
+                new_row["brief"] = study["protocolSection"]["identificationModule"][
+                    "briefTitle"
+                ]
+                new_row["study_type"] = study["protocolSection"]["designModule"][
+                    "studyType"
+                ]
                 try:
-                    new_row["min_age"] = study["protocolSection"]["eligibilityModule"]["minimumAge"]
+                    new_row["min_age"] = study["protocolSection"]["eligibilityModule"][
+                        "minimumAge"
+                    ]
                 except:
                     new_row["min_age"] = "N/A"
 
-                new_row["age_groups"] = study["protocolSection"]["eligibilityModule"]["stdAges"]
+                new_row["age_groups"] = study["protocolSection"]["eligibilityModule"][
+                    "stdAges"
+                ]
                 if "CHILD" in new_row["age_groups"]:
                     new_row["Pediatric?"] = "Yes"
                 else:
                     new_row["Pediatric?"] = "No"
 
-                new_row["conditions"] = study["protocolSection"]["conditionsModule"]["conditions"]
+                new_row["conditions"] = study["protocolSection"]["conditionsModule"][
+                    "conditions"
+                ]
                 try:
-                    new_row["interventions"] = study["protocolSection"]["armsInterventionsModule"]
+                    new_row["interventions"] = study["protocolSection"][
+                        "armsInterventionsModule"
+                    ]
                 except:
                     new_row["interventions"] = "N/A"
 
@@ -271,6 +287,7 @@ def get_clinical_trials(terms: str | list) -> pd.DataFrame: # TODO: Better error
         else:
             pass
     return pd.DataFrame(rows_list)
+
 
 def __process_drug(results: dict) -> pd.DataFrame:
     drug_list = []
