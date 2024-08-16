@@ -8,6 +8,7 @@ from .dgidb import (
     get_gene_list,
     get_interactions,
     get_source,
+    get_clinical_trials
 )
 from .graph_app import generate_app
 
@@ -20,4 +21,5 @@ __all__ = [
     "get_gene_list",
     "get_drug_applications",
     "generate_app",
+    "get_clinical_trials"
 ]
