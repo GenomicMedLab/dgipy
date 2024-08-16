@@ -2,13 +2,13 @@
 
 from .dgidb import (
     get_categories,
+    get_clinical_trials,
     get_drug,
     get_drug_applications,
     get_gene,
     get_gene_list,
     get_interactions,
     get_source,
-    get_clinical_trials
 )
 from .graph_app import generate_app
 

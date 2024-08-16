@@ -220,57 +220,53 @@ def get_drug_applications(
     return result
 
 def get_clinical_trials(terms): # TODO: Better error handling for new_row?
-    base_url = 'https://clinicaltrials.gov/api/v2/studies?format=json'
+    base_url = "https://clinicaltrials.gov/api/v2/studies?format=json"
     rows_list = []
 
     if isinstance(terms, str):
         terms = [terms]
 
     for drug in terms:
-        intr_url = f'&query.intr={drug}'
+        intr_url = f"&query.intr={drug}"
         full_uri = base_url + intr_url # TODO: + cond_url + term_url
         try:
             r = requests.get(full_uri, timeout=20)
         except requests.exceptions.Timeout:
-            print(f'Timeout occured for {drug}')
+            print(f"Timeout occured for {drug}")
         except requests.exceptions.RequestException as e:
-            print(f'Request exception for {drug}: {e}')
-
-        print(r.status_code)
-
+            print(f"Request exception for {drug}: {e}")
         if r.status_code == 200:
 
             data = r.json()
 
-            for study in data['studies']:
+            for study in data["studies"]:
                 new_row = {}
-                new_row['search_term'] = drug
-                new_row['trial_id'] = study['protocolSection']['identificationModule']['nctId']
-                new_row['brief'] = study['protocolSection']['identificationModule']['briefTitle']
-
-                new_row['study_type'] = study['protocolSection']['designModule']['studyType']
-                try: 
-                    new_row['min_age'] = study['protocolSection']['eligibilityModule']['minimumAge']
-                except:
-                    new_row['min_age'] = 'N/A'
-
-                new_row['age_groups'] = study['protocolSection']['eligibilityModule']['stdAges']
-                if 'CHILD' in new_row['age_groups']:
-                    new_row['Pediatric?'] = 'Yes'
-                else:
-                    new_row['Pediatric?'] = 'No'
-
-                new_row['conditions'] = study['protocolSection']['conditionsModule']['conditions'] 
+                new_row["search_term"] = drug
+                new_row["trial_id"] = study["protocolSection"]["identificationModule"]["nctId"]
+                new_row["brief"] = study["protocolSection"]["identificationModule"]["briefTitle"]
+                new_row["study_type"] = study["protocolSection"]["designModule"]["studyType"]
                 try:
-                    new_row['interventions'] = study['protocolSection']['armsInterventionsModule']
+                    new_row["min_age"] = study["protocolSection"]["eligibilityModule"]["minimumAge"]
                 except:
-                    new_row['interventions'] = 'N/A'
+                    new_row["min_age"] = "N/A"
 
-                rows_list.append(new_row)   
+                new_row["age_groups"] = study["protocolSection"]["eligibilityModule"]["stdAges"]
+                if "CHILD" in new_row["age_groups"]:
+                    new_row["Pediatric?"] = "Yes"
+                else:
+                    new_row["Pediatric?"] = "No"
+
+                new_row["conditions"] = study["protocolSection"]["conditionsModule"]["conditions"]
+                try:
+                    new_row["interventions"] = study["protocolSection"]["armsInterventionsModule"]
+                except:
+                    new_row["interventions"] = "N/A"
+
+                rows_list.append(new_row)
         else:
             pass
     return pd.DataFrame(rows_list)
- 
+
 def __process_drug(results: dict) -> pd.DataFrame:
     drug_list = []
     concept_list = []
