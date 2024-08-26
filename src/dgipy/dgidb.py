@@ -263,15 +263,15 @@ def get_clinical_trials(
                         "minimumAge"
                     ]
                 except:
-                    new_row["min_age"] = "N/A"
+                    new_row["min_age"] = None
 
                 new_row["age_groups"] = study["protocolSection"]["eligibilityModule"][
                     "stdAges"
                 ]
                 if "CHILD" in new_row["age_groups"]:
-                    new_row["Pediatric?"] = "Yes"
+                    new_row["Pediatric?"] = True
                 else:
-                    new_row["Pediatric?"] = "No"
+                    new_row["Pediatric?"] = False
 
                 new_row["conditions"] = study["protocolSection"]["conditionsModule"][
                     "conditions"
@@ -281,7 +281,7 @@ def get_clinical_trials(
                         "armsInterventionsModule"
                     ]
                 except:
-                    new_row["interventions"] = "N/A"
+                    new_row["interventions"] = None
 
                 rows_list.append(new_row)
         else:
