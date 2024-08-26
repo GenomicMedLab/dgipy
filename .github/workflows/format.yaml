@@ -1,7 +1,6 @@
 name: Autoformat
 
 on:
-  pull_request:
   push:
     branches:
       - main
@@ -19,4 +18,4 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v4.3
         with:
-          prettier_options: --write **/*.{graphql}
+          prettier_options: --write src/dgipy/queries/*.graphql
