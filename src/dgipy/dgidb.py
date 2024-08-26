@@ -52,7 +52,7 @@ def get_drug(
     result = client.execute(queries.get_drugs.query, variable_values=params)
 
     if use_pandas is True:
-        return __process_drug(result)
+        return _process_drug(result)
     return result
 
 
@@ -74,7 +74,7 @@ def get_gene(
     result = client.execute(queries.get_genes.query, variable_values={"names": terms})
 
     if use_pandas is True:
-        return __process_gene(result)
+        return _process_gene(result)
     return result
 
 
@@ -134,8 +134,8 @@ def get_interactions(
 
     if use_pandas is True:
         if search == "genes":
-            return __process_gene_search(result)
-        return __process_drug_search(result)
+            return _process_gene_search(result)
+        return _process_drug_search(result)
     return result
 
 
@@ -159,7 +159,7 @@ def get_categories(
     )
 
     if use_pandas is True:
-        return __process_gene_categories(result)
+        return _process_gene_categories(result)
     return result
 
 
@@ -215,12 +215,12 @@ def get_drug_applications(
     )
 
     if use_pandas is True:
-        data = __process_drug_applications(result)
-        return __openfda_data(data)
+        data = _process_drug_applications(result)
+        return _openfda_data(data)
     return result
 
 
-def __process_drug(results: dict) -> pd.DataFrame:
+def _process_drug(results: dict) -> pd.DataFrame:
     drug_list = []
     concept_list = []
     alias_list = []
@@ -265,7 +265,7 @@ def __process_drug(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene(results: dict) -> pd.DataFrame:
+def _process_gene(results: dict) -> pd.DataFrame:
     gene_list = []
     alias_list = []
     concept_list = []
@@ -289,7 +289,7 @@ def __process_gene(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene_search(results: dict) -> pd.DataFrame:
+def _process_gene_search(results: dict) -> pd.DataFrame:
     interactionscore_list = []
     drugname_list = []
     approval_list = []
@@ -347,7 +347,7 @@ def __process_gene_search(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene_categories(results: dict) -> pd.DataFrame:
+def _process_gene_categories(results: dict) -> pd.DataFrame:
     gene_list = []
     categories_list = []
     sources_list = []
@@ -371,7 +371,7 @@ def __process_gene_categories(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_drug_search(results: dict) -> pd.DataFrame:
+def _process_drug_search(results: dict) -> pd.DataFrame:
     interactionscore_list = []
     genename_list = []
     approval_list = []
@@ -418,7 +418,7 @@ def __process_drug_search(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_drug_applications(data: dict) -> pd.DataFrame:
+def _process_drug_applications(data: dict) -> pd.DataFrame:
     drug_list = []
     application_list = []
 
@@ -432,7 +432,7 @@ def __process_drug_applications(data: dict) -> pd.DataFrame:
     return pd.DataFrame().assign(drug=drug_list, application=application_list)
 
 
-def __openfda_data(dataframe: pd.DataFrame) -> pd.DataFrame:
+def _openfda_data(dataframe: pd.DataFrame) -> pd.DataFrame:
     openfda_base_url = (
         "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"
     )
