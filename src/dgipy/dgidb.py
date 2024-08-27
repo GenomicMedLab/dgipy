@@ -240,9 +240,11 @@ def get_clinical_trials(
         try:
             r = requests.get(full_uri, timeout=20)
         except requests.exceptions.Timeout:
-            print(f"Timeout occured for {drug}")  # noqa: T201
+            msg = f"Timeout occured for {drug}"
+            raise requests.exceptions.Timeout(msg) from None
         except requests.exceptions.RequestException as e:
-            print(f"Request exception for {drug}: {e}")  # noqa: T201
+            msg = f"Request exception for {drug}: {e}"
+            raise requests.exceptions.RequestException(msg) from e
         if r.status_code == 200:
             data = r.json()
 
