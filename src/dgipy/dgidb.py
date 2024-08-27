@@ -52,7 +52,7 @@ def get_drug(
     result = client.execute(queries.get_drugs.query, variable_values=params)
 
     if use_pandas is True:
-        return __process_drug(result)
+        return _process_drug(result)
     return result
 
 
@@ -291,7 +291,7 @@ def get_clinical_trials(
     return pd.DataFrame(rows_list)
 
 
-def __process_drug(results: dict) -> pd.DataFrame:
+def _process_drug(results: dict) -> pd.DataFrame:
     drug_list = []
     concept_list = []
     alias_list = []
