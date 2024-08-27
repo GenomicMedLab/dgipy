@@ -1,7 +1,7 @@
 """Provides methods for performing different searches in DGIdb"""
 
-import os
 import logging
+import os
 
 import pandas as pd
 import requests
@@ -9,7 +9,6 @@ from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
 
 import dgipy.queries as queries
-
 
 _logger = logging.getLogger(__name__)
 
