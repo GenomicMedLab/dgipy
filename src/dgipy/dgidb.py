@@ -1,6 +1,7 @@
 """Provides methods for performing different searches in DGIdb"""
 
 import os
+import logging
 
 import pandas as pd
 import requests
@@ -8,6 +9,9 @@ from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
 
 import dgipy.queries as queries
+
+
+_logger = logging.getLogger(__name__)
 
 API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
 
@@ -239,12 +243,9 @@ def get_clinical_trials(
         full_uri = base_url + intr_url  # TODO: + cond_url + term_url
         try:
             r = requests.get(full_uri, timeout=20)
-        except requests.exceptions.Timeout:
-            msg = f"Timeout occured for {drug}"
-            raise requests.exceptions.Timeout(msg) from None
         except requests.exceptions.RequestException as e:
-            msg = f"Request exception for {drug}: {e}"
-            raise requests.exceptions.RequestException(msg) from e
+            _logger.error("Clinical trials lookup to URL %s failed: %s", full_uri, e)
+            raise e
         if r.status_code == 200:
             data = r.json()
 
@@ -287,7 +288,11 @@ def get_clinical_trials(
 
                 rows_list.append(new_row)
         else:
-            pass
+            _logger.error(
+                "Received status code %s from request to %s -- returning empty dataframe",
+                r.status_code,
+                full_uri,
+            )
     return pd.DataFrame(rows_list)
 
 
