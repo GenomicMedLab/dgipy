@@ -1,4 +1,4 @@
-name: Autoformat
+name: Format query code
 
 on:
   pull_request:
