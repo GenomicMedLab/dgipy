@@ -1,4 +1,8 @@
-query getDrugs($names: [String!], $immunotherapy: Boolean, $antiNeoplastic: Boolean) {
+query getDrugs(
+  $names: [String!]
+  $immunotherapy: Boolean
+  $antiNeoplastic: Boolean
+) {
   drugs(
     names: $names
     immunotherapy: $immunotherapy
