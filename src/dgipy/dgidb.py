@@ -22,21 +22,29 @@ def _get_client(api_url: str) -> Client:
     return Client(transport=transport, fetch_schema_from_transport=True)
 
 
+def _group_attributes(row: list[dict]) -> dict:
+    grouped_dict = {}
+    for attr in row:
+        if attr["name"] in grouped_dict:
+            grouped_dict[attr["name"]].append(attr["value"])
+        else:
+            grouped_dict[attr["name"]] = [attr["value"]]
+    return grouped_dict
+
+
 def get_drug(
     terms: list | str,
-    use_pandas: bool = True,
     immunotherapy: bool | None = None,
     antineoplastic: bool | None = None,
     api_url: str | None = None,
-) -> pd.DataFrame | dict:
+) -> dict:
     """Perform a record look up in DGIdb for a drug of interest
 
     :param terms: drug or drugs for record lookup
-    :param use_pandas: boolean for whether pandas should be used to format response
     :param immunotherapy: filter option for results that are only immunotherapy
     :param antineoplastic: filter option for results that see antineoplastic use
     :param api_url: API endpoint for GraphQL request
-    :return: record page results for drug in either a dataframe or json object
+    :return: TODO
     """
     if isinstance(terms, str):
         terms = [terms]
@@ -51,20 +59,43 @@ def get_drug(
     client = _get_client(api_url)
     result = client.execute(queries.get_drugs.query, variable_values=params)
 
-    if use_pandas is True:
-        return _process_drug(result)
-    return result
+    output = {
+        "name": [],
+        "concept_id": [],
+        "aliases": [],
+        "attributes": [],
+        "antineoplastic": [],
+        "immunotherapy": [],
+        "approved": [],
+        "approval_ratings": [],
+        "fda_applications": [],
+    }
+    for match in result["drugs"]["nodes"]:
+        output["name"].append(match["name"])
+        output["concept_id"].append(match["conceptId"])
+        output["aliases"].append([a["alias"] for a in match["drugAliases"]])
+        output["attributes"].append(_group_attributes(match["drugAttributes"]))
+        output["antineoplastic"].append(match["antiNeoplastic"])
+        output["immunotherapy"].append(match["immunotherapy"])
+        output["approved"].append(match["approved"])
+        output["approval_ratings"].append(
+            [
+                {"rating": r["rating"], "source": r["source"]["sourceDbName"]}
+                for r in match["drugApprovalRatings"]
+            ]
+        )
+        output["fda_applications"].append(
+            [app["appNo"] for app in match["drugApplications"]]
+        )
+    return output
 
 
-def get_gene(
-    terms: list | str, use_pandas: bool = True, api_url: str | None = None
-) -> pd.DataFrame | dict:
+def get_gene(terms: list | str, api_url: str | None = None) -> dict:
     """Perform a record look up in DGIdb for a gene of interest
 
     :param terms: gene or genes for record lookup
-    :param use_pandas: boolean for whether pandas should be used to format response
     :param api_url: API endpoint for GraphQL request
-    :return: record page results for gene in either a dataframe or json object
+    :return: TODO
     """
     if isinstance(terms, str):
         terms = [terms]
@@ -73,9 +104,18 @@ def get_gene(
     client = _get_client(api_url)
     result = client.execute(queries.get_genes.query, variable_values={"names": terms})
 
-    if use_pandas is True:
-        return _process_gene(result)
-    return result
+    output = {
+        "name": [],
+        "concept_id": [],
+        "aliases": [],
+        "attributes": [],
+    }
+    for match in result["genes"]["nodes"]:
+        output["name"].append(match["name"])
+        output["concept_id"].append(match["conceptId"])
+        output["aliases"].append([[a["alias"] for a in match["geneAliases"]]])
+        output["attributes"].append(_group_attributes(match["geneAttributes"]))
+    return output
 
 
 def get_interactions(
@@ -139,13 +179,10 @@ def get_interactions(
     return result
 
 
-def get_categories(
-    terms: list | str, use_pandas: bool = True, api_url: str | None = None
-) -> pd.DataFrame | dict:
+def get_categories(terms: list | str, api_url: str | None = None) -> dict:
     """Perform a category annotation lookup for genes of interest
 
     :param terms: Genes of interest for annotations
-    :param use_pandas: boolean for whether pandas should be used to format a response
     :param api_url: API endpoint for GraphQL request
     :return: category annotation results for genes formatted in a dataframe or a json object
     """
@@ -154,13 +191,27 @@ def get_categories(
 
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(
+    results = client.execute(
         queries.get_gene_categories.query, variable_values={"names": terms}
     )
-
-    if use_pandas is True:
-        return _process_gene_categories(result)
-    return result
+    output = {
+        "gene": [],
+        "concept_id": [],
+        "full_name": [],
+        "category": [],
+        "sources": [],
+    }
+    for result in results["genes"]["nodes"]:
+        name = result["name"]
+        concept_id = result["conceptId"]
+        long_name = result["longName"]
+        for cat in result["geneCategoriesWithSources"]:
+            output["gene"].append(name)
+            output["concept_id"].append(concept_id)
+            output["full_name"].append(long_name)
+            output["category"].append(cat["name"])
+            output["sources"].append(cat["sourceNames"])
+    return output
 
 
 def get_source(search: str = "all", api_url: str | None = None) -> dict:
@@ -181,17 +232,19 @@ def get_source(search: str = "all", api_url: str | None = None) -> dict:
     return client.execute(queries.get_sources.query, variable_values=params)
 
 
-def get_gene_list(api_url: str | None = None) -> list:
+def get_gene_list(api_url: str | None = None) -> dict:
     """Get all gene names present in DGIdb
 
     :param api_url: API endpoint for GraphQL request
-    :return: a full list of genes present in dgidb
+    :return: todo
     """
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    result = client.execute(queries.get_all_genes.query)
-    genes = result["genes"]["nodes"]
-    genes.sort(key=lambda i: i["name"])
+    results = client.execute(queries.get_all_genes.query)
+    genes = {"name": [], "concept_id": []}
+    for result in results["genes"]["nodes"]:
+        genes["name"].append(result["name"])
+        genes["concept_id"].append(result["conceptId"])
     return genes
 
 
@@ -218,75 +271,6 @@ def get_drug_applications(
         data = _process_drug_applications(result)
         return _openfda_data(data)
     return result
-
-
-def _process_drug(results: dict) -> pd.DataFrame:
-    drug_list = []
-    concept_list = []
-    alias_list = []
-    attribute_list = []
-    antineoplastic_list = []
-    immunotherapy_list = []
-    approved_list = []
-    rating_list = []
-    application_list = []
-
-    for match in results["drugs"]["nodes"]:
-        drug_list.append(match["name"])
-        concept_list.append(match["conceptId"])
-        alias_list.append("|".join([alias["alias"] for alias in match["drugAliases"]]))
-        current_attributes = [
-            ": ".join([attribute["name"], attribute["value"]])
-            for attribute in match["drugAttributes"]
-        ]
-        attribute_list.append(" | ".join(current_attributes))
-        antineoplastic_list.append(str(match["antiNeoplastic"]))
-        immunotherapy_list.append(str(match["immunotherapy"]))
-        approved_list.append(str(match["approved"]))
-        application_list.append(
-            "|".join(app["appNo"] for app in match["drugApplications"])
-        )
-        current_ratings = [
-            ": ".join([rating["source"]["sourceDbName"], rating["rating"]])
-            for rating in match["drugApprovalRatings"]
-        ]
-        rating_list.append(" | ".join(current_ratings))
-
-    return pd.DataFrame().assign(
-        drug=drug_list,
-        concept_id=concept_list,
-        aliases=alias_list,
-        attributes=attribute_list,
-        antineoplastic=antineoplastic_list,
-        immunotherapy=immunotherapy_list,
-        approved=approved_list,
-        approval_ratings=rating_list,
-        applications=application_list,
-    )
-
-
-def _process_gene(results: dict) -> pd.DataFrame:
-    gene_list = []
-    alias_list = []
-    concept_list = []
-    attribute_list = []
-
-    for match in results["genes"]["nodes"]:
-        gene_list.append(match["name"])
-        alias_list.append("|".join([alias["alias"] for alias in match["geneAliases"]]))
-        current_attributes = [
-            ": ".join([attribute["name"], attribute["value"]])
-            for attribute in match["geneAttributes"]
-        ]
-        attribute_list.append(" | ".join(current_attributes))
-        concept_list.append(match["conceptId"])
-
-    return pd.DataFrame().assign(
-        gene=gene_list,
-        concept_id=concept_list,
-        aliases=alias_list,
-        attributes=attribute_list,
-    )
 
 
 def _process_gene_search(results: dict) -> pd.DataFrame:
@@ -344,30 +328,6 @@ def _process_gene_search(results: dict) -> pd.DataFrame:
         interaction_attributes=interactionattributes_list,
         source=sources_list,
         pmid=pmids_list,
-    )
-
-
-def _process_gene_categories(results: dict) -> pd.DataFrame:
-    gene_list = []
-    categories_list = []
-    sources_list = []
-    longname_list = []
-
-    for match in results["genes"]["nodes"]:
-        current_gene = match["name"]
-        current_longname = match["longName"]
-
-        for category in match["geneCategoriesWithSources"]:
-            gene_list.append(current_gene)
-            longname_list.append(current_longname)
-            categories_list.append(category["name"])
-            sources_list.append(" | ".join(category["sourceNames"]))
-
-    return pd.DataFrame().assign(
-        gene=gene_list,
-        longname=longname_list,
-        categories=categories_list,
-        sources=sources_list,
     )
 
 
