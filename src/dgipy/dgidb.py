@@ -257,18 +257,15 @@ def get_categories(terms: list | str, api_url: str | None = None) -> dict:
     )
     output = {
         "gene": [],
-        "concept_id": [],
         "full_name": [],
         "category": [],
         "sources": [],
     }
     for result in results["genes"]["nodes"]:
         name = result["name"]
-        concept_id = result["conceptId"]
         long_name = result["longName"]
         for cat in result["geneCategoriesWithSources"]:
             output["gene"].append(name)
-            output["concept_id"].append(concept_id)
             output["full_name"].append(long_name)
             output["category"].append(cat["name"])
             output["sources"].append(cat["sourceNames"])

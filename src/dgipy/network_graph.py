@@ -11,18 +11,20 @@ def __initalize_network(interactions: pd.DataFrame, selected_genes: list) -> nx.
     interactions_graph = nx.Graph()
     graphed_genes = set()
     for index in interactions.index:
-        graphed_genes.add(interactions["gene"][index])
-        interactions_graph.add_node(interactions["gene"][index], isGene=True)
-        interactions_graph.add_node(interactions["drug"][index], isGene=False)
+        graphed_genes.add(interactions["gene_name"][index])
+        interactions_graph.add_node(interactions["gene_name"][index], isGene=True)
+        interactions_graph.add_node(interactions["drug_name"][index], isGene=False)
         interactions_graph.add_edge(
-            interactions["gene"][index],
-            interactions["drug"][index],
-            id=interactions["gene"][index] + " - " + interactions["drug"][index],
-            approval=interactions["approval"][index],
-            score=interactions["score"][index],
+            interactions["gene_name"][index],
+            interactions["drug_name"][index],
+            id=interactions["gene_name"][index]
+            + " - "
+            + interactions["drug_name"][index],
+            approval=interactions["approved"][index],
+            score=interactions["interaction_score"][index],
             attributes=interactions["interaction_attributes"][index],
-            source=interactions["source"][index],
-            pmid=interactions["pmid"][index],
+            source=interactions["sources"][index],
+            pmid=interactions["pmids"][index],
         )
     ungraphed_genes = set(selected_genes).difference(graphed_genes)
     for gene in ungraphed_genes:

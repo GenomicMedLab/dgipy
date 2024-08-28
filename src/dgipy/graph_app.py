@@ -1,10 +1,12 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
 
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash import Input, Output, State, ctx, dash, dcc, html
 
 from dgipy import dgidb
 from dgipy import network_graph as ng
+from dgipy.type_utils import make_tabular
 
 
 def generate_app() -> dash.Dash:
@@ -12,7 +14,7 @@ def generate_app() -> dash.Dash:
 
     :return: a python dash app that can be run with run_server()
     """
-    genes = dgidb.get_gene_list()
+    genes = make_tabular(dgidb.get_gene_list())
     plot = ng.generate_plotly(None)
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -102,7 +104,7 @@ def __update_plot(app: dash.Dash) -> None:
         selected_genes: list | None,
     ) -> tuple[dict | None, ng.go.Figure]:
         if selected_genes is not None:
-            gene_interactions = dgidb.get_interactions(selected_genes)
+            gene_interactions = pd.DataFrame(dgidb.get_interactions(selected_genes))
             updated_graph = ng.create_network(gene_interactions, selected_genes)
             updated_plot = ng.generate_plotly(updated_graph)
             return ng.generate_json(updated_graph), updated_plot
