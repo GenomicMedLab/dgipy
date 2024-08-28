@@ -1,5 +1,6 @@
 """Provides methods for performing different searches in DGIdb"""
 
+import logging
 import os
 
 import pandas as pd
@@ -8,6 +9,8 @@ from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
 
 import dgipy.queries as queries
+
+_logger = logging.getLogger(__name__)
 
 API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
 
@@ -218,6 +221,75 @@ def get_drug_applications(
         data = _process_drug_applications(result)
         return _openfda_data(data)
     return result
+
+
+def get_clinical_trials(
+    terms: str | list,
+) -> pd.DataFrame:  # TODO: Better error handling for new_row?, use_pandas=False
+    """Perform a look up for clinical trials data for drug or drugs of interest
+
+    :param terms: drug or drugs of interest
+    :return: all clinical trials data for drugs of interest in a DataFrame
+    """
+    base_url = "https://clinicaltrials.gov/api/v2/studies?format=json"
+    rows_list = []
+
+    if isinstance(terms, str):
+        terms = [terms]
+
+    for drug in terms:
+        intr_url = f"&query.intr={drug}"
+        full_uri = base_url + intr_url  # TODO: + cond_url + term_url
+        try:
+            r = requests.get(full_uri, timeout=20)
+        except requests.exceptions.RequestException as e:
+            _logger.error("Clinical trials lookup to URL %s failed: %s", full_uri, e)
+            raise e
+        if r.status_code == 200:
+            data = r.json()
+
+            for study in data["studies"]:
+                new_row = {}
+                new_row["search_term"] = drug
+                new_row["trial_id"] = study["protocolSection"]["identificationModule"][
+                    "nctId"
+                ]
+                new_row["brief"] = study["protocolSection"]["identificationModule"][
+                    "briefTitle"
+                ]
+                new_row["study_type"] = study["protocolSection"]["designModule"][
+                    "studyType"
+                ]
+                try:
+                    new_row["min_age"] = study["protocolSection"]["eligibilityModule"][
+                        "minimumAge"
+                    ]
+                except:
+                    new_row["min_age"] = None
+
+                new_row["age_groups"] = study["protocolSection"]["eligibilityModule"][
+                    "stdAges"
+                ]
+                new_row["Pediatric?"] = "CHILD" in new_row["age_groups"]
+
+                new_row["conditions"] = study["protocolSection"]["conditionsModule"][
+                    "conditions"
+                ]
+                try:
+                    new_row["interventions"] = study["protocolSection"][
+                        "armsInterventionsModule"
+                    ]
+                except:
+                    new_row["interventions"] = None
+
+                rows_list.append(new_row)
+        else:
+            _logger.error(
+                "Received status code %s from request to %s -- returning empty dataframe",
+                r.status_code,
+                full_uri,
+            )
+    return pd.DataFrame(rows_list)
 
 
 def _process_drug(results: dict) -> pd.DataFrame:
