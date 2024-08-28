@@ -1,7 +1,7 @@
 """Provides methods for performing different searches in DGIdb"""
 
 import os
-from enum import StrEnum
+from enum import Enum
 
 import pandas as pd
 import requests
@@ -164,7 +164,7 @@ def get_categories(
     return result
 
 
-class SourceType(StrEnum):
+class SourceType(str, Enum):
     """Constrain source types for :py:method:`dgipy.dgidb.get_source` method."""
 
     DRUG = "drug"
