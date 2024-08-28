@@ -222,6 +222,7 @@ def get_drug_applications(
         return _openfda_data(data)
     return result
 
+
 def get_clinical_trials(
     terms: str | list,
 ) -> pd.DataFrame:  # TODO: Better error handling for new_row?, use_pandas=False
@@ -289,6 +290,7 @@ def get_clinical_trials(
                 full_uri,
             )
     return pd.DataFrame(rows_list)
+
 
 def _process_drug(results: dict) -> pd.DataFrame:
     drug_list = []
