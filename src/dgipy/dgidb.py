@@ -270,11 +270,8 @@ def get_clinical_trials(
                 new_row["age_groups"] = study["protocolSection"]["eligibilityModule"][
                     "stdAges"
                 ]
-                if "CHILD" in new_row["age_groups"]:
-                    new_row["Pediatric?"] = True
-                else:
-                    new_row["Pediatric?"] = False
-
+                new_row["Pediatric?"] = "CHILD" in new_row["age_groups"]
+                
                 new_row["conditions"] = study["protocolSection"]["conditionsModule"][
                     "conditions"
                 ]
