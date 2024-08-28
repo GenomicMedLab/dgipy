@@ -185,22 +185,15 @@ def get_source(
     >>> from dgipy import get_source, SourceType
     >>> sources = get_source(SourceType.POTENTIALLY_DRUGGABLE)
 
-    :param source_type: string to denote type of source to lookup
+    :param source_type: type of source to look up. Fetches all sources otherwise.
     :param api_url: API endpoint for GraphQL request
     :return: all sources of relevant type in a json object
     :raise TypeError: if invalid kind of data given as ``source_type`` param.
     """
-    if not isinstance(source_type, SourceType):
-        try:
-            source_type = SourceType[source_type.upper()]
-        except (KeyError, AttributeError) as e:
-            msg = f"Invalid `source_type` argument: {source_type}. Use an instance of `dgipy.dgidb.SourceType` instead."
-            _logger.error(msg)
-            raise TypeError(msg) from e
-
+    source_param = source_type.value.upper() if source_type is not None else None
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    params = {} if source_type is None else {"sourceType": source_type.value.upper()}
+    params = {} if source_type is None else {"sourceType": source_param}
     return client.execute(queries.get_sources.query, variable_values=params)
 
 
