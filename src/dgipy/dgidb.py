@@ -271,7 +271,7 @@ def get_clinical_trials(
                     "stdAges"
                 ]
                 new_row["Pediatric?"] = "CHILD" in new_row["age_groups"]
-                
+
                 new_row["conditions"] = study["protocolSection"]["conditionsModule"][
                     "conditions"
                 ]
