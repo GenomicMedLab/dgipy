@@ -3,7 +3,6 @@
 import os
 
 import pandas as pd
-import requests
 from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
 
@@ -121,7 +120,6 @@ def get_gene(terms: list | str, api_url: str | None = None) -> dict:
 def get_interactions(
     terms: list | str,
     search: str = "genes",
-    use_pandas: bool = True,
     immunotherapy: bool | None = None,
     antineoplastic: bool | None = None,
     source: str | None = None,
@@ -134,7 +132,6 @@ def get_interactions(
 
     :param terms: drugs or genes for interaction look up
     :param search: interaction search type. valid types are "drugs" or "genes"
-    :param use_pandas: boolean for whether pandas should be used to format response
     :param immunotherapy: filter option for results that are used in immunotherapy
     :param antineoplastic: filter option for results that are part of antineoplastic regimens
     :param source: filter option for specific database of interest
@@ -172,105 +169,11 @@ def get_interactions(
     client = _get_client(api_url)
     result = client.execute(query, variable_values=params)
 
-    if use_pandas is True:
-        if search == "genes":
-            return _process_gene_search(result)
-        return _process_drug_search(result)
-    return result
-
-
-def get_categories(terms: list | str, api_url: str | None = None) -> dict:
-    """Perform a category annotation lookup for genes of interest
-
-    :param terms: Genes of interest for annotations
-    :param api_url: API endpoint for GraphQL request
-    :return: category annotation results for genes formatted in a dataframe or a json object
-    """
-    if isinstance(terms, str):
-        terms = [terms]
-
-    api_url = api_url if api_url else API_ENDPOINT_URL
-    client = _get_client(api_url)
-    results = client.execute(
-        queries.get_gene_categories.query, variable_values={"names": terms}
-    )
-    output = {
-        "gene": [],
-        "concept_id": [],
-        "full_name": [],
-        "category": [],
-        "sources": [],
-    }
-    for result in results["genes"]["nodes"]:
-        name = result["name"]
-        concept_id = result["conceptId"]
-        long_name = result["longName"]
-        for cat in result["geneCategoriesWithSources"]:
-            output["gene"].append(name)
-            output["concept_id"].append(concept_id)
-            output["full_name"].append(long_name)
-            output["category"].append(cat["name"])
-            output["sources"].append(cat["sourceNames"])
-    return output
-
-
-def get_source(search: str = "all", api_url: str | None = None) -> dict:
-    """Perform a source lookup for relevant aggregate sources
-
-    :param search: string to denote type of source to lookup
-    :param api_url: API endpoint for GraphQL request
-    :return: all sources of relevant type in a json object
-    """
-    valid_types = ["all", "drug", "gene", "interaction", "potentially_druggable"]
-    if search.lower() not in valid_types:
-        msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
-        raise Exception(msg)
-
-    api_url = api_url if api_url else API_ENDPOINT_URL
-    client = _get_client(api_url)
-    params = {} if search.lower() == "all" else {"sourceType": search}
-    return client.execute(queries.get_sources.query, variable_values=params)
-
-
-def get_gene_list(api_url: str | None = None) -> dict:
-    """Get all gene names present in DGIdb
-
-    :param api_url: API endpoint for GraphQL request
-    :return: todo
-    """
-    api_url = api_url if api_url else API_ENDPOINT_URL
-    client = _get_client(api_url)
-    results = client.execute(queries.get_all_genes.query)
-    genes = {"name": [], "concept_id": []}
-    for result in results["genes"]["nodes"]:
-        genes["name"].append(result["name"])
-        genes["concept_id"].append(result["conceptId"])
-    return genes
-
-
-def get_drug_applications(
-    terms: list | str, use_pandas: bool = True, api_url: str | None = None
-) -> pd.DataFrame | dict:
-    """Perform a look up for ANDA/NDA applications for drug or drugs of interest
-
-    :param terms: drug or drugs of interest
-    :param use_pandas: boolean for whether to format response in DataFrame
-    :param api_url: API endpoint for GraphQL request
-    :return: all ANDA/NDA applications for drugs of interest in json or DataFrame
-    """
-    if isinstance(terms, str):
-        terms = [terms]
-
-    api_url = api_url if api_url else API_ENDPOINT_URL
-    client = _get_client(api_url)
-    result = client.execute(
-        queries.get_drug_applications.query, variable_values={"names": terms}
-    )
-
-    if use_pandas is True:
-        data = _process_drug_applications(result)
-        return _openfda_data(data)
-    return result
+    # if use_pandas is True:
+    #     if search == "genes":
+    #         return _process_gene_search(result)
+    #     return _process_drug_search(result)
+    return result  # noqa: RET504
 
 
 def _process_gene_search(results: dict) -> pd.DataFrame:
@@ -378,46 +281,150 @@ def _process_drug_search(results: dict) -> pd.DataFrame:
     )
 
 
-def _process_drug_applications(data: dict) -> pd.DataFrame:
-    drug_list = []
-    application_list = []
+def get_categories(terms: list | str, api_url: str | None = None) -> dict:
+    """Perform a category annotation lookup for genes of interest
 
-    for node in data["drugs"]["nodes"]:
-        current_drug = node["name"]
-        for application in node["drugApplications"]:
-            drug_list.append(current_drug)
-            application = application["appNo"].split(".")[1].replace(":", "").upper()
-            application_list.append(application)
+    :param terms: Genes of interest for annotations
+    :param api_url: API endpoint for GraphQL request
+    :return: category annotation results for genes formatted in a dataframe or a json object
+    """
+    if isinstance(terms, str):
+        terms = [terms]
 
-    return pd.DataFrame().assign(drug=drug_list, application=application_list)
-
-
-def _openfda_data(dataframe: pd.DataFrame) -> pd.DataFrame:
-    openfda_base_url = (
-        "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    results = client.execute(
+        queries.get_gene_categories.query, variable_values={"names": terms}
     )
-    terms = list(dataframe["application"])
-    descriptions = []
-    for term in terms:
-        r = requests.get(
-            f'{openfda_base_url}"{term}"', headers={"User-Agent": "Custom"}, timeout=20
-        )
-        try:
-            r.json()["results"][0]["products"]
+    output = {
+        "gene": [],
+        "concept_id": [],
+        "full_name": [],
+        "category": [],
+        "sources": [],
+    }
+    for result in results["genes"]["nodes"]:
+        name = result["name"]
+        concept_id = result["conceptId"]
+        long_name = result["longName"]
+        for cat in result["geneCategoriesWithSources"]:
+            output["gene"].append(name)
+            output["concept_id"].append(concept_id)
+            output["full_name"].append(long_name)
+            output["category"].append(cat["name"])
+            output["sources"].append(cat["sourceNames"])
+    return output
 
-            f = []
-            for product in r.json()["results"][0]["products"]:
-                brand_name = product["brand_name"]
-                marketing_status = product["marketing_status"]
-                dosage_form = product["dosage_form"]
-                # active_ingredient = product["active_ingredients"][0]["name"]
-                dosage_strength = product["active_ingredients"][0]["strength"]
-                f.append(
-                    f"{brand_name}: {dosage_strength} {marketing_status} {dosage_form}"
-                )
 
-            descriptions.append(" | ".join(f))
-        except:
-            descriptions.append("none")
+def get_source(search: str = "all", api_url: str | None = None) -> dict:
+    """Perform a source lookup for relevant aggregate sources
 
-    return dataframe.assign(description=descriptions)
+    :param search: string to denote type of source to lookup
+    :param api_url: API endpoint for GraphQL request
+    :return: all sources of relevant type in a json object
+    """
+    valid_types = ["all", "drug", "gene", "interaction", "potentially_druggable"]
+    if search.lower() not in valid_types:
+        msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
+        raise Exception(msg)
+
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    params = {} if search.lower() == "all" else {"sourceType": search}
+    results = client.execute(queries.get_sources.query, variable_values=params)
+    output = {
+        "name": [],
+        "short_name": [],
+        "version": [],
+        "drug_claims": [],
+        "gene_claims": [],
+        "interaction_claims": [],
+    }
+    for result in results["sources"]["nodes"]:
+        output["name"].append(result["fullName"])
+        output["short_name"].append(result["sourceDbName"])
+        output["version"].append(result["sourceDbVersion"])
+        output["drug_claims"].append(result["drugClaimsCount"])
+        output["gene_claims"].append(result["geneClaimsCount"])
+        output["interaction_claims"].append(result["interactionClaimsCount"])
+    return output
+
+
+def get_gene_list(api_url: str | None = None) -> dict:
+    """Get all gene names present in DGIdb
+
+    :param api_url: API endpoint for GraphQL request
+    :return: todo
+    """
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    results = client.execute(queries.get_all_genes.query)
+    genes = {"name": [], "concept_id": []}
+    for result in results["genes"]["nodes"]:
+        genes["name"].append(result["name"])
+        genes["concept_id"].append(result["conceptId"])
+    return genes
+
+
+def get_drug_applications(
+    terms: list | str, api_url: str | None = None
+) -> pd.DataFrame | dict:
+    """Perform a look up for ANDA/NDA applications for drug or drugs of interest
+
+    :param terms: drug or drugs of interest
+    :param api_url: API endpoint for GraphQL request
+    :return: all ANDA/NDA applications for drugs of interest in json or DataFrame
+    """
+    if isinstance(terms, str):
+        terms = [terms]
+
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    results = client.execute(
+        queries.get_drug_applications.query, variable_values={"names": terms}
+    )
+    output = {
+        "name": [],
+        "application": [],
+        "description": [],
+    }
+
+    for result in results["drugs"]["nodes"]:
+        name = result["name"]
+        for app in result["drugApplications"]:
+            output["name"].append(name)
+            application_number = app["appNo"].split(".")[1].replace(":", "").upper()
+            output["application"].append(application_number)
+            # output["description"].append(_get_openfda_description(application_number))
+    return output
+
+
+# def _openfda_data(dataframe: pd.DataFrame) -> pd.DataFrame:
+#     openfda_base_url = (
+#         "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"
+#     )
+#     terms = list(dataframe["application"])
+#     descriptions = []
+#     for term in terms:
+#         r = requests.get(
+#             f'{openfda_base_url}"{term}"', headers={"User-Agent": "Custom"}, timeout=20
+#         )
+#         try:
+#             r.json()["results"][0]["products"]
+#
+#             f = []
+#             for product in r.json()["results"][0]["products"]:
+#                 brand_name = product["brand_name"]
+#                 marketing_status = product["marketing_status"]
+#                 dosage_form = product["dosage_form"]
+#                 # active_ingredient = product["active_ingredients"][0]["name"]
+#                 dosage_strength = product["active_ingredients"][0]["strength"]
+#                 f.append(
+#                     f"{brand_name}: {dosage_strength} {marketing_status} {dosage_form}"
+#                 )
+#
+#             descriptions.append(" | ".join(f))
+#         except:
+#             descriptions.append("none")
+#
+#     return dataframe.assign(description=descriptions)
