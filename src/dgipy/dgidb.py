@@ -2,6 +2,7 @@
 
 import logging
 import os
+from enum import Enum
 
 import pandas as pd
 import requests
@@ -13,6 +14,9 @@ import dgipy.queries as queries
 _logger = logging.getLogger(__name__)
 
 API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
+
+
+_logger = logging.getLogger(__name__)
 
 
 def _get_client(api_url: str) -> Client:
@@ -166,21 +170,32 @@ def get_categories(
     return result
 
 
-def get_source(search: str = "all", api_url: str | None = None) -> dict:
+class SourceType(str, Enum):
+    """Constrain source types for :py:method:`dgipy.dgidb.get_source` method."""
+
+    DRUG = "drug"
+    GENE = "gene"
+    INTERACTION = "interaction"
+    POTENTIALLY_DRUGGABLE = "potentially_druggable"
+
+
+def get_source(
+    source_type: SourceType | None = None, api_url: str | None = None
+) -> dict:
     """Perform a source lookup for relevant aggregate sources
 
-    :param search: string to denote type of source to lookup
+    >>> from dgipy import get_source, SourceType
+    >>> sources = get_source(SourceType.POTENTIALLY_DRUGGABLE)
+
+    :param source_type: type of source to look up. Fetches all sources otherwise.
     :param api_url: API endpoint for GraphQL request
     :return: all sources of relevant type in a json object
+    :raise TypeError: if invalid kind of data given as ``source_type`` param.
     """
-    valid_types = ["all", "drug", "gene", "interaction", "potentially_druggable"]
-    if search.lower() not in valid_types:
-        msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
-        raise Exception(msg)
-
+    source_param = source_type.value.upper() if source_type is not None else None
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    params = {} if search.lower() == "all" else {"sourceType": search}
+    params = {} if source_type is None else {"sourceType": source_param}
     return client.execute(queries.get_sources.query, variable_values=params)
 
 
