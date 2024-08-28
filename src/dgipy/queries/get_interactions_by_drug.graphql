@@ -1,4 +1,12 @@
-query getInteractionsByDrug($names: [String!], $immunotherapy: Boolean, $antineoplastic: Boolean, $sourceDbName: String, $pmid: Int, $interactionType: String, $approved: Boolean) {
+query getInteractionsByDrug(
+  $names: [String!]
+  $immunotherapy: Boolean
+  $antineoplastic: Boolean
+  $sourceDbName: String
+  $pmid: Int
+  $interactionType: String
+  $approved: Boolean
+) {
   drugs(
     names: $names
     immunotherapy: $immunotherapy
