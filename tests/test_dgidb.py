@@ -206,7 +206,10 @@ def test_get_drug_applications(fixtures_dir, set_up_graphql_mock: Callable):
         )
         results = get_drug_applications(["DAROLUTAMIDE"])
         assert len(results["name"]) == 1
-        # assert results.iloc[0]["description"] == "NUBEQA: 300MG Prescription TABLET"
+        assert results["brand_name"][0] == "NUBEQA"
+        assert results["dosage_strength"][0] == "300MG"
+        assert results["marketing_status"][0] == "Prescription"
+        assert results["dosage_form"][0] == "TABLET"
 
 
 @pytest.mark.performance()
