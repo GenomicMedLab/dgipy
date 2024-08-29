@@ -31,11 +31,18 @@ def _get_client(api_url: str) -> Client:
 def _group_attributes(row: list[dict]) -> dict:
     grouped_dict = {}
     for attr in row:
+        if attr["value"] is None:
+            continue
         if attr["name"] in grouped_dict:
             grouped_dict[attr["name"]].append(attr["value"])
         else:
             grouped_dict[attr["name"]] = [attr["value"]]
     return grouped_dict
+
+
+def _backfill_dicts(col: list[dict]) -> list[dict]:
+    keys = {key for cell in col for key in cell}
+    return [{key: cell.get(key) for key in keys} for cell in col]
 
 
 def get_drug(
@@ -93,6 +100,7 @@ def get_drug(
         output["fda_applications"].append(
             [app["appNo"] for app in match["drugApplications"]]
         )
+    output["attributes"] = _backfill_dicts(output["attributes"])
     return output
 
 
@@ -121,6 +129,7 @@ def get_gene(terms: list | str, api_url: str | None = None) -> dict:
         output["concept_id"].append(match["conceptId"])
         output["aliases"].append([a["alias"] for a in match["geneAliases"]])
         output["attributes"].append(_group_attributes(match["geneAttributes"]))
+    output["attributes"] = _backfill_dicts(output["attributes"])
     return output
 
 
@@ -210,6 +219,7 @@ def _get_interactions_by_genes(
                 pubs += [p["pmid"] for p in claim["publications"]]
             output["pmids"].append(pubs)
             output["sources"].append(sources)
+    output["interaction_attributes"] = _backfill_dicts(output["interaction_attributes"])
     return output
 
 
@@ -245,6 +255,7 @@ def _get_interactions_by_drugs(
                 pubs += [p["pmid"] for p in claim["publications"]]
             output["pmids"].append(pubs)
             output["sources"].append(sources)
+    output["interaction_attributes"] = _backfill_dicts(output["interaction_attributes"])
     return output
 
 
