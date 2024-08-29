@@ -1,12 +1,10 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
 
 import dash_bootstrap_components as dbc
-import pandas as pd
 from dash import Input, Output, State, ctx, dash, dcc, html
 
 from dgipy import dgidb
 from dgipy import network_graph as ng
-from dgipy.type_utils import make_tabular
 
 
 def generate_app() -> dash.Dash:
@@ -14,38 +12,53 @@ def generate_app() -> dash.Dash:
 
     :return: a python dash app that can be run with run_server()
     """
-    genes = make_tabular(dgidb.get_gene_list())
-    plot = ng.generate_plotly(None)
+    genes = [
+        {"label": gene["name"], "value": gene["name"]} for gene in dgidb.get_gene_list()
+    ]
+    drugs = [
+        {"label": drug["name"], "value": drug["name"]} for drug in dgidb.get_drug_list()
+    ]
+
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-    __set_app_layout(app, plot, genes)
-    __update_plot(app)
+    __set_app_layout(app)
+    __update_plotly(app)
+    __update_terms_dropdown(app, genes, drugs)
     __update_selected_node(app)
-    __update_selected_node_display(app)
-    __update_neighbor_dropdown(app)
+    __update_selected_node_text(app)
+    __update_neighbors_dropdown(app)
     __update_edge_info(app)
 
     return app
 
 
-def __set_app_layout(app: dash.Dash, plot: ng.go.Figure, genes: list) -> None:
-    graph_display = dcc.Graph(
-        id="network-graph", figure=plot, style={"width": "100%", "height": "800px"}
+def __set_app_layout(app: dash.Dash) -> None:
+    plotly_figure = dcc.Graph(
+        id="plotly-figure", style={"width": "100%", "height": "800px"}
     )
 
-    genes_dropdown_display = dcc.Dropdown(
-        id="gene-dropdown",
-        options=[{"label": gene["name"], "value": gene["name"]} for gene in genes],
-        multi=True,
+    search_mode = dcc.RadioItems(
+        id="search-mode",
+        options=[
+            {"label": "Gene Search", "value": "genes"},
+            {"label": "Drug Search", "value": "drugs"},
+        ],
+        value="genes",
     )
 
-    selected_node_display = dcc.Markdown(
+    terms_dropdown = dcc.Dropdown(
+        id="terms-dropdown", optionHeight=75, multi=True, value=[]
+    )
+
+    selected_node_text = dcc.Markdown(
         id="selected-node-text", children="No Node Selected"
     )
 
-    neighbors_dropdown_display = dcc.Dropdown(id="neighbor-dropdown", multi=False)
+    neighbors_dropdown = dcc.Dropdown(id="neighbors-dropdown", multi=False)
 
-    edge_info_display = dcc.Markdown(id="edge-info-text", children="No Edge Selected")
+    selected_edge_info = dcc.Markdown(
+        id="selected-edge-info", children="No Edge Selected"
+    )
 
     app.layout = html.Div(
         [
@@ -56,22 +69,29 @@ def __set_app_layout(app: dash.Dash, plot: ng.go.Figure, genes: list) -> None:
             dbc.Row(
                 [
                     dbc.Col(
-                        dbc.Card(graph_display, body=True, style={"margin": "10px"}),
+                        dbc.Card(plotly_figure, body=True, style={"margin": "10px"}),
                         width=8,
                     ),
                     dbc.Col(
                         [
                             dbc.Card(
                                 [
-                                    dbc.CardHeader("Genes Dropdown Display"),
-                                    dbc.CardBody(genes_dropdown_display),
+                                    dbc.CardHeader("Search Mode"),
+                                    dbc.CardBody(search_mode),
                                 ],
                                 style={"margin": "10px"},
                             ),
                             dbc.Card(
                                 [
-                                    dbc.CardHeader("Neighbors Dropdown Display"),
-                                    dbc.CardBody(neighbors_dropdown_display),
+                                    dbc.CardHeader("Terms Dropdown"),
+                                    dbc.CardBody(terms_dropdown),
+                                ],
+                                style={"margin": "10px"},
+                            ),
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader("Neighbors Dropdown"),
+                                    dbc.CardBody(neighbors_dropdown),
                                 ],
                                 style={"margin": "10px"},
                             ),
@@ -79,9 +99,9 @@ def __set_app_layout(app: dash.Dash, plot: ng.go.Figure, genes: list) -> None:
                                 dbc.CardBody(
                                     [
                                         html.H4("Selected Node/Edge:"),
-                                        html.P(selected_node_display),
+                                        html.P(selected_node_text),
                                         html.H4("Selected Edge Info:"),
-                                        html.P(edge_info_display),
+                                        html.P(selected_edge_info),
                                     ]
                                 ),
                                 style={"margin": "10px"},
@@ -95,39 +115,53 @@ def __set_app_layout(app: dash.Dash, plot: ng.go.Figure, genes: list) -> None:
     )
 
 
-def __update_plot(app: dash.Dash) -> None:
+def __update_plotly(app: dash.Dash) -> None:
     @app.callback(
-        [Output("graph", "data"), Output("network-graph", "figure")],
-        Input("gene-dropdown", "value"),
+        [Output("graph", "data"), Output("plotly-figure", "figure")],
+        Input("terms-dropdown", "value"),
+        State("search-mode", "value"),
     )
     def update(
-        selected_genes: list | None,
+        terms: list | None, search_mode: str
     ) -> tuple[dict | None, ng.go.Figure]:
-        if selected_genes is not None:
-            gene_interactions = pd.DataFrame(dgidb.get_interactions(selected_genes))
-            updated_graph = ng.create_network(gene_interactions, selected_genes)
-            updated_plot = ng.generate_plotly(updated_graph)
-            return ng.generate_json(updated_graph), updated_plot
+        if len(terms) != 0:
+            interactions = dgidb.get_interactions(terms, search_mode)
+            network_graph = ng.create_network(interactions, terms, search_mode)
+            plotly_figure = ng.generate_plotly(network_graph)
+            return ng.generate_json(network_graph), plotly_figure
         return None, ng.generate_plotly(None)
+
+
+def __update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
+    @app.callback(
+        Output("terms-dropdown", "options"),
+        Input("search-mode", "value"),
+    )
+    def update(search_mode: str) -> list:
+        if search_mode == "genes":
+            return genes
+        if search_mode == "drugs":
+            return drugs
+        return None
 
 
 def __update_selected_node(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-node", "data"),
-        [Input("network-graph", "click_data"), Input("gene-dropdown", "value")],
+        [Input("plotly-figure", "clickData"), Input("terms-dropdown", "value")],
     )
-    def update(click_data: dict | None, new_gene: list | None) -> str | dict:  # noqa: ARG001
-        if ctx.triggered_id == "gene-dropdown":
+    def update(clickData: dict | None, new_gene: list | None) -> str | dict:  # noqa: N803, ARG001
+        if ctx.triggered_id == "terms-dropdown":
             return ""
-        if click_data is not None and "points" in click_data:
-            selected_node = click_data["points"][0]
+        if clickData is not None and "points" in clickData:
+            selected_node = clickData["points"][0]
             if "text" not in selected_node:
                 return dash.no_update
             return selected_node
         return dash.no_update
 
 
-def __update_selected_node_display(app: dash.Dash) -> None:
+def __update_selected_node_text(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-node-text", "children"), Input("selected-node", "data")
     )
@@ -137,9 +171,12 @@ def __update_selected_node_display(app: dash.Dash) -> None:
         return "No Node Selected"
 
 
-def __update_neighbor_dropdown(app: dash.Dash) -> None:
+def __update_neighbors_dropdown(app: dash.Dash) -> None:
     @app.callback(
-        [Output("neighbor-dropdown", "options"), Output("neighbor-dropdown", "value")],
+        [
+            Output("neighbors-dropdown", "options"),
+            Output("neighbors-dropdown", "value"),
+        ],
         Input("selected-node", "data"),
     )
     def update(selected_node: str | dict) -> tuple[list, None]:
@@ -150,8 +187,8 @@ def __update_neighbor_dropdown(app: dash.Dash) -> None:
 
 def __update_edge_info(app: dash.Dash) -> None:
     @app.callback(
-        Output("edge-info-text", "children"),
-        [Input("selected-node", "data"), Input("neighbor-dropdown", "value")],
+        Output("selected-edge-info", "children"),
+        [Input("selected-node", "data"), Input("neighbors-dropdown", "value")],
         State("graph", "data"),
     )
     def update(
