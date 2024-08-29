@@ -187,7 +187,9 @@ def __update_selected_element(app: dash.Dash) -> None:
         ],
     )
     def update(
-        tap_node: dict | None, tap_edge: dict | None, terms_dropdown: list | None  # noqa: ARG001
+        tap_node: dict | None,
+        tap_edge: dict | None,
+        terms_dropdown: list | None,  # noqa: ARG001
     ) -> str | dict:
         if ctx.triggered_prop_ids:
             dash_trigger = next(iter(ctx.triggered_prop_ids.keys()))
