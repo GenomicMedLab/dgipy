@@ -50,7 +50,7 @@ def get_drug(
     :param immunotherapy: filter option for results that are only immunotherapy
     :param antineoplastic: filter option for results that see antineoplastic use
     :param api_url: API endpoint for GraphQL request
-    :return: TODO
+    :return: drug data
     """
     if isinstance(terms, str):
         terms = [terms]
@@ -101,7 +101,7 @@ def get_gene(terms: list | str, api_url: str | None = None) -> dict:
 
     :param terms: gene or genes for record lookup
     :param api_url: API endpoint for GraphQL request
-    :return: TODO
+    :return: gene data
     """
     if isinstance(terms, str):
         terms = [terms]
@@ -329,7 +329,7 @@ def get_gene_list(api_url: str | None = None) -> dict:
     """Get all gene names present in DGIdb
 
     :param api_url: API endpoint for GraphQL request
-    :return: todo
+    :return: list of genes in DGIdb
     """
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
