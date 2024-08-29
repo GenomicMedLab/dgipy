@@ -2,7 +2,6 @@ query getGeneCategories($names: [String!]) {
   genes(names: $names) {
     nodes {
       name
-      conceptId
       longName
       geneCategoriesWithSources {
         name
