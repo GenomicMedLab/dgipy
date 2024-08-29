@@ -1,6 +1,8 @@
 """Provides methods for performing different searches in DGIdb"""
 
+import logging
 import os
+from enum import Enum
 
 import pandas as pd
 import requests
@@ -9,7 +11,12 @@ from gql.transport.requests import RequestsHTTPTransport
 
 import dgipy.queries as queries
 
+_logger = logging.getLogger(__name__)
+
 API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
+
+
+_logger = logging.getLogger(__name__)
 
 
 def _get_client(api_url: str) -> Client:
@@ -52,7 +59,7 @@ def get_drug(
     result = client.execute(queries.get_drugs.query, variable_values=params)
 
     if use_pandas is True:
-        return __process_drug(result)
+        return _process_drug(result)
     return result
 
 
@@ -74,7 +81,7 @@ def get_gene(
     result = client.execute(queries.get_genes.query, variable_values={"names": terms})
 
     if use_pandas is True:
-        return __process_gene(result)
+        return _process_gene(result)
     return result
 
 
@@ -134,8 +141,8 @@ def get_interactions(
 
     if use_pandas is True:
         if search == "genes":
-            return __process_gene_search(result)
-        return __process_drug_search(result)
+            return _process_gene_search(result)
+        return _process_drug_search(result)
     return result
 
 
@@ -159,25 +166,36 @@ def get_categories(
     )
 
     if use_pandas is True:
-        return __process_gene_categories(result)
+        return _process_gene_categories(result)
     return result
 
 
-def get_source(search: str = "all", api_url: str | None = None) -> dict:
+class SourceType(str, Enum):
+    """Constrain source types for :py:method:`dgipy.dgidb.get_source` method."""
+
+    DRUG = "drug"
+    GENE = "gene"
+    INTERACTION = "interaction"
+    POTENTIALLY_DRUGGABLE = "potentially_druggable"
+
+
+def get_source(
+    source_type: SourceType | None = None, api_url: str | None = None
+) -> dict:
     """Perform a source lookup for relevant aggregate sources
 
-    :param search: string to denote type of source to lookup
+    >>> from dgipy import get_source, SourceType
+    >>> sources = get_source(SourceType.POTENTIALLY_DRUGGABLE)
+
+    :param source_type: type of source to look up. Fetches all sources otherwise.
     :param api_url: API endpoint for GraphQL request
     :return: all sources of relevant type in a json object
+    :raise TypeError: if invalid kind of data given as ``source_type`` param.
     """
-    valid_types = ["all", "drug", "gene", "interaction", "potentially_druggable"]
-    if search.lower() not in valid_types:
-        msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
-        raise Exception(msg)
-
+    source_param = source_type.value.upper() if source_type is not None else None
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    params = {} if search.lower() == "all" else {"sourceType": search}
+    params = {} if source_type is None else {"sourceType": source_param}
     return client.execute(queries.get_sources.query, variable_values=params)
 
 
@@ -229,12 +247,81 @@ def get_drug_applications(
     )
 
     if use_pandas is True:
-        data = __process_drug_applications(result)
-        return __openfda_data(data)
+        data = _process_drug_applications(result)
+        return _openfda_data(data)
     return result
 
 
-def __process_drug(results: dict) -> pd.DataFrame:
+def get_clinical_trials(
+    terms: str | list,
+) -> pd.DataFrame:  # TODO: Better error handling for new_row?, use_pandas=False
+    """Perform a look up for clinical trials data for drug or drugs of interest
+
+    :param terms: drug or drugs of interest
+    :return: all clinical trials data for drugs of interest in a DataFrame
+    """
+    base_url = "https://clinicaltrials.gov/api/v2/studies?format=json"
+    rows_list = []
+
+    if isinstance(terms, str):
+        terms = [terms]
+
+    for drug in terms:
+        intr_url = f"&query.intr={drug}"
+        full_uri = base_url + intr_url  # TODO: + cond_url + term_url
+        try:
+            r = requests.get(full_uri, timeout=20)
+        except requests.exceptions.RequestException as e:
+            _logger.error("Clinical trials lookup to URL %s failed: %s", full_uri, e)
+            raise e
+        if r.status_code == 200:
+            data = r.json()
+
+            for study in data["studies"]:
+                new_row = {}
+                new_row["search_term"] = drug
+                new_row["trial_id"] = study["protocolSection"]["identificationModule"][
+                    "nctId"
+                ]
+                new_row["brief"] = study["protocolSection"]["identificationModule"][
+                    "briefTitle"
+                ]
+                new_row["study_type"] = study["protocolSection"]["designModule"][
+                    "studyType"
+                ]
+                try:
+                    new_row["min_age"] = study["protocolSection"]["eligibilityModule"][
+                        "minimumAge"
+                    ]
+                except:
+                    new_row["min_age"] = None
+
+                new_row["age_groups"] = study["protocolSection"]["eligibilityModule"][
+                    "stdAges"
+                ]
+                new_row["Pediatric?"] = "CHILD" in new_row["age_groups"]
+
+                new_row["conditions"] = study["protocolSection"]["conditionsModule"][
+                    "conditions"
+                ]
+                try:
+                    new_row["interventions"] = study["protocolSection"][
+                        "armsInterventionsModule"
+                    ]
+                except:
+                    new_row["interventions"] = None
+
+                rows_list.append(new_row)
+        else:
+            _logger.error(
+                "Received status code %s from request to %s -- returning empty dataframe",
+                r.status_code,
+                full_uri,
+            )
+    return pd.DataFrame(rows_list)
+
+
+def _process_drug(results: dict) -> pd.DataFrame:
     drug_list = []
     concept_list = []
     alias_list = []
@@ -279,7 +366,7 @@ def __process_drug(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene(results: dict) -> pd.DataFrame:
+def _process_gene(results: dict) -> pd.DataFrame:
     gene_list = []
     alias_list = []
     concept_list = []
@@ -303,7 +390,7 @@ def __process_gene(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene_search(results: dict) -> pd.DataFrame:
+def _process_gene_search(results: dict) -> pd.DataFrame:
     interactionscore_list = []
     drugname_list = []
     approval_list = []
@@ -361,7 +448,7 @@ def __process_gene_search(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_gene_categories(results: dict) -> pd.DataFrame:
+def _process_gene_categories(results: dict) -> pd.DataFrame:
     gene_list = []
     categories_list = []
     sources_list = []
@@ -385,7 +472,7 @@ def __process_gene_categories(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_drug_search(results: dict) -> pd.DataFrame:
+def _process_drug_search(results: dict) -> pd.DataFrame:
     interactionscore_list = []
     genename_list = []
     approval_list = []
@@ -432,7 +519,7 @@ def __process_drug_search(results: dict) -> pd.DataFrame:
     )
 
 
-def __process_drug_applications(data: dict) -> pd.DataFrame:
+def _process_drug_applications(data: dict) -> pd.DataFrame:
     drug_list = []
     application_list = []
 
@@ -446,7 +533,7 @@ def __process_drug_applications(data: dict) -> pd.DataFrame:
     return pd.DataFrame().assign(drug=drug_list, application=application_list)
 
 
-def __openfda_data(dataframe: pd.DataFrame) -> pd.DataFrame:
+def _openfda_data(dataframe: pd.DataFrame) -> pd.DataFrame:
     openfda_base_url = (
         "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"
     )

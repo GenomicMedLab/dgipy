@@ -1,7 +1,9 @@
 """Python wrapper for accessing an instance of DGIdb v5 database"""
 
 from .dgidb import (
+    SourceType,
     get_categories,
+    get_clinical_trials,
     get_drug,
     get_drug_applications,
     get_gene,
@@ -17,7 +19,9 @@ __all__ = [
     "get_interactions",
     "get_categories",
     "get_source",
+    "SourceType",
     "get_gene_list",
     "get_drug_applications",
     "generate_app",
+    "get_clinical_trials",
 ]

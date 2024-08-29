@@ -1,4 +1,9 @@
-query getInteractionsByGene($names: [String!], $sourceDbName: String, $pmid: Int, $interactionType: String) {
+query getInteractionsByGene(
+  $names: [String!]
+  $sourceDbName: String
+  $pmid: Int
+  $interactionType: String
+) {
   genes(
     names: $names
     sourceDbName: $sourceDbName
