@@ -352,6 +352,22 @@ def get_gene_list(api_url: str | None = None) -> dict:
     return genes
 
 
+def get_drug_list(api_url: str | None = None) -> dict:
+    """Get all drug names present in DGIdb
+
+    :param api_url: API endpoint for GraphQL request
+    :return: a full list of drugs present in dgidb
+    """
+    api_url = api_url if api_url else API_ENDPOINT_URL
+    client = _get_client(api_url)
+    results = client.execute(queries.get_all_drugs.query)
+    drugs = {"name": [], "concept_id": []}
+    for result in results["drugs"]["nodes"]:
+        drugs["name"].append(result["name"])
+        drugs["concept_id"].append(result["concept_id"])
+    return drugs
+
+
 def _get_openfda_data(app_no: str) -> list[tuple]:
     url = f'https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"{app_no}"'
     response = requests.get(url, headers={"User-Agent": "Custom"}, timeout=20)
