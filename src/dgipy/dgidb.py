@@ -1,13 +1,21 @@
 """Provides methods for performing different searches in DGIdb"""
 
+import logging
 import os
+from enum import Enum
 
+import requests
 from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
 
 import dgipy.queries as queries
 
+_logger = logging.getLogger(__name__)
+
 API_ENDPOINT_URL = os.environ.get("DGIDB_API_URL", "https://dgidb.org/api/graphql")
+
+
+_logger = logging.getLogger(__name__)
 
 
 def _get_client(api_url: str) -> Client:
@@ -272,21 +280,32 @@ def get_categories(terms: list | str, api_url: str | None = None) -> dict:
     return output
 
 
-def get_source(search: str = "all", api_url: str | None = None) -> dict:
+class SourceType(str, Enum):
+    """Constrain source types for :py:method:`dgipy.dgidb.get_source` method."""
+
+    DRUG = "drug"
+    GENE = "gene"
+    INTERACTION = "interaction"
+    POTENTIALLY_DRUGGABLE = "potentially_druggable"
+
+
+def get_source(
+    source_type: SourceType | None = None, api_url: str | None = None
+) -> dict:
     """Perform a source lookup for relevant aggregate sources
 
-    :param search: string to denote type of source to lookup
+    >>> from dgipy import get_source, SourceType
+    >>> sources = get_source(SourceType.POTENTIALLY_DRUGGABLE)
+
+    :param source_type: type of source to look up. Fetches all sources otherwise.
     :param api_url: API endpoint for GraphQL request
     :return: all sources of relevant type in a json object
+    :raise TypeError: if invalid kind of data given as ``source_type`` param.
     """
-    valid_types = ["all", "drug", "gene", "interaction", "potentially_druggable"]
-    if search.lower() not in valid_types:
-        msg = "Type must be a valid source type: drug, gene, interaction, potentially_druggable"
-        raise Exception(msg)
-
+    source_param = source_type.value.upper() if source_type is not None else None
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
-    params = {} if search.lower() == "all" else {"sourceType": search}
+    params = {} if source_type is None else {"sourceType": source_param}
     results = client.execute(queries.get_sources.query, variable_values=params)
     output = {
         "name": [],
@@ -322,6 +341,26 @@ def get_gene_list(api_url: str | None = None) -> dict:
     return genes
 
 
+def _get_openfda_data(app_no: str) -> list[tuple]:
+    url = f'https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"{app_no}"'
+    response = requests.get(url, headers={"User-Agent": "Custom"}, timeout=20)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        _logger.error("Request to %s failed: %s", url, e)
+        raise e
+    data = response.json()
+    return [
+        (
+            product["brand_name"],
+            product["marketing_status"],
+            product["dosage_form"],
+            product["active_ingredients"][0]["strength"],
+        )
+        for product in data["results"][0]["products"]
+    ]
+
+
 def get_drug_applications(terms: list | str, api_url: str | None = None) -> dict:
     """Perform a look up for ANDA/NDA applications for drug or drugs of interest
 
@@ -340,45 +379,104 @@ def get_drug_applications(terms: list | str, api_url: str | None = None) -> dict
     output = {
         "name": [],
         "application": [],
-        # "description": [],
+        "brand_name": [],
+        "marketing_status": [],
+        "dosage_form": [],
+        "dosage_strength": [],
     }
 
     for result in results["drugs"]["nodes"]:
         name = result["name"]
         for app in result["drugApplications"]:
-            output["name"].append(name)
             application_number = app["appNo"].split(".")[1].replace(":", "").upper()
-            output["application"].append(application_number)
-            # output["description"].append(_get_openfda_description(application_number))
+            for (
+                brand_name,
+                marketing_status,
+                dosage_form,
+                dosage_strength,
+            ) in _get_openfda_data(application_number):
+                output["name"].append(name)
+                output["application"].append(application_number)
+                output["brand_name"].append(brand_name)
+                output["marketing_status"].append(marketing_status)
+                output["dosage_form"].append(dosage_form)
+                output["dosage_strength"].append(dosage_strength)
+
     return output
 
 
-# def _openfda_data(dataframe: pd.DataFrame) -> pd.DataFrame:
-#     openfda_base_url = (
-#         "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"
-#     )
-#     terms = list(dataframe["application"])
-#     descriptions = []
-#     for term in terms:
-#         r = requests.get(
-#             f'{openfda_base_url}"{term}"', headers={"User-Agent": "Custom"}, timeout=20
-#         )
-#         try:
-#             r.json()["results"][0]["products"]
-#
-#             f = []
-#             for product in r.json()["results"][0]["products"]:
-#                 brand_name = product["brand_name"]
-#                 marketing_status = product["marketing_status"]
-#                 dosage_form = product["dosage_form"]
-#                 # active_ingredient = product["active_ingredients"][0]["name"]
-#                 dosage_strength = product["active_ingredients"][0]["strength"]
-#                 f.append(
-#                     f"{brand_name}: {dosage_strength} {marketing_status} {dosage_form}"
-#                 )
-#
-#             descriptions.append(" | ".join(f))
-#         except:
-#             descriptions.append("none")
-#
-#     return dataframe.assign(description=descriptions)
+def get_clinical_trials(
+    terms: str | list,
+) -> dict:
+    """Perform a look up for clinical trials data for drug or drugs of interest
+
+    :param terms: drug or drugs of interest
+    :return: all clinical trials data for drugs of interest in a DataFrame
+    """
+    base_url = "https://clinicaltrials.gov/api/v2/studies?format=json"
+
+    if isinstance(terms, str):
+        terms = [terms]
+
+    output = {
+        "search_term": [],
+        "trial_id": [],
+        "brief": [],
+        "study_type": [],
+        "min_age": [],
+        "age_groups": [],
+        "pediatric": [],
+        "conditions": [],
+        "interventions": [],
+    }
+
+    for drug in terms:
+        intr_url = f"&query.intr={drug}"
+        full_uri = base_url + intr_url  # TODO: + cond_url + term_url
+        response = requests.get(full_uri, timeout=20)
+        try:
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            _logger.error("Clinical trials lookup to URL %s failed: %s", full_uri, e)
+            raise e
+        if response.status_code != 200:
+            _logger.error(
+                "Received status code %s from request to %s -- returning empty dataframe",
+                response.status_code,
+                full_uri,
+            )
+        else:
+            data = response.json()
+
+            for study in data["studies"]:
+                output["search_term"].append(drug)
+                output["trial_id"].append(
+                    study["protocolSection"]["identificationModule"]["nctId"]
+                )
+                output["brief"].append(
+                    study["protocolSection"]["identificationModule"]["briefTitle"]
+                )
+                output["study_type"].append(
+                    study["protocolSection"]["designModule"]["studyType"]
+                )
+                try:
+                    output["min_age"].append(
+                        study["protocolSection"]["eligibilityModule"]["minimumAge"]
+                    )
+                except KeyError:
+                    output["min_age"].append(None)
+
+                age_groups = study["protocolSection"]["eligibilityModule"]["stdAges"]
+
+                output["age_groups"].append(age_groups)
+                output["pediatric"].append("CHILD" in age_groups)
+                output["conditions"].append(
+                    study["protocolSection"]["conditionsModule"]["conditions"]
+                )
+                try:
+                    output["interventions"].append(
+                        study["protocolSection"]["armsInterventionsModule"]
+                    )
+                except:
+                    output["interventions"].append(None)
+    return output

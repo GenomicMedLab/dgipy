@@ -6,6 +6,7 @@ import pytest
 import requests_mock
 
 from dgipy.dgidb import (
+    SourceType,
     get_categories,
     get_drug,
     get_drug_applications,
@@ -164,7 +165,7 @@ def test_get_sources(fixtures_dir: Path, set_up_graphql_mock: Callable):
         ), f"Incorrect # of sources: {len(results['name'])}"
 
         set_up_graphql_mock(m, filtered_sources_response)
-        results = get_source("GENE")
+        results = get_source(SourceType.GENE)
         sources = results["name"]
         assert len(sources) == 3, f"Incorrect # of sources: {len(sources)}"
         assert set(sources) == {
