@@ -6,7 +6,9 @@ import pandas as pd
 LAYOUT_SEED = 7
 
 
-def initalize_network(interactions: pd.DataFrame, terms: list, search_mode: str) -> nx.Graph:
+def initalize_network(
+    interactions: pd.DataFrame, terms: list, search_mode: str
+) -> nx.Graph:
     """Create a networkx graph representing interactions between genes and drugs
 
     :param interactions: DataFrame containing drug-gene interaction data
@@ -22,8 +24,12 @@ def initalize_network(interactions: pd.DataFrame, terms: list, search_mode: str)
             graphed_terms.add(interactions["gene"][index])
         if search_mode == "drugs":
             graphed_terms.add(interactions["drug"][index])
-        interactions_graph.add_node(interactions["gene"][index], label=interactions["gene"][index], isGene=True)
-        interactions_graph.add_node(interactions["drug"][index], label=interactions["drug"][index], isGene=False)
+        interactions_graph.add_node(
+            interactions["gene"][index], label=interactions["gene"][index], isGene=True
+        )
+        interactions_graph.add_node(
+            interactions["drug"][index], label=interactions["drug"][index], isGene=False
+        )
         interactions_graph.add_edge(
             interactions["gene"][index],
             interactions["drug"][index],
@@ -42,7 +48,9 @@ def initalize_network(interactions: pd.DataFrame, terms: list, search_mode: str)
         if search_mode == "drugs":
             interactions_graph.add_node(term, label=term, isGene=False)
 
-    nx.set_node_attributes(interactions_graph, dict(interactions_graph.degree()), "node_degree")
+    nx.set_node_attributes(
+        interactions_graph, dict(interactions_graph.degree()), "node_degree"
+    )
     return interactions_graph
 
 
@@ -58,6 +66,8 @@ def generate_cytoscape(graph: nx.Graph) -> dict:
     cytoscape_edge_data = cytoscape_data["edges"]
     for node in range(len(cytoscape_node_data)):
         node_pos = pos[cytoscape_node_data[node]["data"]["id"]]
-        node_pos = {"position" : {"x": int(node_pos[0].item()), "y": int(node_pos[1].item())}}
+        node_pos = {
+            "position": {"x": int(node_pos[0].item()), "y": int(node_pos[1].item())}
+        }
         cytoscape_node_data[node].update(node_pos)
     return cytoscape_node_data + cytoscape_edge_data

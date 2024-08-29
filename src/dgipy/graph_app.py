@@ -39,44 +39,37 @@ def __set_app_layout(app: dash.Dash) -> None:
         layout={"name": "preset"},
         style={"width": "100%", "height": "800px"},
         stylesheet=[
-            # Group selectors
+            # Group Selectors
             {
                 "selector": "node",
-                "style": {
-                    "content": "data(label)"
-                },
+                "style": {"content": "data(label)"},
             },
-            {
-                "selector": "edge",
-                "style": {
-                    "width": 0.75
-                }
-            },
+            {"selector": "edge", "style": {"width": 0.75}},
             {
                 "selector": "[node_degree > 1][isGene]",
                 "style": {
                     "background-color": "cyan",
-                }
+                },
             },
             {
                 "selector": "[node_degree <= 1][isGene]",
                 "style": {
                     "background-color": "blue",
-                }
+                },
             },
             {
                 "selector": "[node_degree > 1][!isGene]",
                 "style": {
                     "background-color": "orange",
-                }
+                },
             },
             {
                 "selector": "[node_degree <= 1][!isGene]",
                 "style": {
                     "background-color": "red",
-                }
-            }
-        ]
+                },
+            },
+        ],
     )
 
     search_mode = dcc.RadioItems(
@@ -187,17 +180,23 @@ def __update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
 def __update_selected_element(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-element", "data"),
-        [Input("cytoscape-figure", "tapNode"), Input("cytoscape-figure", "tapEdge"), Input("terms-dropdown", "value")],
+        [
+            Input("cytoscape-figure", "tapNode"),
+            Input("cytoscape-figure", "tapEdge"),
+            Input("terms-dropdown", "value"),
+        ],
     )
-    def update(tapNode: dict | None, tapEdge: dict | None, termsDropdown: list | None) -> str | dict:  # noqa: N803
+    def update(
+        tap_node: dict | None, tap_edge: dict | None, terms_dropdown: list | None  # noqa: ARG001
+    ) -> str | dict:
         if ctx.triggered_prop_ids:
             dash_trigger = next(iter(ctx.triggered_prop_ids.keys()))
             if dash_trigger == "terms-dropdown.value":
                 return ""
-            if dash_trigger == "cytoscape-figure.tapNode" and tapNode is not None:
-                return tapNode
-            if dash_trigger == "cytoscape-figure.tapEdge" and tapEdge is not None:
-                return tapEdge
+            if dash_trigger == "cytoscape-figure.tapNode" and tap_node is not None:
+                return tap_node
+            if dash_trigger == "cytoscape-figure.tapEdge" and tap_edge is not None:
+                return tap_edge
         return dash.no_update
 
 
@@ -217,10 +216,14 @@ def __update_neighbors_dropdown(app: dash.Dash) -> None:
             Output("neighbors-dropdown", "options"),
             Output("neighbors-dropdown", "value"),
         ],
-        Input("selected-element", "data")
+        Input("selected-element", "data"),
     )
     def update(selected_element: str | dict) -> tuple[list, None]:
-        if selected_element != "" and selected_element["group"] == "nodes" and selected_element["data"]["node_degree"] != 1:
+        if (
+            selected_element != ""
+            and selected_element["group"] == "nodes"
+            and selected_element["data"]["node_degree"] != 1
+        ):
             neighbor_set = set()
             for edge in selected_element["edgesData"]:
                 neighbor_set.add(edge["target"])
@@ -234,12 +237,9 @@ def __update_neighbors_dropdown(app: dash.Dash) -> None:
 def __update_edge_info(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-edge-info", "children"),
-        [Input("selected-element", "data"), Input("neighbors-dropdown", "value")]
+        [Input("selected-element", "data"), Input("neighbors-dropdown", "value")],
     )
-    def update(
-        selected_element: str | dict,
-        selected_neighbor: str | None
-    ) -> str:
+    def update(selected_element: str | dict, selected_neighbor: str | None) -> str:
         if selected_element == "":
             return "No Edge Selected"
 
@@ -257,7 +257,9 @@ def __update_edge_info(app: dash.Dash) -> None:
         if selected_element["group"] == "edges":
             edge_info = selected_element["data"]
 
-        if (selected_element["group"] == "nodes" and selected_neighbor is not None) or selected_element["group"] == "edges":
+        if (
+            selected_element["group"] == "nodes" and selected_neighbor is not None
+        ) or selected_element["group"] == "edges":
             return (
                 "ID: "
                 + str(edge_info["id"])
