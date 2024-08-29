@@ -111,7 +111,7 @@ def get_gene(terms: list | str, api_url: str | None = None) -> dict:
     for match in result["genes"]["nodes"]:
         output["name"].append(match["name"])
         output["concept_id"].append(match["conceptId"])
-        output["aliases"].append([[a["alias"] for a in match["geneAliases"]]])
+        output["aliases"].append([a["alias"] for a in match["geneAliases"]])
         output["attributes"].append(_group_attributes(match["geneAttributes"]))
     return output
 
