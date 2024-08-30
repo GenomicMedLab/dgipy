@@ -19,22 +19,31 @@ python3 -m pip install dgipy
 
 ## Usage
 
-Methods in `dgipy.dgidb` send pre-defined queries with user-supplied parameters to the DGIdb GraphQL API endpoint. Response objects can optionally be returned as Pandas dataframes for readability and ease of use, or retained as the raw GraphQL responses by setting the `use_pandas` argument to `False`.
+DGIpy is built around query methods that wrap a GraphQL client and fetch data from the public DGIdb API endpoint. By default, data returned in a columnar format (i.e., as a dictionary where keys are column names and values are lists representing column data).
 
-```python
-from dgipy.dgidb import get_drug
-
-# get a dataframe including drug name, identifier/aliases, molecular attributes, and regulatory data
-response = get_drug(["sunitinib", "trastuzumab", "not-a-real-drug"])
-print(list(response["drug"].unique()))
-# ['BROMPHENIRAMINE MALEATE', 'SUNITINIB', 'BROMPHENIRAMINE']
-print(dict(response[["drug", "concept_id", "approved"]].iloc[0]))
-# {'drug': 'BROMPHENIRAMINE MALEATE',
-#  'concept_id': 'rxcui:142427',
-#  'approved': 'True'}
+```pycon
+>>> from dgipy import get_drug
+>>> results = get_drug("imatinib")
+>>> results['name'][0], results['concept_id'][0], results['approved'][0]
+('IMATINIB', 'rxcui:282388', True)
 ```
 
-Similar methods are provided for looking up genes and drug-gene interactions.
+This orientation enables easy use within the dataframe library of your choosing:
+
+```pycon
+>>> import polars as pl  # not included in DGIpy dependencies
+>>> pl.DataFrame(results)
+shape: (1, 9)
+┌──────────┬──────────────┬──────────────┬────────────────────┬───┬───────────────┬──────────┬───────────────────┬───────────────────┐
+│ name     ┆ concept_id   ┆ aliases      ┆ attributes         ┆ … ┆ immunotherapy ┆ approved ┆ approval_ratings  ┆ fda_applications  │
+│ ---      ┆ ---          ┆ ---          ┆ ---                ┆   ┆ ---           ┆ ---      ┆ ---               ┆ ---               │
+│ str      ┆ str          ┆ list[str]    ┆ struct[3]          ┆   ┆ bool          ┆ bool     ┆ list[struct[2]]   ┆ list[str]         │
+╞══════════╪══════════════╪══════════════╪════════════════════╪═══╪═══════════════╪══════════╪═══════════════════╪═══════════════════╡
+│ IMATINIB ┆ rxcui:282388 ┆ ["IMATINIB", ┆ {["Small           ┆ … ┆ false         ┆ true     ┆ [{"Prescribable", ┆ ["drugsatfda.anda │
+│          ┆              ┆ "IMATINIB    ┆ Molecule", "MEK    ┆   ┆               ┆          ┆ "RxNorm"}, {"…    ┆ :078340", "dr…    │
+│          ┆              ┆ MESYLAT…     ┆ inhib…             ┆   ┆               ┆          ┆                   ┆                   │
+└──────────┴──────────────┴──────────────┴────────────────────┴───┴───────────────┴──────────┴───────────────────┴───────────────────┘
+```
 
 ## Graph App
 
