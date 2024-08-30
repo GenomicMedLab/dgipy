@@ -2,10 +2,12 @@
 
 import dash_bootstrap_components as dbc
 import dash_cytoscape as cyto
+import pandas as pd
 from dash import Input, Output, State, ctx, dash, dcc, html
 
 from dgipy import dgidb
 from dgipy import network_graph as ng
+from dgipy.data_utils import make_tabular
 
 
 def generate_app() -> dash.Dash:
@@ -14,10 +16,12 @@ def generate_app() -> dash.Dash:
     :return: a python dash app that can be run with run_server()
     """
     genes = [
-        {"label": gene["name"], "value": gene["name"]} for gene in dgidb.get_gene_list()
+        {"label": gene["name"], "value": gene["name"]}
+        for gene in make_tabular(dgidb.get_gene_list())
     ]
     drugs = [
-        {"label": drug["name"], "value": drug["name"]} for drug in dgidb.get_drug_list()
+        {"label": drug["name"], "value": drug["name"]}
+        for drug in make_tabular(dgidb.get_drug_list())
     ]
 
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -158,7 +162,7 @@ def __update_cytoscape(app: dash.Dash) -> None:
     )
     def update(terms: list | None, search_mode: str) -> dict:
         if len(terms) != 0:
-            interactions = dgidb.get_interactions(terms, search_mode)
+            interactions = pd.DataFrame(dgidb.get_interactions(terms, search_mode))
             network_graph = ng.initalize_network(interactions, terms, search_mode)
             return ng.generate_cytoscape(network_graph)
         return {}
