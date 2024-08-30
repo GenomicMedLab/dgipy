@@ -15,20 +15,22 @@ def __initalize_network(
 
     for index in interactions.index:
         if search_mode == "genes":
-            graphed_terms.add(interactions["gene"][index])
+            graphed_terms.add(interactions["gene_name"][index])
         if search_mode == "drugs":
-            graphed_terms.add(interactions["drug"][index])
-        interactions_graph.add_node(interactions["gene"][index], isGene=True)
-        interactions_graph.add_node(interactions["drug"][index], isGene=False)
+            graphed_terms.add(interactions["drug_name"][index])
+        interactions_graph.add_node(interactions["gene_name"][index], isGene=True)
+        interactions_graph.add_node(interactions["drug_name"][index], isGene=False)
         interactions_graph.add_edge(
-            interactions["gene"][index],
-            interactions["drug"][index],
-            id=interactions["gene"][index] + " - " + interactions["drug"][index],
-            approval=interactions["approval"][index],
-            score=interactions["score"][index],
+            interactions["gene_name"][index],
+            interactions["drug_name"][index],
+            id=interactions["gene_name"][index]
+            + " - "
+            + interactions["drug_name"][index],
+            approval=interactions["approved"][index],
+            score=interactions["interaction_score"][index],
             attributes=interactions["interaction_attributes"][index],
-            source=interactions["source"][index],
-            pmid=interactions["pmid"][index],
+            source=interactions["sources"][index],
+            pmid=interactions["pmids"][index],
         )
 
     graphed_terms = set(terms).difference(graphed_terms)
