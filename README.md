@@ -23,9 +23,9 @@ DGIpy is built around query methods that wrap a GraphQL client and fetch data fr
 
 ```pycon
 >>> from dgipy import get_drug
->>> results = get_drug("imatinib")
->>> results['name'][0], results['concept_id'][0], results['approved'][0]
-('IMATINIB', 'rxcui:282388', True)
+>>> results = get_gene(["BRAF"])
+>>> results["name"][0], results["concept_id"][0], results["aliases"][0][:5]
+('BRAF', 'hgnc:1097', ['B-RAF PROTO-ONCOGENE, SERINE/THREONINE KINASE', 'BRAF1', 'BRAF-1', 'UCSC:UC003VWC.5', 'VEGA:OTTHUMG00000157457'])
 ```
 
 This orientation enables easy use within the dataframe library of your choosing:
@@ -33,16 +33,14 @@ This orientation enables easy use within the dataframe library of your choosing:
 ```pycon
 >>> import polars as pl  # not included in DGIpy dependencies
 >>> pl.DataFrame(results)
-shape: (1, 9)
-┌──────────┬──────────────┬──────────────┬────────────────────┬───┬───────────────┬──────────┬───────────────────┬───────────────────┐
-│ name     ┆ concept_id   ┆ aliases      ┆ attributes         ┆ … ┆ immunotherapy ┆ approved ┆ approval_ratings  ┆ fda_applications  │
-│ ---      ┆ ---          ┆ ---          ┆ ---                ┆   ┆ ---           ┆ ---      ┆ ---               ┆ ---               │
-│ str      ┆ str          ┆ list[str]    ┆ struct[3]          ┆   ┆ bool          ┆ bool     ┆ list[struct[2]]   ┆ list[str]         │
-╞══════════╪══════════════╪══════════════╪════════════════════╪═══╪═══════════════╪══════════╪═══════════════════╪═══════════════════╡
-│ IMATINIB ┆ rxcui:282388 ┆ ["IMATINIB", ┆ {["Small           ┆ … ┆ false         ┆ true     ┆ [{"Prescribable", ┆ ["drugsatfda.anda │
-│          ┆              ┆ "IMATINIB    ┆ Molecule", "MEK    ┆   ┆               ┆          ┆ "RxNorm"}, {"…    ┆ :078340", "dr…    │
-│          ┆              ┆ MESYLAT…     ┆ inhib…             ┆   ┆               ┆          ┆                   ┆                   │
-└──────────┴──────────────┴──────────────┴────────────────────┴───┴───────────────┴──────────┴───────────────────┴───────────────────┘
+shape: (1, 4)
+┌──────┬────────────┬─────────────────────────────────┬─────────────────────────────────┐
+│ name ┆ concept_id ┆ aliases                         ┆ attributes                      │
+│ ---  ┆ ---        ┆ ---                             ┆ ---                             │
+│ str  ┆ str        ┆ list[str]                       ┆ struct[14]                      │
+╞══════╪════════════╪═════════════════════════════════╪═════════════════════════════════╡
+│ BRAF ┆ hgnc:1097  ┆ ["B-RAF PROTO-ONCOGENE, SERINE… ┆ {["0"],["Swiss-Prot"],["Report… │
+└──────┴────────────┴─────────────────────────────────┴─────────────────────────────────┘
 ```
 
 ## Graph App
