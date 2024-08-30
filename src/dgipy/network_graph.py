@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 PLOTLY_SEED = 7
 
 
-def __initalize_network(
+def _initalize_network(
     interactions: pd.DataFrame, terms: list, search_mode: str
 ) -> nx.Graph:
     interactions_graph = nx.Graph()
@@ -42,7 +42,7 @@ def __initalize_network(
     return interactions_graph
 
 
-def __add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None:
+def _add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None:
     for node in interactions_graph.nodes:
         is_gene = interactions_graph.nodes[node]["isGene"]
         degree = interactions_graph.degree[node]
@@ -90,8 +90,8 @@ def create_network(
     :param search_mode: String indicating whether query was gene-focused or drug-focused
     :return: a networkx graph of drug-gene interactions
     """
-    interactions_graph = __initalize_network(interactions, terms, search_mode)
-    __add_node_attributes(interactions_graph, search_mode)
+    interactions_graph = _initalize_network(interactions, terms, search_mode)
+    _add_node_attributes(interactions_graph, search_mode)
     return interactions_graph
 
 
@@ -112,8 +112,8 @@ def generate_plotly(graph: nx.Graph) -> go.Figure:
     if graph is not None:
         pos = nx.spring_layout(graph, seed=PLOTLY_SEED)
 
-        trace_nodes = __create_trace_nodes(graph, pos)
-        trace_edges = __create_trace_edges(graph, pos)
+        trace_nodes = _create_trace_nodes(graph, pos)
+        trace_edges = _create_trace_edges(graph, pos)
 
         fig.add_trace(trace_edges[0])
         fig.add_trace(trace_edges[1])
@@ -123,7 +123,7 @@ def generate_plotly(graph: nx.Graph) -> go.Figure:
     return fig
 
 
-def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
+def _create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
     nodes_by_group = {
         "cyan": {
             "node_x": [],
@@ -198,7 +198,7 @@ def __create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
     return trace_nodes
 
 
-def __create_trace_edges(graph: nx.Graph, pos: dict) -> go.Scatter:
+def _create_trace_edges(graph: nx.Graph, pos: dict) -> go.Scatter:
     edge_x = []
     edge_y = []
 
