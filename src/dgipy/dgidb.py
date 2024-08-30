@@ -364,7 +364,7 @@ def get_drug_list(api_url: str | None = None) -> dict:
     drugs = {"name": [], "concept_id": []}
     for result in results["drugs"]["nodes"]:
         drugs["name"].append(result["name"])
-        drugs["concept_id"].append(result["concept_id"])
+        drugs["concept_id"].append(result["conceptId"])
     return drugs
 
 

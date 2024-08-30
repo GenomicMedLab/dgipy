@@ -1,6 +1,7 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
 
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash import Input, Output, State, ctx, dash, dcc, html
 
 from dgipy import dgidb
@@ -128,7 +129,7 @@ def __update_plotly(app: dash.Dash) -> None:
         terms: list | None, search_mode: str
     ) -> tuple[dict | None, ng.go.Figure]:
         if len(terms) != 0:
-            interactions = dgidb.get_interactions(terms, search_mode)
+            interactions = pd.DataFrame(dgidb.get_interactions(terms, search_mode))
             network_graph = ng.create_network(interactions, terms, search_mode)
             plotly_figure = ng.generate_plotly(network_graph)
             return ng.generate_json(network_graph), plotly_figure
