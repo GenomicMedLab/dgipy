@@ -34,6 +34,11 @@ def drop_none_attrs(column: list[dict]) -> list[dict]:
     """For an attributes column (i.e., a list of dicts), drop all entries with `None`
     values.
 
+    In DGIdb (and consequently DGIpy), there's no semantic information intended by
+    giving attributes `None` values. They are, however, included to ensure compatibility
+    with strongly-structured dataframe libraries like Polars. Otherwise, these
+    properties are unnecessary, and can be safely dropped without loss of information.
+
     >>> from dgipy import get_interactions
     >>> from dgipy.data_utils import drop_none_attrs
     >>> results = get_interactions(["braf"])
@@ -44,11 +49,6 @@ def drop_none_attrs(column: list[dict]) -> list[dict]:
     ... )
     >>> results["interaction_attributes"][2]
     {'Novel Drug Target': ['Established target'], 'Clinical Trial Name': ['XL281']}
-
-    In DGIdb (and consequently DGIpy), there's no semantic information intended by
-    giving attributes `None` values. They are, however, included to ensure compatibility
-    with strongly-structured dataframe libraries like Polars. Otherwise, these
-    properties are unnecessary, and can be safely dropped without loss of information.
 
     :param column: an individual column value from the columnar output of a
         :py:module:`dgipy.dgidb` query function
