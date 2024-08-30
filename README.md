@@ -23,7 +23,7 @@ DGIpy is built around query methods that wrap a GraphQL client and fetch data fr
 
 ```pycon
 >>> from dgipy import get_drug
->>> results = get_gene(["BRAF"])
+>>> results = get_genes(["BRAF"])
 >>> results["name"][0], results["concept_id"][0], results["aliases"][0][:5]
 ('BRAF', 'hgnc:1097', ['B-RAF PROTO-ONCOGENE, SERINE/THREONINE KINASE', 'BRAF1', 'BRAF-1', 'UCSC:UC003VWC.5', 'VEGA:OTTHUMG00000157457'])
 ```
