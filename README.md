@@ -31,6 +31,11 @@ DGIpy is built around query methods that wrap a GraphQL client and fetch data fr
 This orientation enables easy use within the dataframe library of your choosing:
 
 ```pycon
+>>> import pandas as pd
+>>> pd.DataFrame(results)
+   name concept_id                                            aliases                                         attributes
+0  BRAF  hgnc:1097  [B-RAF PROTO-ONCOGENE, SERINE/THREONINE KINASE...  {'BRAF MUT': ['Reported Genome Event Targeted'...
+>>>
 >>> import polars as pl  # not included in DGIpy dependencies
 >>> pl.DataFrame(results)
 shape: (1, 4)
