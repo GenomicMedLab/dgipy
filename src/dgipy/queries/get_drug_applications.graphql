@@ -2,7 +2,7 @@ query getDrugApplications($names: [String!]) {
   drugs(names: $names) {
     nodes {
       name
-            conceptId
+      conceptId
       drugApplications {
         appNo
       }

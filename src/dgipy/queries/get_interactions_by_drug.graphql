@@ -22,19 +22,19 @@ query getInteractionsByDrug(
           name
           value
         }
-                drug {
-                    name
-                    conceptId
-                    approved
-                }
+        drug {
+          name
+          conceptId
+          approved
+        }
         gene {
-                    name
-                    longName
-                    conceptId
+          name
+          longName
+          conceptId
 
-      geneCategories {
-        name
-      }
+          geneCategories {
+            name
+          }
         }
         interactionScore
         interactionClaims {

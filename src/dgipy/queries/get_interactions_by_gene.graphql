@@ -18,18 +18,18 @@ query getInteractionsByGene(
         }
         drug {
           name
-                    conceptId
+          conceptId
           approved
         }
-                gene {
-                    name
-                    longName
-                    conceptId
+        gene {
+          name
+          longName
+          conceptId
 
-      geneCategories {
-        name
-      }
-                }
+          geneCategories {
+            name
+          }
+        }
         interactionScore
         interactionClaims {
           publications {
