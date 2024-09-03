@@ -19,7 +19,7 @@ jobs:
       #   run: |
       #     python3 -m pip install ".[tests]"
       - uses: yezz123/setup-uv@v4
-      - run: uv pip install --no-cache -r pyproject.toml --extra tests
+      - run: uv pip install --system -r pyproject.toml --extra tests
 
       - name: Run tests
         run: uv run pytest tests/test_dgidb.py
@@ -37,7 +37,7 @@ jobs:
       - uses: yezz123/setup-uv@v4
 
       - name: Install dependencies
-        run: uv pip install --no-cache ".[dev]"
+        run: uv pip install --system ".[dev]"
 
       - name: Check style
         run: uv run ruff check . && uv run ruff format --check .
@@ -57,7 +57,7 @@ jobs:
       - uses: yezz123/setup-uv@v4
 
       - name: Install dependencies
-        run: uv pip install --no-cache ".[docs]"
+        run: uv pip install --system ".[docs]"
 
       - name: Attempt docs build
         working-directory: ./docs
