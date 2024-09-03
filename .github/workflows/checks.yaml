@@ -15,9 +15,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: |
-          python3 -m pip install ".[tests]"
+      # - name: Install dependencies
+      #   run: |
+      #     python3 -m pip install ".[tests]"
+      - uses: yezz123/setup-uv@v4
+      - run: uv pip install --system --no-cache . --extra tests
 
       - name: Run tests
         run: python3 -m pytest tests/test_dgidb.py
