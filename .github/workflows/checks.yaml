@@ -22,7 +22,7 @@ jobs:
       - run: uv pip install --system --no-cache -r pyproject.toml --extra tests
 
       - name: Run tests
-        run: python3 -m pytest tests/test_dgidb.py
+        run: uv run pytest tests/test_dgidb.py
   lint:
     name: lint
     runs-on: ubuntu-latest
@@ -34,11 +34,13 @@ jobs:
         with:
           python-version: "3.11"
 
+      - uses: yezz123/setup-uv@v4
+
       - name: Install dependencies
-        run: python3 -m pip install ".[dev]"
+        run: uv pip install --system --no-cache ".[dev]"
 
       - name: Check style
-        run: python3 -m ruff check . && python3 -m ruff format --check .
+        run: uv run ruff check . && uv run ruff format --check .
 
   docs:
     runs-on: ubuntu-latest
