@@ -52,11 +52,13 @@ jobs:
         with:
           python-version: 3.11
 
+      - uses: yezz123/setup-uv@v4
+
       - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install '.[docs]'
+        run: uv run pip install '.[docs]'
 
       - name: Attempt docs build
         working-directory: ./docs
+        env:
+          SPHINXBUILD: uv run sphinx-build
         run: make html
