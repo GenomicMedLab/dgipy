@@ -19,7 +19,7 @@ jobs:
       #   run: |
       #     python3 -m pip install ".[tests]"
       - uses: yezz123/setup-uv@v4
-      - run: uv pip install --system --no-cache . --extra tests
+      - run: uv pip install --system --no-cache -r pyproject.toml --extra tests
 
       - name: Run tests
         run: python3 -m pytest tests/test_dgidb.py
