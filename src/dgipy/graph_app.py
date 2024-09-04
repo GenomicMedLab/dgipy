@@ -16,11 +16,11 @@ def generate_app() -> dash.Dash:
     """
     genes = [
         {"label": gene["name"], "value": gene["name"]}
-        for gene in make_tabular(dgidb.get_gene_list())
+        for gene in make_tabular(dgidb.get_all_genes())
     ]
     drugs = [
         {"label": drug["name"], "value": drug["name"]}
-        for drug in make_tabular(dgidb.get_drug_list())
+        for drug in make_tabular(dgidb.get_all_drugs())
     ]
 
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
