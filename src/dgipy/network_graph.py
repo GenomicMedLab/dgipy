@@ -26,7 +26,7 @@ def _initalize_network(
             id=interactions["gene_name"][index]
             + " - "
             + interactions["drug_name"][index],
-            approval=interactions["approved"][index],
+            approval=interactions["drug_approved"][index],
             score=interactions["interaction_score"][index],
             attributes=interactions["interaction_attributes"][index],
             source=interactions["sources"][index],
