@@ -3,27 +3,31 @@
     "genes": {
       "nodes": [
         {
-          "name": "EREG",
-          "longName": "epiregulin",
-          "geneCategories": [
-            {
-              "name": "DRUGGABLE GENOME"
-            },
-            {
-              "name": "GROWTH FACTOR"
-            },
-            {
-              "name": "KINASE"
-            }
-          ],
           "interactions": [
             {
               "interactionAttributes": [],
               "drug": {
                 "name": "CETUXIMAB",
+                "conceptId": "rxcui:318341",
                 "approved": true
               },
-              "interactionScore": 0.3469414935062527,
+              "gene": {
+                "name": "EREG",
+                "longName": "epiregulin",
+                "conceptId": "hgnc:3443",
+                "geneCategories": [
+                  {
+                    "name": "DRUGGABLE GENOME"
+                  },
+                  {
+                    "name": "GROWTH FACTOR"
+                  },
+                  {
+                    "name": "KINASE"
+                  }
+                ]
+              },
+              "interactionScore": 0.2430910705356227,
               "interactionClaims": [
                 {
                   "publications": [],
@@ -36,26 +40,27 @@
             {
               "interactionAttributes": [],
               "drug": {
-                "name": "FEPIXNEBART",
-                "approved": false
-              },
-              "interactionScore": 5.898005389606295,
-              "interactionClaims": [
-                {
-                  "publications": [],
-                  "source": {
-                    "sourceDbName": "TTD"
-                  }
-                }
-              ]
-            },
-            {
-              "interactionAttributes": [],
-              "drug": {
                 "name": "HUMAN CHORIONIC GONADOTROPIN",
+                "conceptId": "rxcui:340705",
                 "approved": true
               },
-              "interactionScore": 1.241685345180272,
+              "gene": {
+                "name": "EREG",
+                "longName": "epiregulin",
+                "conceptId": "hgnc:3443",
+                "geneCategories": [
+                  {
+                    "name": "DRUGGABLE GENOME"
+                  },
+                  {
+                    "name": "GROWTH FACTOR"
+                  },
+                  {
+                    "name": "KINASE"
+                  }
+                ]
+              },
+              "interactionScore": 0.921187214661307,
               "interactionClaims": [
                 {
                   "publications": [
@@ -71,26 +76,14 @@
               ]
             },
             {
-              "interactionAttributes": [],
-              "drug": {
-                "name": "PANITUMUMAB",
-                "approved": true
-              },
-              "interactionScore": 0.6208426725901364,
-              "interactionClaims": [
-                {
-                  "publications": [],
-                  "source": {
-                    "sourceDbName": "CIViC"
-                  }
-                }
-              ]
-            },
-            {
               "interactionAttributes": [
                 {
                   "name": "Mechanism of Action",
-                  "value": "Proepiregulin inhibitor"
+                  "value": "Inhibition"
+                },
+                {
+                  "name": "Endogenous Drug",
+                  "value": "false"
                 },
                 {
                   "name": "Direct Interaction",
@@ -98,15 +91,140 @@
                 }
               ],
               "drug": {
-                "name": "FEPIXNEBART",
+                "name": "E6201",
+                "conceptId": "iuphar.ligand:7836",
                 "approved": false
               },
-              "interactionScore": 5.898005389606295,
+              "gene": {
+                "name": "EREG",
+                "longName": "epiregulin",
+                "conceptId": "hgnc:3443",
+                "geneCategories": [
+                  {
+                    "name": "DRUGGABLE GENOME"
+                  },
+                  {
+                    "name": "GROWTH FACTOR"
+                  },
+                  {
+                    "name": "KINASE"
+                  }
+                ]
+              },
+              "interactionScore": 1.250182648468916,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "GuideToPharmacology"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [
+                {
+                  "name": "Direct Interaction",
+                  "value": "true"
+                },
+                {
+                  "name": "Mechanism of Action",
+                  "value": "Proepiregulin inhibitor"
+                }
+              ],
+              "drug": {
+                "name": "FEPIXNEBART",
+                "conceptId": "ncit:C188574",
+                "approved": false
+              },
+              "gene": {
+                "name": "EREG",
+                "longName": "epiregulin",
+                "conceptId": "hgnc:3443",
+                "geneCategories": [
+                  {
+                    "name": "DRUGGABLE GENOME"
+                  },
+                  {
+                    "name": "GROWTH FACTOR"
+                  },
+                  {
+                    "name": "KINASE"
+                  }
+                ]
+              },
+              "interactionScore": 4.375639269641208,
               "interactionClaims": [
                 {
                   "publications": [],
                   "source": {
                     "sourceDbName": "ChEMBL"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "drug": {
+                "name": "FEPIXNEBART",
+                "conceptId": "chembl:CHEMBL4594573",
+                "approved": false
+              },
+              "gene": {
+                "name": "EREG",
+                "longName": "epiregulin",
+                "conceptId": "hgnc:3443",
+                "geneCategories": [
+                  {
+                    "name": "DRUGGABLE GENOME"
+                  },
+                  {
+                    "name": "GROWTH FACTOR"
+                  },
+                  {
+                    "name": "KINASE"
+                  }
+                ]
+              },
+              "interactionScore": 4.375639269641208,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "TTD"
+                  }
+                }
+              ]
+            },
+            {
+              "interactionAttributes": [],
+              "drug": {
+                "name": "PANITUMUMAB",
+                "conceptId": "rxcui:263034",
+                "approved": true
+              },
+              "gene": {
+                "name": "EREG",
+                "longName": "epiregulin",
+                "conceptId": "hgnc:3443",
+                "geneCategories": [
+                  {
+                    "name": "DRUGGABLE GENOME"
+                  },
+                  {
+                    "name": "GROWTH FACTOR"
+                  },
+                  {
+                    "name": "KINASE"
+                  }
+                ]
+              },
+              "interactionScore": 0.4375639269641209,
+              "interactionClaims": [
+                {
+                  "publications": [],
+                  "source": {
+                    "sourceDbName": "CIViC"
                   }
                 }
               ]

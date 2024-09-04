@@ -25,7 +25,6 @@ query getInteractionsByGene(
           name
           longName
           conceptId
-
           geneCategories {
             name
           }

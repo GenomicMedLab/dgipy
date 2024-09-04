@@ -28,30 +28,30 @@ def test_get_drugs(fixtures_dir: Path, set_up_graphql_mock: Callable):
         set_up_graphql_mock(m, json_response)
 
         results = get_drug(["Imatinib"])
-        assert len(results["name"]), "DataFrame is non-empty"
+        assert len(results["drug_name"]), "DataFrame is non-empty"
 
         results_with_added_fake = get_drug(["imatinib", "not-real"])
-        assert len(results_with_added_fake["name"]) == len(
-            results["name"]
+        assert len(results_with_added_fake["drug_name"]) == len(
+            results["drug_name"]
         ), "Gracefully ignore non-existent search terms"
 
         # handling filters
         filtered_results = get_drug(["imatinib", "metronidazole"], antineoplastic=True)
-        assert len(filtered_results["name"]) == 1, "Metronidazole is filtered out"
+        assert len(filtered_results["drug_name"]) == 1, "Metronidazole is filtered out"
         assert (
-            filtered_results["name"][0] == "IMATINIB"
+            filtered_results["drug_name"][0] == "IMATINIB"
         ), "Imatinib is retained by the filter"
         assert all(results["antineoplastic"]), "All results are antineoplastics"
 
         set_up_graphql_mock(m, filtered_json_response)
         filtered_results = get_drug(["imatinib", "metronidazole"], antineoplastic=False)
-        assert len(filtered_results["name"]), "DataFrame is non-empty"
-        assert "METRONIDAZOLE" in filtered_results["name"]
+        assert len(filtered_results["drug_name"]), "DataFrame is non-empty"
+        assert "METRONIDAZOLE" in filtered_results["drug_name"]
 
         # empty response
         set_up_graphql_mock(m, StringIO('{"data": {"drugs": {"nodes": []}}}'))
         empty_results = get_drug("not-real")
-        assert len(empty_results["name"]) == 0, "Handles empty response"
+        assert len(empty_results["drug_name"]) == 0, "Handles empty response"
 
 
 def test_get_genes(fixtures_dir: Path, set_up_graphql_mock: Callable):
@@ -62,17 +62,17 @@ def test_get_genes(fixtures_dir: Path, set_up_graphql_mock: Callable):
         set_up_graphql_mock(m, json_response)
 
         results = get_gene(["ereg"])
-        assert len(results["name"]), "DataFrame is non-empty"
+        assert len(results["gene_name"]), "DataFrame is non-empty"
 
         results_with_added_fake = get_gene(["ereg", "not-real"])
-        assert len(results_with_added_fake["name"]) == len(
-            results["name"]
+        assert len(results_with_added_fake["gene_name"]) == len(
+            results["gene_name"]
         ), "Gracefully ignore non-existent search terms"
 
         # empty response
         set_up_graphql_mock(m, StringIO('{"data": {"genes": {"nodes": []}}}'))
         empty_results = get_gene("not-real")
-        assert len(empty_results["name"]) == 0, "Handles empty response"
+        assert len(empty_results["gene_name"]) == 0, "Handles empty response"
 
 
 def test_get_interactions_by_genes(fixtures_dir: Path, set_up_graphql_mock: Callable):
@@ -144,7 +144,7 @@ def test_get_categories(fixtures_dir: Path, set_up_graphql_mock: Callable):
     ):
         set_up_graphql_mock(m, categories_response)
         results = get_categories(["BRAF"])
-        assert len(results["gene"]), "Results are non-empty"
+        assert len(results["gene_name"]), "Results are non-empty"
         assert "DRUG RESISTANCE" in results["category"]
         assert "DRUGGABLE GENOME" in results["category"]
         assert "CLINICALLY ACTIONABLE" in results["category"]
@@ -161,12 +161,12 @@ def test_get_sources(fixtures_dir: Path, set_up_graphql_mock: Callable):
         set_up_graphql_mock(m, sources_response)
         results = get_source()
         assert (
-            len(results["name"]) == 45
+            len(results["source_name"]) == 45
         ), f"Incorrect # of sources: {len(results['name'])}"
 
         set_up_graphql_mock(m, filtered_sources_response)
         results = get_source(SourceType.GENE)
-        sources = results["name"]
+        sources = results["source_name"]
         assert len(sources) == 3, f"Incorrect # of sources: {len(sources)}"
         assert set(sources) == {
             "NCBI Gene",
@@ -186,7 +186,7 @@ def test_get_gene_list(fixtures_dir: Path, set_up_graphql_mock: Callable):
         set_up_graphql_mock(m, gene_list_response)
 
         results = get_gene_list()
-        assert len(results["name"]) == 9
+        assert len(results["gene_name"]) == 9
 
 
 def test_get_drug_applications(fixtures_dir, set_up_graphql_mock: Callable):
@@ -205,7 +205,7 @@ def test_get_drug_applications(fixtures_dir, set_up_graphql_mock: Callable):
             text=drugsatfda_response.read(),
         )
         results = get_drug_applications(["DAROLUTAMIDE"])
-        assert len(results["name"]) == 1
+        assert len(results["drug_name"]) == 1
         assert results["brand_name"][0] == "NUBEQA"
         assert results["dosage_strength"][0] == "300MG"
         assert results["marketing_status"][0] == "Prescription"
