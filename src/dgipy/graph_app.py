@@ -25,18 +25,18 @@ def generate_app() -> dash.Dash:
 
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-    __set_app_layout(app)
-    __update_plotly(app)
-    __update_terms_dropdown(app, genes, drugs)
-    __update_selected_node(app)
-    __update_selected_node_text(app)
-    __update_neighbors_dropdown(app)
-    __update_edge_info(app)
+    _set_app_layout(app)
+    _update_plotly(app)
+    _update_terms_dropdown(app, genes, drugs)
+    _update_selected_node(app)
+    _update_selected_node_text(app)
+    _update_neighbors_dropdown(app)
+    _update_edge_info(app)
 
     return app
 
 
-def __set_app_layout(app: dash.Dash) -> None:
+def _set_app_layout(app: dash.Dash) -> None:
     plotly_figure = dcc.Graph(
         id="plotly-figure", style={"width": "100%", "height": "800px"}
     )
@@ -119,7 +119,7 @@ def __set_app_layout(app: dash.Dash) -> None:
     )
 
 
-def __update_plotly(app: dash.Dash) -> None:
+def _update_plotly(app: dash.Dash) -> None:
     @app.callback(
         [Output("graph", "data"), Output("plotly-figure", "figure")],
         Input("terms-dropdown", "value"),
@@ -136,7 +136,7 @@ def __update_plotly(app: dash.Dash) -> None:
         return None, ng.generate_plotly(None)
 
 
-def __update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
+def _update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
     @app.callback(
         Output("terms-dropdown", "options"),
         Input("search-mode", "value"),
@@ -149,7 +149,7 @@ def __update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
         return None
 
 
-def __update_selected_node(app: dash.Dash) -> None:
+def _update_selected_node(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-node", "data"),
         [Input("plotly-figure", "clickData"), Input("terms-dropdown", "value")],
@@ -165,7 +165,7 @@ def __update_selected_node(app: dash.Dash) -> None:
         return dash.no_update
 
 
-def __update_selected_node_text(app: dash.Dash) -> None:
+def _update_selected_node_text(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-node-text", "children"), Input("selected-node", "data")
     )
@@ -175,7 +175,7 @@ def __update_selected_node_text(app: dash.Dash) -> None:
         return "No Node Selected"
 
 
-def __update_neighbors_dropdown(app: dash.Dash) -> None:
+def _update_neighbors_dropdown(app: dash.Dash) -> None:
     @app.callback(
         [
             Output("neighbors-dropdown", "options"),
@@ -189,7 +189,7 @@ def __update_neighbors_dropdown(app: dash.Dash) -> None:
         return [], None
 
 
-def __update_edge_info(app: dash.Dash) -> None:
+def _update_edge_info(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-edge-info", "children"),
         [Input("selected-node", "data"), Input("neighbors-dropdown", "value")],
@@ -203,7 +203,7 @@ def __update_edge_info(app: dash.Dash) -> None:
         if selected_node == "":
             return "No Edge Selected"
         if selected_node["curveNumber"] == 1:
-            selected_data = __get_node_data_from_id(
+            selected_data = _get_node_data_from_id(
                 graph["links"], selected_node["text"]
             )
             return (
@@ -222,10 +222,10 @@ def __update_edge_info(app: dash.Dash) -> None:
             )
         if selected_neighbor is not None:
             edge_node_id = None
-            selected_node_is_gene = __get_node_data_from_id(
+            selected_node_is_gene = _get_node_data_from_id(
                 graph["nodes"], selected_node["text"]
             )["isGene"]
-            selected_neighbor_is_gene = __get_node_data_from_id(
+            selected_neighbor_is_gene = _get_node_data_from_id(
                 graph["nodes"], selected_neighbor
             )["isGene"]
             if selected_node_is_gene == selected_neighbor_is_gene:
@@ -234,7 +234,7 @@ def __update_edge_info(app: dash.Dash) -> None:
                 edge_node_id = selected_node["text"] + " - " + selected_neighbor
             elif selected_neighbor_is_gene:
                 edge_node_id = selected_neighbor + " - " + selected_node["text"]
-            selected_data = __get_node_data_from_id(graph["links"], edge_node_id)
+            selected_data = _get_node_data_from_id(graph["links"], edge_node_id)
             if selected_data is None:
                 return dash.no_update
             return (
@@ -254,7 +254,7 @@ def __update_edge_info(app: dash.Dash) -> None:
         return "No Edge Selected"
 
 
-def __get_node_data_from_id(nodes: list, node_id: str) -> dict | None:
+def _get_node_data_from_id(nodes: list, node_id: str) -> dict | None:
     for node in nodes:
         if node["id"] == node_id:
             return node
