@@ -45,23 +45,20 @@ def _backfill_dicts(col: list[dict]) -> list[dict]:
     return [{key: cell.get(key) for key in keys} for cell in col]
 
 
-def get_drug(
-    terms: list | str,
+def get_drugs(
+    terms: list,
     immunotherapy: bool | None = None,
     antineoplastic: bool | None = None,
     api_url: str | None = None,
 ) -> dict:
     """Perform a record look up in DGIdb for a drug of interest
 
-    :param terms: drug or drugs for record lookup
+    :param terms: drugs for record lookup
     :param immunotherapy: filter option for results that are only immunotherapy
     :param antineoplastic: filter option for results that see antineoplastic use
     :param api_url: API endpoint for GraphQL request
     :return: drug data
     """
-    if isinstance(terms, str):
-        terms = [terms]
-
     params: dict[str, bool | list] = {"names": terms}
     if immunotherapy is not None:
         params["immunotherapy"] = immunotherapy
@@ -104,16 +101,13 @@ def get_drug(
     return output
 
 
-def get_gene(terms: list | str, api_url: str | None = None) -> dict:
-    """Perform a record look up in DGIdb for a gene of interest
+def get_genes(terms: list, api_url: str | None = None) -> dict:
+    """Perform a record look up in DGIdb for genes of interest
 
-    :param terms: gene or genes for record lookup
+    :param terms: genes for record lookup
     :param api_url: API endpoint for GraphQL request
     :return: gene data
     """
-    if isinstance(terms, str):
-        terms = [terms]
-
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
     result = client.execute(queries.get_genes.query, variable_values={"names": terms})
@@ -134,7 +128,7 @@ def get_gene(terms: list | str, api_url: str | None = None) -> dict:
 
 
 def get_interactions(
-    terms: list | str,
+    terms: list,
     search: str = "genes",
     immunotherapy: bool | None = None,
     antineoplastic: bool | None = None,
@@ -157,8 +151,6 @@ def get_interactions(
     :param api_url: API endpoint for GraphQL request
     :return: interaction results for terms
     """
-    if isinstance(terms, str):
-        terms = [terms]
     params: dict[str, str | int | bool | list[str]] = {"names": terms}
     if immunotherapy is not None:
         params["immunotherapy"] = immunotherapy
@@ -220,16 +212,13 @@ def get_interactions(
     return output
 
 
-def get_categories(terms: list | str, api_url: str | None = None) -> dict:
+def get_categories(terms: list, api_url: str | None = None) -> dict:
     """Perform a category annotation lookup for genes of interest
 
     :param terms: Genes of interest for annotations
     :param api_url: API endpoint for GraphQL request
     :return: category annotation results for genes
     """
-    if isinstance(terms, str):
-        terms = [terms]
-
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
     results = client.execute(
@@ -264,7 +253,7 @@ class SourceType(str, Enum):
     POTENTIALLY_DRUGGABLE = "potentially_druggable"
 
 
-def get_source(
+def get_sources(
     source_type: SourceType | None = None, api_url: str | None = None
 ) -> dict:
     """Perform a source lookup for relevant aggregate sources
@@ -304,7 +293,7 @@ def get_source(
     return output
 
 
-def get_gene_list(api_url: str | None = None) -> dict:
+def get_all_genes(api_url: str | None = None) -> dict:
     """Get all gene names present in DGIdb
 
     :param api_url: API endpoint for GraphQL request
@@ -320,7 +309,7 @@ def get_gene_list(api_url: str | None = None) -> dict:
     return genes
 
 
-def get_drug_list(api_url: str | None = None) -> dict:
+def get_all_drugs(api_url: str | None = None) -> dict:
     """Get all drug names present in DGIdb
 
     :param api_url: API endpoint for GraphQL request
@@ -356,16 +345,13 @@ def _get_openfda_data(app_no: str) -> list[tuple]:
     ]
 
 
-def get_drug_applications(terms: list | str, api_url: str | None = None) -> dict:
+def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
     """Perform a look up for ANDA/NDA applications for drug or drugs of interest
 
-    :param terms: drug or drugs of interest
+    :param terms: drugs of interest
     :param api_url: API endpoint for GraphQL request
     :return: all ANDA/NDA applications for drugs of interest
     """
-    if isinstance(terms, str):
-        terms = [terms]
-
     api_url = api_url if api_url else API_ENDPOINT_URL
     client = _get_client(api_url)
     results = client.execute(
@@ -403,18 +389,13 @@ def get_drug_applications(terms: list | str, api_url: str | None = None) -> dict
     return output
 
 
-def get_clinical_trials(
-    terms: str | list,
-) -> dict:
+def get_clinical_trials(terms: list) -> dict:
     """Perform a look up for clinical trials data for drug or drugs of interest
 
-    :param terms: drug or drugs of interest
+    :param terms: drugs of interest
     :return: all clinical trials data for drugs of interest in a DataFrame
     """
     base_url = "https://clinicaltrials.gov/api/v2/studies?format=json"
-
-    if isinstance(terms, str):
-        terms = [terms]
 
     output = {
         "search_term": [],

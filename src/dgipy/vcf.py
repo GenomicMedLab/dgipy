@@ -42,7 +42,7 @@ class GeneResult:
                 list(self.interactions["drug"].values)
             )
 
-        self.gene_info = dgipy.get_gene(self.gene)
+        self.gene_info = dgipy.get_genes(self.gene)
         self.categories = dgipy.get_categories(self.gene)
 
 
