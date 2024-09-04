@@ -15,11 +15,11 @@ def generate_app() -> dash.Dash:
     :return: a python dash app that can be run with run_server()
     """
     genes = [
-        {"label": gene["name"], "value": gene["name"]}
+        {"label": gene["gene_name"], "value": gene["gene_name"]}
         for gene in make_tabular(dgidb.get_gene_list())
     ]
     drugs = [
-        {"label": drug["name"], "value": drug["name"]}
+        {"label": drug["drug_name"], "value": drug["drug_name"]}
         for drug in make_tabular(dgidb.get_drug_list())
     ]
 
