@@ -66,6 +66,18 @@ def _get_interaction_edges(query_result: dict) -> list[tuple[str, str, dict]]:
     return edges
 
 
+def _get_gene_category_entities(
+    query_result: dict,
+) -> tuple[list[tuple[str, dict]], list[tuple[str, str, dict]]]:
+    if "gene_cateogory" not in query_result:
+        return [], []
+    nodes = []
+    edges = []
+    # for row in make_tabular(query_result)
+
+    return nodes, edges
+
+
 def to_network(query_result: dict) -> nx.Graph:
     """Construct a networkx graph from a DGIpy query result.
 
@@ -77,8 +89,8 @@ def to_network(query_result: dict) -> nx.Graph:
     graph.add_nodes_from(_get_gene_node_inputs(query_result))
     graph.add_nodes_from(_get_drug_node_inputs(query_result))
     graph.add_edges_from(_get_interaction_edges(query_result))
-    # gene_cat_nodes, gene_cat_edges = _get_gene_category_entities(query_result)
-    # graph.add_nodes_from(gene_cat_nodes)
-    # graph.add_edges_from(gene_cat_edges)
+    gene_cat_nodes, gene_cat_edges = _get_gene_category_entities(query_result)
+    graph.add_nodes_from(gene_cat_nodes)
+    graph.add_edges_from(gene_cat_edges)
 
     return graph
