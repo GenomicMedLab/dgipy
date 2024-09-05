@@ -73,8 +73,12 @@ def to_network(query_result: dict) -> nx.Graph:
     other stuff = add as attributes
     """
     graph = nx.Graph()
+
     graph.add_nodes_from(_get_gene_node_inputs(query_result))
     graph.add_nodes_from(_get_drug_node_inputs(query_result))
     graph.add_edges_from(_get_interaction_edges(query_result))
+    # gene_cat_nodes, gene_cat_edges = _get_gene_category_entities(query_result)
+    # graph.add_nodes_from(gene_cat_nodes)
+    # graph.add_edges_from(gene_cat_edges)
 
     return graph
