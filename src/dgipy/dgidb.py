@@ -74,27 +74,27 @@ def get_drugs(
         "drug_concept_id": [],
         "drug_aliases": [],
         "drug_attributes": [],
-        "antineoplastic": [],
-        "immunotherapy": [],
-        "approved": [],
-        "approval_ratings": [],
-        "fda_applications": [],
+        "drug_is_antineoplastic": [],
+        "drug_is_immunotherapy": [],
+        "drug_is_approved": [],
+        "drug_approval_ratings": [],
+        "drug_fda_applications": [],
     }
     for match in result["drugs"]["nodes"]:
         output["drug_name"].append(match["name"])
         output["drug_concept_id"].append(match["conceptId"])
         output["drug_aliases"].append([a["alias"] for a in match["drugAliases"]])
         output["drug_attributes"].append(_group_attributes(match["drugAttributes"]))
-        output["antineoplastic"].append(match["antiNeoplastic"])
-        output["immunotherapy"].append(match["immunotherapy"])
-        output["approved"].append(match["approved"])
-        output["approval_ratings"].append(
+        output["drug_is_antineoplastic"].append(match["antiNeoplastic"])
+        output["drug_is_immunotherapy"].append(match["immunotherapy"])
+        output["drug_is_approved"].append(match["approved"])
+        output["drug_approval_ratings"].append(
             [
                 {"rating": r["rating"], "source": r["source"]["sourceDbName"]}
                 for r in match["drugApprovalRatings"]
             ]
         )
-        output["fda_applications"].append(
+        output["drug_fda_applications"].append(
             [app["appNo"] for app in match["drugApplications"]]
         )
     output["drug_attributes"] = _backfill_dicts(output["drug_attributes"])
@@ -186,8 +186,8 @@ def get_interactions(
         "drug_approved": [],
         "interaction_score": [],
         "interaction_attributes": [],
-        "sources": [],
-        "pmids": [],
+        "interaction_sources": [],
+        "interaction_pmids": [],
     }
     for result in results:
         for interaction in result["interactions"]:
@@ -206,8 +206,8 @@ def get_interactions(
             for claim in interaction["interactionClaims"]:
                 sources.append(claim["source"]["sourceDbName"])
                 pubs += [p["pmid"] for p in claim["publications"]]
-            output["pmids"].append(pubs)
-            output["sources"].append(sources)
+            output["interaction_pmids"].append(pubs)
+            output["interaction_sources"].append(sources)
     output["interaction_attributes"] = _backfill_dicts(output["interaction_attributes"])
     return output
 
@@ -228,8 +228,8 @@ def get_categories(terms: list, api_url: str | None = None) -> dict:
         "gene_name": [],
         "gene_concept_id": [],
         "gene_full_name": [],
-        "category": [],
-        "sources": [],
+        "gene_category": [],
+        "gene_category_sources": [],
     }
     for result in results["genes"]["nodes"]:
         name = result["name"]
@@ -239,8 +239,8 @@ def get_categories(terms: list, api_url: str | None = None) -> dict:
             output["gene_name"].append(name)
             output["gene_concept_id"].append(concept_id)
             output["gene_full_name"].append(long_name)
-            output["category"].append(cat["name"])
-            output["sources"].append(cat["sourceNames"])
+            output["gene_category"].append(cat["name"])
+            output["gene_category_sources"].append(cat["sourceNames"])
     return output
 
 
@@ -274,22 +274,22 @@ def get_sources(
     output = {
         "source_name": [],
         "source_short_name": [],
-        "version": [],
-        "drug_claims": [],
-        "gene_claims": [],
-        "interaction_claims": [],
-        "license": [],
-        "license_url": [],
+        "source_version": [],
+        "source_drug_claims": [],
+        "source_gene_claims": [],
+        "source_interaction_claims": [],
+        "source_license": [],
+        "source_license_url": [],
     }
     for result in results["sources"]["nodes"]:
         output["source_name"].append(result["fullName"])
         output["source_short_name"].append(result["sourceDbName"])
-        output["version"].append(result["sourceDbVersion"])
-        output["drug_claims"].append(result["drugClaimsCount"])
-        output["gene_claims"].append(result["geneClaimsCount"])
-        output["interaction_claims"].append(result["interactionClaimsCount"])
-        output["license"].append(result["license"])
-        output["license_url"].append(result["licenseLink"])
+        output["source_version"].append(result["sourceDbVersion"])
+        output["source_drug_claims"].append(result["drugClaimsCount"])
+        output["source_gene_claims"].append(result["geneClaimsCount"])
+        output["source_interaction_claims"].append(result["interactionClaimsCount"])
+        output["source_license"].append(result["license"])
+        output["source_license_url"].append(result["licenseLink"])
     return output
 
 
@@ -360,11 +360,11 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
     output = {
         "drug_name": [],
         "drug_concept_id": [],
-        "application": [],
-        "brand_name": [],
-        "marketing_status": [],
-        "dosage_form": [],
-        "dosage_strength": [],
+        "drug_product_application": [],
+        "drug_brand_name": [],
+        "drug_marketing_status": [],
+        "drug_dosage_form": [],
+        "drug_dosage_strength": [],
     }
 
     for result in results["drugs"]["nodes"]:
@@ -380,11 +380,11 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
             ) in _get_openfda_data(application_number):
                 output["drug_name"].append(name)
                 output["drug_concept_id"].append(concept_id)
-                output["application"].append(application_number)
-                output["brand_name"].append(brand_name)
-                output["marketing_status"].append(marketing_status)
-                output["dosage_form"].append(dosage_form)
-                output["dosage_strength"].append(dosage_strength)
+                output["drug_product_application"].append(application_number)
+                output["drug_brand_name"].append(brand_name)
+                output["drug_marketing_status"].append(marketing_status)
+                output["drug_dosage_form"].append(dosage_form)
+                output["drug_dosage_strength"].append(dosage_strength)
 
     return output
 

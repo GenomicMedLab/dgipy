@@ -41,7 +41,7 @@ def test_get_drugs(fixtures_dir: Path, set_up_graphql_mock: Callable):
         assert (
             filtered_results["drug_name"][0] == "IMATINIB"
         ), "Imatinib is retained by the filter"
-        assert all(results["antineoplastic"]), "All results are antineoplastics"
+        assert all(results["drug_is_antineoplastic"]), "All results are antineoplastics"
 
         set_up_graphql_mock(m, filtered_json_response)
         filtered_results = get_drugs(
@@ -147,9 +147,9 @@ def test_get_categories(fixtures_dir: Path, set_up_graphql_mock: Callable):
         set_up_graphql_mock(m, categories_response)
         results = get_categories(["BRAF"])
         assert len(results["gene_name"]), "Results are non-empty"
-        assert "DRUG RESISTANCE" in results["category"]
-        assert "DRUGGABLE GENOME" in results["category"]
-        assert "CLINICALLY ACTIONABLE" in results["category"]
+        assert "DRUG RESISTANCE" in results["gene_category"]
+        assert "DRUGGABLE GENOME" in results["gene_category"]
+        assert "CLINICALLY ACTIONABLE" in results["gene_category"]
 
 
 def test_get_sources(fixtures_dir: Path, set_up_graphql_mock: Callable):
@@ -208,10 +208,10 @@ def test_get_drug_applications(fixtures_dir, set_up_graphql_mock: Callable):
         )
         results = get_drug_applications(["DAROLUTAMIDE"])
         assert len(results["drug_name"]) == 1
-        assert results["brand_name"][0] == "NUBEQA"
-        assert results["dosage_strength"][0] == "300MG"
-        assert results["marketing_status"][0] == "Prescription"
-        assert results["dosage_form"][0] == "TABLET"
+        assert results["drug_brand_name"][0] == "NUBEQA"
+        assert results["drug_dosage_strength"][0] == "300MG"
+        assert results["drug_marketing_status"][0] == "Prescription"
+        assert results["drug_dosage_form"][0] == "TABLET"
 
 
 @pytest.mark.performance()
