@@ -16,9 +16,7 @@ def _get_gene_nodes(result_table: list[dict]) -> list[tuple[str, dict]]:
             {
                 k[5:]: v
                 for k, v in row.items()
-                if k.startswith("gene_")
-                and not k.startswith("gene_concept_id")
-                and not k.startswith("gene_category")
+                if k.startswith("gene_") and not k.startswith("gene_concept_id")
             }
         )
         nodes.append((row["gene_concept_id"], node_attrs))
@@ -60,29 +58,6 @@ def _get_interaction_edges(result_table: list[dict]) -> list[tuple[str, str, dic
     return edges
 
 
-def _get_gene_category_entities(
-    result_table: list[dict],
-) -> tuple[list[tuple[str, dict]], list[tuple[str, str, dict]]]:
-    if result_table and "gene_category" not in result_table[0]:
-        return [], []
-
-    nodes = []
-    edges = []
-    for row in result_table:
-        nodes.append((row["gene_category"], {"type": "gene_category"}))
-        edges.append(
-            (
-                row["gene_concept_id"],
-                row["gene_category"],
-                {
-                    "type": "gene_has_gene_category",
-                    "sources": row["gene_category_sources"],
-                },
-            )
-        )
-    return nodes, edges
-
-
 def construct_graph(query_result: dict) -> nx.Graph:
     """Construct a NetworkX graph from a DGIpy query result (i.e., a columnar dict).
 
@@ -105,8 +80,5 @@ def construct_graph(query_result: dict) -> nx.Graph:
     graph.add_nodes_from(_get_gene_nodes(result_table))
     graph.add_nodes_from(_get_drug_nodes(result_table))
     graph.add_edges_from(_get_interaction_edges(result_table))
-    gene_cat_nodes, gene_cat_edges = _get_gene_category_entities(result_table)
-    graph.add_nodes_from(gene_cat_nodes)
-    graph.add_edges_from(gene_cat_edges)
 
     return graph
