@@ -20,39 +20,23 @@
             },
             {
               "name": "DRUG RESISTANCE",
-              "sourceNames": [
-                "CIViC",
-                "COSMIC"
-              ]
+              "sourceNames": ["CIViC", "COSMIC"]
             },
             {
               "name": "DRUGGABLE GENOME",
-              "sourceNames": [
-                "HingoraniCasas",
-                "HopkinsGroom",
-                "RussLampel"
-              ]
+              "sourceNames": ["HingoraniCasas", "HopkinsGroom", "RussLampel"]
             },
             {
               "name": "ENZYME",
-              "sourceNames": [
-                "GuideToPharmacology"
-              ]
+              "sourceNames": ["GuideToPharmacology"]
             },
             {
               "name": "KINASE",
-              "sourceNames": [
-                "HopkinsGroom",
-                "Pharos",
-                "dGene"
-              ]
+              "sourceNames": ["HopkinsGroom", "Pharos", "dGene"]
             },
             {
               "name": "SERINE THREONINE KINASE",
-              "sourceNames": [
-                "GO",
-                "dGene"
-              ]
+              "sourceNames": ["GO", "dGene"]
             }
           ]
         }
