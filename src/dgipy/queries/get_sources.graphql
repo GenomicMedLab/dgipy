@@ -7,6 +7,8 @@ query getSources($sourceType: SourceTypeFilter) {
       drugClaimsCount
       geneClaimsCount
       interactionClaimsCount
+      license
+      licenseLink
     }
   }
 }

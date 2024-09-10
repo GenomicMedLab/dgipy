@@ -4,6 +4,7 @@
       "nodes": [
         {
           "name": "BRAF",
+          "conceptId": "hgnc:1097",
           "longName": "B-Raf proto-oncogene, serine/threonine kinase",
           "geneCategoriesWithSources": [
             {
@@ -30,6 +31,12 @@
                 "HingoraniCasas",
                 "HopkinsGroom",
                 "RussLampel"
+              ]
+            },
+            {
+              "name": "ENZYME",
+              "sourceNames": [
+                "GuideToPharmacology"
               ]
             },
             {

@@ -22,9 +22,9 @@ python3 -m pip install dgipy
 DGIpy is built around query methods that wrap a GraphQL client and fetch data from the public DGIdb API endpoint. By default, data returned in a columnar format (i.e., as a dictionary where keys are column names and values are lists representing column data).
 
 ```pycon
->>> from dgipy import get_drug
+>>> from dgipy import get_gene
 >>> results = get_gene(["BRAF"])
->>> results["name"][0], results["concept_id"][0], results["aliases"][0][:5]
+>>> results["gene_name"][0], results["gene_concept_id"][0], results["gene_aliases"][0][:5]
 ('BRAF', 'hgnc:1097', ['B-RAF PROTO-ONCOGENE, SERINE/THREONINE KINASE', 'BRAF1', 'BRAF-1', 'UCSC:UC003VWC.5', 'VEGA:OTTHUMG00000157457'])
 ```
 

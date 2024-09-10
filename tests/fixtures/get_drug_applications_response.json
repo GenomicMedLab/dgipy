@@ -4,6 +4,7 @@
       "nodes": [
         {
           "name": "DAROLUTAMIDE",
+          "conceptId": "rxcui:2180325",
           "drugApplications": [
             {
               "appNo": "drugsatfda.nda:212099"
