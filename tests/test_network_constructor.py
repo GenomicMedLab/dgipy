@@ -13,3 +13,8 @@ def test_construct(fixtures_dir: Path):
     graph = construct.construct_graph(results)
     assert len(graph.nodes) == 7
     assert len(graph.edges) == 6
+    assert graph.nodes["hgnc:3443"]["long_name"] == "epiregulin"
+    assert graph.nodes["ncit:C188574"]["approved"] is False
+    assert graph.edges[("hgnc:3443", "iuphar.ligand:7836")]["attributes"][
+        "Mechanism of Action"
+    ] == ["Inhibition"]
