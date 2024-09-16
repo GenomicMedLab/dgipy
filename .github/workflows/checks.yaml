@@ -20,7 +20,7 @@ jobs:
           python3 -m pip install ".[tests]"
 
       - name: Run tests
-        run: python3 -m pytest tests/test_dgidb.py
+        run: python3 -m pytest tests/test_dgidb.py tests/test_network_constructor.py
   lint:
     name: lint
     runs-on: ubuntu-latest

@@ -115,47 +115,19 @@
       "application_number": "NDA212099",
       "sponsor_name": "BAYER HEALTHCARE",
       "openfda": {
-        "application_number": [
-          "NDA212099"
-        ],
-        "brand_name": [
-          "NUBEQA"
-        ],
-        "generic_name": [
-          "DAROLUTAMIDE"
-        ],
-        "manufacturer_name": [
-          "Bayer HealthCare Pharmaceuticals Inc."
-        ],
-        "product_ndc": [
-          "50419-395"
-        ],
-        "product_type": [
-          "HUMAN PRESCRIPTION DRUG"
-        ],
-        "route": [
-          "ORAL"
-        ],
-        "substance_name": [
-          "DAROLUTAMIDE"
-        ],
-        "rxcui": [
-          "2180330",
-          "2180336"
-        ],
-        "spl_id": [
-          "78565601-df32-45a6-9d08-ac84738c8963"
-        ],
-        "spl_set_id": [
-          "1a7cb212-56e4-4b9d-a73d-bfee7fe4735e"
-        ],
-        "package_ndc": [
-          "50419-395-01",
-          "50419-395-72"
-        ],
-        "unii": [
-          "X05U0N2RCO"
-        ]
+        "application_number": ["NDA212099"],
+        "brand_name": ["NUBEQA"],
+        "generic_name": ["DAROLUTAMIDE"],
+        "manufacturer_name": ["Bayer HealthCare Pharmaceuticals Inc."],
+        "product_ndc": ["50419-395"],
+        "product_type": ["HUMAN PRESCRIPTION DRUG"],
+        "route": ["ORAL"],
+        "substance_name": ["DAROLUTAMIDE"],
+        "rxcui": ["2180330", "2180336"],
+        "spl_id": ["78565601-df32-45a6-9d08-ac84738c8963"],
+        "spl_set_id": ["1a7cb212-56e4-4b9d-a73d-bfee7fe4735e"],
+        "package_ndc": ["50419-395-01", "50419-395-72"],
+        "unii": ["X05U0N2RCO"]
       },
       "products": [
         {
