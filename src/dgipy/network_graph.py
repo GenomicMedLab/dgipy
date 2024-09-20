@@ -6,7 +6,7 @@ import pandas as pd
 LAYOUT_SEED = 7
 
 
-def _initalize_network(
+def initalize_network(
     interactions: pd.DataFrame, terms: list, search_mode: str
 ) -> nx.Graph:
     """Create a networkx graph representing interactions between genes and drugs
@@ -21,14 +21,14 @@ def _initalize_network(
 
     for index in interactions.index:
         if search_mode == "genes":
-            graphed_terms.add(interactions["gene"][index])
+            graphed_terms.add(interactions["gene_name"][index])
         if search_mode == "drugs":
-            graphed_terms.add(interactions["drug"][index])
+            graphed_terms.add(interactions["drug_name"][index])
         interactions_graph.add_node(
-            interactions["gene"][index], label=interactions["gene"][index], isGene=True
+            interactions["gene_name"][index], label=interactions["gene_name"][index], isGene=True
         )
         interactions_graph.add_node(
-            interactions["drug"][index], label=interactions["drug"][index], isGene=False
+            interactions["drug_name"][index], label=interactions["drug_name"][index], isGene=False
         )
         interactions_graph.add_edge(
             interactions["gene_name"][index],
@@ -48,7 +48,11 @@ def _initalize_network(
         if search_mode == "genes":
             interactions_graph.add_node(term, label=term, isGene=True)
         if search_mode == "drugs":
-            interactions_graph.add_node(term, isGene=False)
+            interactions_graph.add_node(term, label=term, isGene=False)
+
+    nx.set_node_attributes(
+        interactions_graph, dict(interactions_graph.degree()), "node_degree"
+    )
     return interactions_graph
 
 
@@ -100,7 +104,7 @@ def create_network(
     :param search_mode: String indicating whether query was gene-focused or drug-focused
     :return: a networkx graph of drug-gene interactions
     """
-    interactions_graph = _initalize_network(interactions, terms, search_mode)
+    interactions_graph = initalize_network(interactions, terms, search_mode)
     _add_node_attributes(interactions_graph, search_mode)
     return interactions_graph
 
