@@ -19,7 +19,7 @@ def initalize_network(
     interactions_graph = nx.Graph()
     graphed_terms = set()
 
-    for index in interactions.index:
+    for index in range(len(interactions["gene_name"])-1):
         if search_mode == "genes":
             graphed_terms.add(interactions["gene_name"][index])
         if search_mode == "drugs":
@@ -39,8 +39,8 @@ def initalize_network(
             approval=interactions["drug_approved"][index],
             score=interactions["interaction_score"][index],
             attributes=interactions["interaction_attributes"][index],
-            sourcedata=interactions["source"][index],
-            pmid=interactions["pmid"][index],
+            sourcedata=interactions["interaction_sources"][index],
+            pmid=interactions["interaction_pmids"][index],
         )
 
     graphed_terms = set(terms).difference(graphed_terms)
