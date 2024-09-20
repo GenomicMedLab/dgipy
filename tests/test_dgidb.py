@@ -2,7 +2,6 @@ from collections.abc import Callable
 from io import StringIO
 from pathlib import Path
 
-import pandas as pd
 import pytest
 import requests_mock
 
@@ -90,23 +89,22 @@ def test_get_interactions_by_genes(fixtures_dir: Path, set_up_graphql_mock: Call
     ):
         set_up_graphql_mock(m, genes_response)
         results = get_interactions(["ereg"])
-        assert isinstance(results, pd.DataFrame), "Results object is a DataFrame"
-        assert len(results), "Results are non-empty"
+        assert len(results["gene_name"]), "Results are non-empty"
 
         results = get_interactions(["ereg", "not-real"])
-        assert len(results), "Handles additional not-real terms gracefully"
+        assert len(results["gene_name"]), "Handles additional not-real terms gracefully"
 
         # multiple terms
         set_up_graphql_mock(m, multiple_genes_response)
         multiple_gene_results = get_interactions(["ereg", "braf"])
-        assert len(multiple_gene_results) > len(
-            results
+        assert len(multiple_gene_results["gene_name"]) > len(
+            results["gene_name"]
         ), "Handles multiple genes at once"
 
         # empty response
         set_up_graphql_mock(m, StringIO('{"data": {"genes": {"nodes": []}}}'))
         empty_results = get_interactions(["not-real"])
-        assert len(empty_results) == 0, "Handles empty response"
+        assert len(empty_results["gene_name"]) == 0, "Handles empty response"
 
 
 def test_get_interactions_by_drugs(fixtures_dir: Path, set_up_graphql_mock: Callable):
@@ -121,25 +119,24 @@ def test_get_interactions_by_drugs(fixtures_dir: Path, set_up_graphql_mock: Call
     ):
         set_up_graphql_mock(m, drugs_response)
         results = get_interactions(["sunitinib"], search="drugs")
-        assert isinstance(results, pd.DataFrame), "Results object is a DataFrame"
-        assert len(results), "Results are non-empty"
+        assert len(results["drug_name"]), "Results are non-empty"
 
         results = get_interactions(["sunitinib", "not-real"], search="drugs")
-        assert len(results), "Handles additional not-real terms gracefully"
+        assert len(results["drug_name"]), "Handles additional not-real terms gracefully"
 
         # multiple terms
         set_up_graphql_mock(m, multiple_drugs_response)
         multiple_gene_results = get_interactions(
             ["sunitinib", "clonazepam"], search="drugs"
         )
-        assert len(multiple_gene_results) > len(
-            results
+        assert len(multiple_gene_results["drug_name"]) > len(
+            results["drug_name"]
         ), "Handles multiple drugs at once"
 
         # empty response
         set_up_graphql_mock(m, StringIO('{"data": {"drugs": {"nodes": []}}}'))
         empty_results = get_interactions(["not-real"], search="drugs")
-        assert len(empty_results) == 0, "Handles empty response"
+        assert len(empty_results["drug_name"]) == 0, "Handles empty response"
 
 
 def test_get_categories(fixtures_dir: Path, set_up_graphql_mock: Callable):
@@ -173,9 +170,9 @@ def test_get_sources(fixtures_dir: Path, set_up_graphql_mock: Callable):
         results = get_sources(SourceType.GENE)
         sources = results["source_name"]
         assert len(sources) == 3, f"Incorrect # of sources: {len(sources)}"
-        assert {s["sourceDbName"] for s in sources} == {
-            "NCBI",
-            "HGNC",
+        assert set(sources) == {
+            "NCBI Gene",
+            "HUGO Gene Nomenclature Committee",
             "Ensembl",
         }, "Contains correct sources"
 
