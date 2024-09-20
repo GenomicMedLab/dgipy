@@ -19,16 +19,20 @@ def initalize_network(
     interactions_graph = nx.Graph()
     graphed_terms = set()
 
-    for index in range(len(interactions["gene_name"])-1):
+    for index in range(len(interactions["gene_name"]) - 1):
         if search_mode == "genes":
             graphed_terms.add(interactions["gene_name"][index])
         if search_mode == "drugs":
             graphed_terms.add(interactions["drug_name"][index])
         interactions_graph.add_node(
-            interactions["gene_name"][index], label=interactions["gene_name"][index], isGene=True
+            interactions["gene_name"][index],
+            label=interactions["gene_name"][index],
+            isGene=True,
         )
         interactions_graph.add_node(
-            interactions["drug_name"][index], label=interactions["drug_name"][index], isGene=False
+            interactions["drug_name"][index],
+            label=interactions["drug_name"][index],
+            isGene=False,
         )
         interactions_graph.add_edge(
             interactions["gene_name"][index],
