@@ -19,7 +19,7 @@ python3 -m pip install dgipy
 
 ## Usage
 
-Methods in `dgipy.dgidb` send pre-defined queries with user-supplied parameters to the DGIdb GraphQL API endpoint. Response objects can optionally be returned as Pandas dataframes for readability and ease of use, or retained as the raw GraphQL responses by setting the `use_pandas` argument to `False`.
+DGIpy is built around query methods that wrap a GraphQL client and fetch data from the public DGIdb API endpoint. By default, data returned in a columnar format (i.e., as a dictionary where keys are column names and values are lists representing column data).
 
 ```pycon
 >>> from dgipy import get_gene
