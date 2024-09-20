@@ -1,0 +1,81 @@
+{
+  "gene_name": ["EREG", "EREG", "EREG", "EREG", "EREG", "EREG"],
+  "gene_concept_id": [
+    "hgnc:3443",
+    "hgnc:3443",
+    "hgnc:3443",
+    "hgnc:3443",
+    "hgnc:3443",
+    "hgnc:3443"
+  ],
+  "gene_long_name": [
+    "epiregulin",
+    "epiregulin",
+    "epiregulin",
+    "epiregulin",
+    "epiregulin",
+    "epiregulin"
+  ],
+  "drug_name": [
+    "CETUXIMAB",
+    "HUMAN CHORIONIC GONADOTROPIN",
+    "E6201",
+    "FEPIXNEBART",
+    "FEPIXNEBART",
+    "PANITUMUMAB"
+  ],
+  "drug_concept_id": [
+    "rxcui:318341",
+    "rxcui:340705",
+    "iuphar.ligand:7836",
+    "ncit:C188574",
+    "chembl:CHEMBL4594573",
+    "rxcui:263034"
+  ],
+  "drug_approved": [true, true, false, false, false, true],
+  "interaction_score": [
+    0.2430910705356227, 0.921187214661307, 1.250182648468916, 4.375639269641208,
+    4.375639269641208, 0.4375639269641209
+  ],
+  "interaction_attributes": [
+    {
+      "Mechanism of Action": null,
+      "Direct Interaction": null,
+      "Endogenous Drug": null
+    },
+    {
+      "Mechanism of Action": null,
+      "Direct Interaction": null,
+      "Endogenous Drug": null
+    },
+    {
+      "Mechanism of Action": ["Inhibition"],
+      "Direct Interaction": ["true"],
+      "Endogenous Drug": ["false"]
+    },
+    {
+      "Mechanism of Action": ["Proepiregulin inhibitor"],
+      "Direct Interaction": ["true"],
+      "Endogenous Drug": null
+    },
+    {
+      "Mechanism of Action": null,
+      "Direct Interaction": null,
+      "Endogenous Drug": null
+    },
+    {
+      "Mechanism of Action": null,
+      "Direct Interaction": null,
+      "Endogenous Drug": null
+    }
+  ],
+  "interaction_sources": [
+    ["CIViC"],
+    ["NCI"],
+    ["GuideToPharmacology"],
+    ["ChEMBL"],
+    ["TTD"],
+    ["CIViC"]
+  ],
+  "interaction_pmids": [[], [16543407], [], [], [], []]
+}

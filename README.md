@@ -21,20 +21,32 @@ python3 -m pip install dgipy
 
 Methods in `dgipy.dgidb` send pre-defined queries with user-supplied parameters to the DGIdb GraphQL API endpoint. Response objects can optionally be returned as Pandas dataframes for readability and ease of use, or retained as the raw GraphQL responses by setting the `use_pandas` argument to `False`.
 
-```python
-from dgipy.dgidb import get_drug
-
-# get a dataframe including drug name, identifier/aliases, molecular attributes, and regulatory data
-response = get_drug(["sunitinib", "trastuzumab", "not-a-real-drug"])
-print(list(response["drug"].unique()))
-# ['BROMPHENIRAMINE MALEATE', 'SUNITINIB', 'BROMPHENIRAMINE']
-print(dict(response[["drug", "concept_id", "approved"]].iloc[0]))
-# {'drug': 'BROMPHENIRAMINE MALEATE',
-#  'concept_id': 'rxcui:142427',
-#  'approved': 'True'}
+```pycon
+>>> from dgipy import get_gene
+>>> results = get_gene(["BRAF"])
+>>> results["gene_name"][0], results["gene_concept_id"][0], results["gene_aliases"][0][:5]
+('BRAF', 'hgnc:1097', ['B-RAF PROTO-ONCOGENE, SERINE/THREONINE KINASE', 'BRAF1', 'BRAF-1', 'UCSC:UC003VWC.5', 'VEGA:OTTHUMG00000157457'])
 ```
 
-Similar methods are provided for looking up genes and drug-gene interactions.
+This orientation enables easy use within the dataframe library of your choosing:
+
+```pycon
+>>> import pandas as pd
+>>> pd.DataFrame(results)
+   name concept_id                                            aliases                                         attributes
+0  BRAF  hgnc:1097  [B-RAF PROTO-ONCOGENE, SERINE/THREONINE KINASE...  {'BRAF MUT': ['Reported Genome Event Targeted'...
+>>>
+>>> import polars as pl  # not included in DGIpy dependencies
+>>> pl.DataFrame(results)
+shape: (1, 4)
+┌──────┬────────────┬─────────────────────────────────┬─────────────────────────────────┐
+│ name ┆ concept_id ┆ aliases                         ┆ attributes                      │
+│ ---  ┆ ---        ┆ ---                             ┆ ---                             │
+│ str  ┆ str        ┆ list[str]                       ┆ struct[14]                      │
+╞══════╪════════════╪═════════════════════════════════╪═════════════════════════════════╡
+│ BRAF ┆ hgnc:1097  ┆ ["B-RAF PROTO-ONCOGENE, SERINE… ┆ {["0"],["Swiss-Prot"],["Report… │
+└──────┴────────────┴─────────────────────────────────┴─────────────────────────────────┘
+```
 
 ## Graph App
 

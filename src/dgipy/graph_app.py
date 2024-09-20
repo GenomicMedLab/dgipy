@@ -6,6 +6,7 @@ from dash import Input, Output, State, ctx, dash, dcc, html
 
 from dgipy import dgidb
 from dgipy import network_graph as ng
+from dgipy.data_utils import make_tabular
 
 
 def generate_app() -> dash.Dash:
@@ -14,26 +15,28 @@ def generate_app() -> dash.Dash:
     :return: a python dash app that can be run with run_server()
     """
     genes = [
-        {"label": gene["name"], "value": gene["name"]} for gene in dgidb.get_gene_list()
+        {"label": gene["gene_name"], "value": gene["gene_name"]}
+        for gene in make_tabular(dgidb.get_all_genes())
     ]
     drugs = [
-        {"label": drug["name"], "value": drug["name"]} for drug in dgidb.get_drug_list()
+        {"label": drug["drug_name"], "value": drug["drug_name"]}
+        for drug in make_tabular(dgidb.get_all_drugs())
     ]
 
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-    __set_app_layout(app)
-    __update_cytoscape(app)
-    __update_terms_dropdown(app, genes, drugs)
-    __update_selected_element(app)
-    __update_selected_element_text(app)
-    __update_neighbors_dropdown(app)
-    __update_edge_info(app)
+    _set_app_layout(app)
+    _update_cytoscape(app)
+    _update_terms_dropdown(app, genes, drugs)
+    _update_selected_element(app)
+    _update_selected_element_text(app)
+    _update_neighbors_dropdown(app)
+    _update_edge_info(app)
 
     return app
 
 
-def __set_app_layout(app: dash.Dash) -> None:
+def _set_app_layout(app: dash.Dash) -> None:
     cytoscape_figure = cyto.Cytoscape(
         id="cytoscape-figure",
         layout={"name": "preset"},
@@ -150,7 +153,7 @@ def __set_app_layout(app: dash.Dash) -> None:
     )
 
 
-def __update_cytoscape(app: dash.Dash) -> None:
+def _update_cytoscape(app: dash.Dash) -> None:
     @app.callback(
         Output("cytoscape-figure", "elements"),
         Input("terms-dropdown", "value"),
@@ -164,7 +167,7 @@ def __update_cytoscape(app: dash.Dash) -> None:
         return {}
 
 
-def __update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
+def _update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
     @app.callback(
         Output("terms-dropdown", "options"),
         Input("search-mode", "value"),
@@ -177,7 +180,7 @@ def __update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
         return None
 
 
-def __update_selected_element(app: dash.Dash) -> None:
+def _update_selected_element(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-element", "data"),
         [
@@ -202,7 +205,7 @@ def __update_selected_element(app: dash.Dash) -> None:
         return dash.no_update
 
 
-def __update_selected_element_text(app: dash.Dash) -> None:
+def _update_selected_element_text(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-element-text", "children"), Input("selected-element", "data")
     )
@@ -212,7 +215,7 @@ def __update_selected_element_text(app: dash.Dash) -> None:
         return "No Node Selected"
 
 
-def __update_neighbors_dropdown(app: dash.Dash) -> None:
+def _update_neighbors_dropdown(app: dash.Dash) -> None:
     @app.callback(
         [
             Output("neighbors-dropdown", "options"),
@@ -236,7 +239,7 @@ def __update_neighbors_dropdown(app: dash.Dash) -> None:
         return [], None
 
 
-def __update_edge_info(app: dash.Dash) -> None:
+def _update_edge_info(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-edge-info", "children"),
         [Input("selected-element", "data"), Input("neighbors-dropdown", "value")],
@@ -277,3 +280,10 @@ def __update_edge_info(app: dash.Dash) -> None:
                 + str(edge_info["pmid"])
             )
         return "No Edge Selected"
+
+
+def _get_node_data_from_id(nodes: list, node_id: str) -> dict | None:
+    for node in nodes:
+        if node["id"] == node_id:
+            return node
+    return None

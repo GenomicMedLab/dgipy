@@ -17,15 +17,24 @@ query getInteractionsByDrug(
     approved: $approved
   ) {
     nodes {
-      name
-      approved
       interactions {
         interactionAttributes {
           name
           value
         }
+        drug {
+          name
+          conceptId
+          approved
+        }
         gene {
           name
+          longName
+          conceptId
+
+          geneCategories {
+            name
+          }
         }
         interactionScore
         interactionClaims {
