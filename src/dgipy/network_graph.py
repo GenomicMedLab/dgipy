@@ -2,24 +2,38 @@
 
 import networkx as nx
 import pandas as pd
-import plotly.graph_objects as go
 
-PLOTLY_SEED = 7
+LAYOUT_SEED = 7
 
 
-def _initalize_network(
+def initalize_network(
     interactions: pd.DataFrame, terms: list, search_mode: str
 ) -> nx.Graph:
+    """Create a networkx graph representing interactions between genes and drugs
+
+    :param interactions: DataFrame containing drug-gene interaction data
+    :param terms: List containing terms used to query interaction data
+    :param search_mode: String indicating whether query was gene-focused or drug-focused
+    :return: a networkx graph of drug-gene interactions
+    """
     interactions_graph = nx.Graph()
     graphed_terms = set()
 
-    for index in interactions.index:
+    for index in range(len(interactions["gene_name"]) - 1):
         if search_mode == "genes":
             graphed_terms.add(interactions["gene_name"][index])
         if search_mode == "drugs":
             graphed_terms.add(interactions["drug_name"][index])
-        interactions_graph.add_node(interactions["gene_name"][index], isGene=True)
-        interactions_graph.add_node(interactions["drug_name"][index], isGene=False)
+        interactions_graph.add_node(
+            interactions["gene_name"][index],
+            label=interactions["gene_name"][index],
+            isGene=True,
+        )
+        interactions_graph.add_node(
+            interactions["drug_name"][index],
+            label=interactions["drug_name"][index],
+            isGene=False,
+        )
         interactions_graph.add_edge(
             interactions["gene_name"][index],
             interactions["drug_name"][index],
@@ -29,16 +43,20 @@ def _initalize_network(
             approval=interactions["drug_approved"][index],
             score=interactions["interaction_score"][index],
             attributes=interactions["interaction_attributes"][index],
-            source=interactions["sources"][index],
-            pmid=interactions["pmids"][index],
+            sourcedata=interactions["interaction_sources"][index],
+            pmid=interactions["interaction_pmids"][index],
         )
 
     graphed_terms = set(terms).difference(graphed_terms)
     for term in graphed_terms:
         if search_mode == "genes":
-            interactions_graph.add_node(term, isGene=True)
+            interactions_graph.add_node(term, label=term, isGene=True)
         if search_mode == "drugs":
-            interactions_graph.add_node(term, isGene=False)
+            interactions_graph.add_node(term, label=term, isGene=False)
+
+    nx.set_node_attributes(
+        interactions_graph, dict(interactions_graph.degree()), "node_degree"
+    )
     return interactions_graph
 
 
@@ -90,162 +108,25 @@ def create_network(
     :param search_mode: String indicating whether query was gene-focused or drug-focused
     :return: a networkx graph of drug-gene interactions
     """
-    interactions_graph = _initalize_network(interactions, terms, search_mode)
+    interactions_graph = initalize_network(interactions, terms, search_mode)
     _add_node_attributes(interactions_graph, search_mode)
     return interactions_graph
 
 
-def generate_plotly(graph: nx.Graph) -> go.Figure:
-    """Create a plotly graph representing interactions between genes and drugs
+def generate_cytoscape(graph: nx.Graph) -> dict:
+    """Create a cytoscape graph representing interactions between genes and drugs
 
-    :param graph: networkx graph to be formatted as a plotly graph
-    :return: a plotly graph of drug-gene interactions
+    :param graph: networkx graph to be formatted as a cytoscape graph
+    :return: a cytoscape graph of drug-gene interactions
     """
-    layout = go.Layout(
-        hovermode="closest",
-        xaxis={"showgrid": False, "zeroline": False, "showticklabels": False},
-        yaxis={"showgrid": False, "zeroline": False, "showticklabels": False},
-        showlegend=True,
-    )
-    fig = go.Figure(layout=layout)
-
-    if graph is not None:
-        pos = nx.spring_layout(graph, seed=PLOTLY_SEED)
-
-        trace_nodes = _create_trace_nodes(graph, pos)
-        trace_edges = _create_trace_edges(graph, pos)
-
-        fig.add_trace(trace_edges[0])
-        fig.add_trace(trace_edges[1])
-        for trace_group in trace_nodes:
-            fig.add_trace(trace_group)
-
-    return fig
-
-
-def _create_trace_nodes(graph: nx.Graph, pos: dict) -> list:
-    nodes_by_group = {
-        "cyan": {
-            "node_x": [],
-            "node_y": [],
-            "node_text": [],
-            "node_color": [],
-            "node_size": [],
-            "neighbors": [],
-            "legend_name": "multi-degree genes",
-        },
-        "orange": {
-            "node_x": [],
-            "node_y": [],
-            "node_text": [],
-            "node_color": [],
-            "node_size": [],
-            "neighbors": [],
-            "legend_name": "multi-degree drugs",
-        },
-        "red": {
-            "node_x": [],
-            "node_y": [],
-            "node_text": [],
-            "node_color": [],
-            "node_size": [],
-            "neighbors": [],
-            "legend_name": "single-degree drugs",
-        },
-        "blue": {
-            "node_x": [],
-            "node_y": [],
-            "node_text": [],
-            "node_color": [],
-            "node_size": [],
-            "neighbors": [],
-            "legend_name": "single-degree genes",
-        },
-    }
-
-    for node in graph.nodes():
-        node_color = graph.nodes[node]["node_color"]
-        node_size = graph.nodes[node]["node_size"]
-        x, y = pos[node]
-        nodes_by_group[node_color]["node_x"].append(x)
-        nodes_by_group[node_color]["node_y"].append(y)
-        nodes_by_group[node_color]["node_text"].append(str(node))
-        nodes_by_group[node_color]["node_color"].append(node_color)
-        nodes_by_group[node_color]["node_size"].append(node_size)
-        nodes_by_group[node_color]["neighbors"].append(list(graph.neighbors(node)))
-
-    trace_nodes = []
-
-    for _, node in nodes_by_group.items():  # noqa: PERF102
-        trace_group = go.Scatter(
-            x=node["node_x"],
-            y=node["node_y"],
-            mode="markers",
-            marker={
-                "symbol": "circle",
-                "size": node["node_size"],
-                "color": node["node_color"],
-            },
-            text=node["node_text"],
-            name=node["legend_name"],
-            customdata=node["neighbors"],
-            hoverinfo="text",
-            visible=True,
-            showlegend=True,
-        )
-        trace_nodes.append(trace_group)
-
-    return trace_nodes
-
-
-def _create_trace_edges(graph: nx.Graph, pos: dict) -> go.Scatter:
-    edge_x = []
-    edge_y = []
-
-    i_edge_x = []
-    i_edge_y = []
-    i_edge_id = []
-
-    for edge in graph.edges():
-        x0, y0 = pos[edge[0]]
-        x1, y1 = pos[edge[1]]
-        edge_x.append(x0)
-        edge_x.append(x1)
-        edge_x.append(None)
-        edge_y.append(y0)
-        edge_y.append(y1)
-        edge_y.append(None)
-
-        i_edge_x.append((x0 + x1) / 2)
-        i_edge_y.append((y0 + y1) / 2)
-        i_edge_id.append(graph.edges[edge]["id"])
-
-    trace_edges = go.Scatter(
-        x=edge_x,
-        y=edge_y,
-        mode="lines",
-        line={"width": 0.5, "color": "gray"},
-        hoverinfo="none",
-        showlegend=False,
-    )
-
-    i_trace_edges = go.Scatter(
-        x=i_edge_x,
-        y=i_edge_y,
-        mode="markers",
-        marker_size=0.5,
-        text=i_edge_id,
-        hoverinfo="text",
-        showlegend=False,
-    )
-
-    return trace_edges, i_trace_edges
-
-
-def generate_json(graph: nx.Graph) -> dict:
-    """Generate a JSON representation of a networkx graph
-
-    :param graph: networkx graph to be formatted as a JSON
-    :return: a dictionary representing the JSON data of the graph
-    """
-    return nx.node_link_data(graph)
+    pos = nx.spring_layout(graph, seed=LAYOUT_SEED, scale=4000)
+    cytoscape_data = nx.cytoscape_data(graph)["elements"]
+    cytoscape_node_data = cytoscape_data["nodes"]
+    cytoscape_edge_data = cytoscape_data["edges"]
+    for node in range(len(cytoscape_node_data)):
+        node_pos = pos[cytoscape_node_data[node]["data"]["id"]]
+        node_pos = {
+            "position": {"x": int(node_pos[0].item()), "y": int(node_pos[1].item())}
+        }
+        cytoscape_node_data[node].update(node_pos)
+    return cytoscape_node_data + cytoscape_edge_data
