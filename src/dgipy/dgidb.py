@@ -7,7 +7,7 @@ from enum import Enum
 import requests
 from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
-from regbot.fetch.drugsfda import get_anda_results
+from regbot.fetch.drugsfda import get_anda_results, get_nda_results
 
 import dgipy.queries as queries
 
@@ -357,7 +357,10 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
             lui = app_no.split(":")[1]
             full_app_no = f"{"ANDA" if anda else "NDA"}{lui}"
             try:
-                anda_data = get_anda_results(lui, True)
+                if anda:
+                    data = get_anda_results(lui, True)
+                else:
+                    data = get_nda_results(lui, True)
             except requests.exceptions.RequestException:
                 _logger.warning(
                     "HTTP status error for Drugs@FDA lookup %s from drug %s: %s",
@@ -366,7 +369,7 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
                     name,
                 )
                 continue
-            if not anda_data:
+            if not data:
                 _logger.warning(
                     "No results for Drugs@FDA lookup %s from drug %s: %s",
                     full_app_no,
@@ -374,14 +377,16 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
                     name,
                 )
                 continue
-            for product in anda_data[0].products:
+            for product in data[0].products:
                 output["drug_name"].append(name)
                 output["drug_concept_id"].append(concept_id)
                 output["drug_product_application"].append(full_app_no)
                 output["drug_brand_name"].append(product.brand_name)
                 output["drug_marketing_status"].append(product.marketing_status)
                 output["drug_dosage_form"].append(product.dosage_form)
-                # output["drug_dosage_strength"].append(product.dosage_strength)  # TODO <-- figure this out??? where is it
+                output["drug_dosage_strength"].append(
+                    product.active_ingredients[0].strength
+                )
     return output
 
 
