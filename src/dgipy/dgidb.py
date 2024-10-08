@@ -352,18 +352,36 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
         name = result["name"]
         concept_id = result["conceptId"]
         for app in result["drugApplications"]:
-            application_number = app["appNo"].split(".")[1].replace(":", "").upper()
-            anda_data = get_anda_results(application_number, True)
+            app_no = app["appNo"]
+            anda = "anda" in app_no
+            lui = app_no.split(":")[1]
+            full_app_no = f"{"ANDA" if anda else "NDA"}{lui}"
+            try:
+                anda_data = get_anda_results(lui, True)
+            except requests.exceptions.RequestException:
+                _logger.warning(
+                    "HTTP status error for Drugs@FDA lookup %s from drug %s: %s",
+                    full_app_no,
+                    concept_id,
+                    name,
+                )
+                continue
             if not anda_data:
-                return {}  # TODO ?
+                _logger.warning(
+                    "No results for Drugs@FDA lookup %s from drug %s: %s",
+                    full_app_no,
+                    concept_id,
+                    name,
+                )
+                continue
             for product in anda_data[0].products:
                 output["drug_name"].append(name)
                 output["drug_concept_id"].append(concept_id)
-                output["drug_product_application"].append(application_number)
+                output["drug_product_application"].append(full_app_no)
                 output["drug_brand_name"].append(product.brand_name)
                 output["drug_marketing_status"].append(product.marketing_status)
                 output["drug_dosage_form"].append(product.dosage_form)
-                output["drug_dosage_strength"].append(product.dosage_strength)
+                # output["drug_dosage_strength"].append(product.dosage_strength)  # TODO <-- figure this out??? where is it
     return output
 
 
@@ -434,6 +452,6 @@ def get_clinical_trials(terms: list) -> dict:
                     output["interventions"].append(
                         study["protocolSection"]["armsInterventionsModule"]
                     )
-                except:
+                except KeyError:
                     output["interventions"].append(None)
     return output
