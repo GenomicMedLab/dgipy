@@ -7,6 +7,7 @@ from enum import Enum
 import requests
 from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
+from regbot.fetch.drugsfda import get_anda_results
 
 import dgipy.queries as queries
 
@@ -325,26 +326,6 @@ def get_all_drugs(api_url: str | None = None) -> dict:
     return drugs
 
 
-def _get_openfda_data(app_no: str) -> list[tuple]:
-    url = f'https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"{app_no}"'
-    response = requests.get(url, headers={"User-Agent": "Custom"}, timeout=20)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        _logger.error("Request to %s failed: %s", url, e)
-        raise e
-    data = response.json()
-    return [
-        (
-            product["brand_name"],
-            product["marketing_status"],
-            product["dosage_form"],
-            product["active_ingredients"][0]["strength"],
-        )
-        for product in data["results"][0]["products"]
-    ]
-
-
 def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
     """Perform a look up for ANDA/NDA applications for drug or drugs of interest
 
@@ -372,20 +353,17 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
         concept_id = result["conceptId"]
         for app in result["drugApplications"]:
             application_number = app["appNo"].split(".")[1].replace(":", "").upper()
-            for (
-                brand_name,
-                marketing_status,
-                dosage_form,
-                dosage_strength,
-            ) in _get_openfda_data(application_number):
+            anda_data = get_anda_results(application_number, True)
+            if not anda_data:
+                return {}  # TODO ?
+            for product in anda_data[0].products:
                 output["drug_name"].append(name)
                 output["drug_concept_id"].append(concept_id)
                 output["drug_product_application"].append(application_number)
-                output["drug_brand_name"].append(brand_name)
-                output["drug_marketing_status"].append(marketing_status)
-                output["drug_dosage_form"].append(dosage_form)
-                output["drug_dosage_strength"].append(dosage_strength)
-
+                output["drug_brand_name"].append(product.brand_name)
+                output["drug_marketing_status"].append(product.marketing_status)
+                output["drug_dosage_form"].append(product.dosage_form)
+                output["drug_dosage_strength"].append(product.dosage_strength)
     return output
 
 
