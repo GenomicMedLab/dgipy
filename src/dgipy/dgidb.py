@@ -355,7 +355,7 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
             app_no = app["appNo"]
             anda = "anda" in app_no
             lui = app_no.split(":")[1]
-            full_app_no = f"{"ANDA" if anda else "NDA"}{lui}"
+            full_app_no = f"{'ANDA' if anda else 'NDA'}{lui}"
             try:
                 if anda:
                     data = get_anda_results(lui, True)
