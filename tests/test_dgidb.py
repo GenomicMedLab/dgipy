@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 import requests_mock
+from regbot.fetch.drugsfda import ProductDosageForm, ProductMarketingStatus
 
 from dgipy.dgidb import (
     SourceType,
@@ -203,15 +204,17 @@ def test_get_drug_applications(fixtures_dir, set_up_graphql_mock: Callable):
     ):
         set_up_graphql_mock(m, drug_applications_response)
         m.get(
-            "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:%22NDA212099%22",
+            "https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:NDA212099&limit=500&skip=0",
             text=drugsatfda_response.read(),
         )
         results = get_drug_applications(["DAROLUTAMIDE"])
         assert len(results["drug_name"]) == 1
         assert results["drug_brand_name"][0] == "NUBEQA"
         assert results["drug_dosage_strength"][0] == "300MG"
-        assert results["drug_marketing_status"][0] == "Prescription"
-        assert results["drug_dosage_form"][0] == "TABLET"
+        assert (
+            results["drug_marketing_status"][0] == ProductMarketingStatus.PRESCRIPTION
+        )
+        assert results["drug_dosage_form"][0] == ProductDosageForm.TABLET
 
 
 @pytest.mark.performance()
