@@ -21,13 +21,14 @@ requires-python = ">=3.10"
 description = "Python wrapper for accessing an instance of DGIdb v5 database"
 license = {file = "LICENSE"}
 dependencies = [
+    "regbot",
+    "requests",
+    "gql[requests]",
     "pandas~=2.0",
     "dash",
     "dash-bootstrap-components",
     "plotly",
     "networkx[default]",
-    "requests",
-    "gql[requests]",
     "dash_cytoscape"
 ]
 dynamic = ["version"]
