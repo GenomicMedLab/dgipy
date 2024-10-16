@@ -156,8 +156,8 @@ def _set_app_layout(app: dash.Dash) -> None:
                                     dbc.CardHeader("Export Graph"),
                                     dbc.CardBody(
                                         [
-                                            dbc.Button("Export Graph as .png", id="export-png-graph"),
-                                            dbc.Button("Export Graph as .json", id="export-json-graph"),
+                                            dbc.Button("Export Graph as .png", id="export-png-graph", class_name="m-1"),
+                                            dbc.Button("Export Graph as .json", id="export-json-graph", class_name="m-1"),
                                             dcc.Download(id="json-download")
                                         ]
                                     ),
