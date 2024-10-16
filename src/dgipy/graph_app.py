@@ -1,5 +1,7 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
 
+import json
+
 import dash_bootstrap_components as dbc
 import dash_cytoscape as cyto
 from dash import Input, Output, State, ctx, dash, dcc, html
@@ -32,6 +34,8 @@ def generate_app() -> dash.Dash:
     _update_selected_element_text(app)
     _update_neighbors_dropdown(app)
     _update_edge_info(app)
+    _generate_png(app)
+    _generate_json(app)
 
     return app
 
@@ -134,16 +138,32 @@ def _set_app_layout(app: dash.Dash) -> None:
                                 style={"margin": "10px"},
                             ),
                             dbc.Card(
-                                dbc.CardBody(
-                                    [
-                                        html.H4("Selected Node/Edge:"),
-                                        html.P(selected_element_text),
-                                        html.H4("Selected Edge Info:"),
-                                        html.P(selected_edge_info),
-                                    ]
-                                ),
+                                [
+                                    dbc.CardHeader("Selection Info"),
+                                    dbc.CardBody(
+                                        [
+                                            html.H4("Selected Node/Edge:"),
+                                            html.P(selected_element_text),
+                                            html.H4("Selected Edge Info:"),
+                                            html.P(selected_edge_info),
+                                        ]
+                                    ),
+                                ],
                                 style={"margin": "10px"},
                             ),
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader("Export Graph"),
+                                    dbc.CardBody(
+                                        [
+                                            dbc.Button("Export Graph as .png", id="export-png-graph"),
+                                            dbc.Button("Export Graph as .json", id="export-json-graph"),
+                                            dcc.Download(id="json-download")
+                                        ]
+                                    ),
+                                ],
+                                style={"margin": "10px"},
+                            )
                         ],
                         width=4,
                     ),
@@ -151,7 +171,6 @@ def _set_app_layout(app: dash.Dash) -> None:
             ),
         ]
     )
-
 
 def _update_cytoscape(app: dash.Dash) -> None:
     @app.callback(
@@ -281,9 +300,23 @@ def _update_edge_info(app: dash.Dash) -> None:
             )
         return "No Edge Selected"
 
+def _generate_png(app: dash.Dash) -> None:
+    @app.callback(
+        Output("cytoscape-figure", "generateImage"),
+        Input("export-png-graph", "n_clicks")
+    )
+    def update(export_png_graph: int) -> dict:  # noqa: ARG001
+        if ctx.triggered_id is None:
+            return dash.no_update
+        return {"type": "png", "action": "download"}
 
-def _get_node_data_from_id(nodes: list, node_id: str) -> dict | None:
-    for node in nodes:
-        if node["id"] == node_id:
-            return node
-    return None
+def _generate_json(app: dash.Dash) -> None:
+    @app.callback(
+        Output("json-download", "data"),
+        Input("export-json-graph", "n_clicks"),
+        State("cytoscape-figure","elements"),
+    )
+    def update(export_png_graph: int, cytoscape_figure: dict) -> dict:  # noqa: ARG001
+        if ctx.triggered_id is None:
+            return dash.no_update
+        return dcc.send_string(json.dumps(cytoscape_figure, indent=4), "cyto.json")
