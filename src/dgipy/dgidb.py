@@ -7,6 +7,7 @@ from enum import Enum
 import requests
 from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
+from regbot.fetch.drugsfda import get_anda_results, get_nda_results
 
 import dgipy.queries as queries
 
@@ -325,26 +326,6 @@ def get_all_drugs(api_url: str | None = None) -> dict:
     return drugs
 
 
-def _get_openfda_data(app_no: str) -> list[tuple]:
-    url = f'https://api.fda.gov/drug/drugsfda.json?search=openfda.application_number:"{app_no}"'
-    response = requests.get(url, headers={"User-Agent": "Custom"}, timeout=20)
-    try:
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        _logger.error("Request to %s failed: %s", url, e)
-        raise e
-    data = response.json()
-    return [
-        (
-            product["brand_name"],
-            product["marketing_status"],
-            product["dosage_form"],
-            product["active_ingredients"][0]["strength"],
-        )
-        for product in data["results"][0]["products"]
-    ]
-
-
 def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
     """Perform a look up for ANDA/NDA applications for drug or drugs of interest
 
@@ -371,21 +352,41 @@ def get_drug_applications(terms: list, api_url: str | None = None) -> dict:
         name = result["name"]
         concept_id = result["conceptId"]
         for app in result["drugApplications"]:
-            application_number = app["appNo"].split(".")[1].replace(":", "").upper()
-            for (
-                brand_name,
-                marketing_status,
-                dosage_form,
-                dosage_strength,
-            ) in _get_openfda_data(application_number):
+            app_no = app["appNo"]
+            anda = "anda" in app_no
+            lui = app_no.split(":")[1]
+            full_app_no = f"{'ANDA' if anda else 'NDA'}{lui}"
+            try:
+                if anda:
+                    data = get_anda_results(lui, True)
+                else:
+                    data = get_nda_results(lui, True)
+            except requests.exceptions.RequestException:
+                _logger.warning(
+                    "HTTP status error for Drugs@FDA lookup %s from drug %s: %s",
+                    full_app_no,
+                    concept_id,
+                    name,
+                )
+                continue
+            if not data:
+                _logger.warning(
+                    "No results for Drugs@FDA lookup %s from drug %s: %s",
+                    full_app_no,
+                    concept_id,
+                    name,
+                )
+                continue
+            for product in data[0].products:
                 output["drug_name"].append(name)
                 output["drug_concept_id"].append(concept_id)
-                output["drug_product_application"].append(application_number)
-                output["drug_brand_name"].append(brand_name)
-                output["drug_marketing_status"].append(marketing_status)
-                output["drug_dosage_form"].append(dosage_form)
-                output["drug_dosage_strength"].append(dosage_strength)
-
+                output["drug_product_application"].append(full_app_no)
+                output["drug_brand_name"].append(product.brand_name)
+                output["drug_marketing_status"].append(product.marketing_status)
+                output["drug_dosage_form"].append(product.dosage_form)
+                output["drug_dosage_strength"].append(
+                    product.active_ingredients[0].strength
+                )
     return output
 
 
@@ -456,6 +457,6 @@ def get_clinical_trials(terms: list) -> dict:
                     output["interventions"].append(
                         study["protocolSection"]["armsInterventionsModule"]
                     )
-                except:
+                except KeyError:
                     output["interventions"].append(None)
     return output
