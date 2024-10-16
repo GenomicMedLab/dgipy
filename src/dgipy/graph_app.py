@@ -1,7 +1,7 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
 
 import dash_bootstrap_components as dbc
-import pandas as pd
+import dash_cytoscape as cyto
 from dash import Input, Output, State, ctx, dash, dcc, html
 
 from dgipy import dgidb
@@ -26,10 +26,10 @@ def generate_app() -> dash.Dash:
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
     _set_app_layout(app)
-    _update_plotly(app)
+    _update_cytoscape(app)
     _update_terms_dropdown(app, genes, drugs)
-    _update_selected_node(app)
-    _update_selected_node_text(app)
+    _update_selected_element(app)
+    _update_selected_element_text(app)
     _update_neighbors_dropdown(app)
     _update_edge_info(app)
 
@@ -37,8 +37,42 @@ def generate_app() -> dash.Dash:
 
 
 def _set_app_layout(app: dash.Dash) -> None:
-    plotly_figure = dcc.Graph(
-        id="plotly-figure", style={"width": "100%", "height": "800px"}
+    cytoscape_figure = cyto.Cytoscape(
+        id="cytoscape-figure",
+        layout={"name": "preset"},
+        style={"width": "100%", "height": "800px"},
+        stylesheet=[
+            # Group Selectors
+            {
+                "selector": "node",
+                "style": {"content": "data(label)"},
+            },
+            {"selector": "edge", "style": {"width": 0.75}},
+            {
+                "selector": "[node_degree > 1][isGene]",
+                "style": {
+                    "background-color": "cyan",
+                },
+            },
+            {
+                "selector": "[node_degree <= 1][isGene]",
+                "style": {
+                    "background-color": "blue",
+                },
+            },
+            {
+                "selector": "[node_degree > 1][!isGene]",
+                "style": {
+                    "background-color": "orange",
+                },
+            },
+            {
+                "selector": "[node_degree <= 1][!isGene]",
+                "style": {
+                    "background-color": "red",
+                },
+            },
+        ],
     )
 
     search_mode = dcc.RadioItems(
@@ -54,8 +88,8 @@ def _set_app_layout(app: dash.Dash) -> None:
         id="terms-dropdown", optionHeight=75, multi=True, value=[]
     )
 
-    selected_node_text = dcc.Markdown(
-        id="selected-node-text", children="No Node Selected"
+    selected_element_text = dcc.Markdown(
+        id="selected-element-text", children="No Element Selected"
     )
 
     neighbors_dropdown = dcc.Dropdown(id="neighbors-dropdown", multi=False)
@@ -67,13 +101,13 @@ def _set_app_layout(app: dash.Dash) -> None:
     app.layout = html.Div(
         [
             # Variables
-            dcc.Store(id="selected-node", data=""),
+            dcc.Store(id="selected-element", data=""),
             dcc.Store(id="graph"),
             # Layout
             dbc.Row(
                 [
                     dbc.Col(
-                        dbc.Card(plotly_figure, body=True, style={"margin": "10px"}),
+                        dbc.Card(cytoscape_figure, body=True, style={"margin": "10px"}),
                         width=8,
                     ),
                     dbc.Col(
@@ -103,7 +137,7 @@ def _set_app_layout(app: dash.Dash) -> None:
                                 dbc.CardBody(
                                     [
                                         html.H4("Selected Node/Edge:"),
-                                        html.P(selected_node_text),
+                                        html.P(selected_element_text),
                                         html.H4("Selected Edge Info:"),
                                         html.P(selected_edge_info),
                                     ]
@@ -119,21 +153,18 @@ def _set_app_layout(app: dash.Dash) -> None:
     )
 
 
-def _update_plotly(app: dash.Dash) -> None:
+def _update_cytoscape(app: dash.Dash) -> None:
     @app.callback(
-        [Output("graph", "data"), Output("plotly-figure", "figure")],
+        Output("cytoscape-figure", "elements"),
         Input("terms-dropdown", "value"),
         State("search-mode", "value"),
     )
-    def update(
-        terms: list | None, search_mode: str
-    ) -> tuple[dict | None, ng.go.Figure]:
+    def update(terms: list | None, search_mode: str) -> dict:
         if len(terms) != 0:
-            interactions = pd.DataFrame(dgidb.get_interactions(terms, search_mode))
-            network_graph = ng.create_network(interactions, terms, search_mode)
-            plotly_figure = ng.generate_plotly(network_graph)
-            return ng.generate_json(network_graph), plotly_figure
-        return None, ng.generate_plotly(None)
+            interactions = dgidb.get_interactions(terms, search_mode)
+            network_graph = ng.initalize_network(interactions, terms, search_mode)
+            return ng.generate_cytoscape(network_graph)
+        return {}
 
 
 def _update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
@@ -149,29 +180,38 @@ def _update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
         return None
 
 
-def _update_selected_node(app: dash.Dash) -> None:
+def _update_selected_element(app: dash.Dash) -> None:
     @app.callback(
-        Output("selected-node", "data"),
-        [Input("plotly-figure", "clickData"), Input("terms-dropdown", "value")],
+        Output("selected-element", "data"),
+        [
+            Input("cytoscape-figure", "tapNode"),
+            Input("cytoscape-figure", "tapEdge"),
+            Input("terms-dropdown", "value"),
+        ],
     )
-    def update(clickData: dict | None, new_gene: list | None) -> str | dict:  # noqa: N803, ARG001
-        if ctx.triggered_id == "terms-dropdown":
-            return ""
-        if clickData is not None and "points" in clickData:
-            selected_node = clickData["points"][0]
-            if "text" not in selected_node:
-                return dash.no_update
-            return selected_node
+    def update(
+        tap_node: dict | None,
+        tap_edge: dict | None,
+        terms_dropdown: list | None,  # noqa: ARG001
+    ) -> str | dict:
+        if ctx.triggered_prop_ids:
+            dash_trigger = next(iter(ctx.triggered_prop_ids.keys()))
+            if dash_trigger == "terms-dropdown.value":
+                return ""
+            if dash_trigger == "cytoscape-figure.tapNode" and tap_node is not None:
+                return tap_node
+            if dash_trigger == "cytoscape-figure.tapEdge" and tap_edge is not None:
+                return tap_edge
         return dash.no_update
 
 
-def _update_selected_node_text(app: dash.Dash) -> None:
+def _update_selected_element_text(app: dash.Dash) -> None:
     @app.callback(
-        Output("selected-node-text", "children"), Input("selected-node", "data")
+        Output("selected-element-text", "children"), Input("selected-element", "data")
     )
-    def update(selected_node: str | dict) -> str:
-        if selected_node != "":
-            return selected_node["text"]
+    def update(selected_element: str | dict) -> str:
+        if selected_element != "":
+            return selected_element["data"]["id"]
         return "No Node Selected"
 
 
@@ -181,75 +221,63 @@ def _update_neighbors_dropdown(app: dash.Dash) -> None:
             Output("neighbors-dropdown", "options"),
             Output("neighbors-dropdown", "value"),
         ],
-        Input("selected-node", "data"),
+        Input("selected-element", "data"),
     )
-    def update(selected_node: str | dict) -> tuple[list, None]:
-        if selected_node != "" and selected_node["curveNumber"] != 1:
-            return selected_node["customdata"], None
+    def update(selected_element: str | dict) -> tuple[list, None]:
+        if (
+            selected_element != ""
+            and selected_element["group"] == "nodes"
+            and selected_element["data"]["node_degree"] != 1
+        ):
+            neighbor_set = set()
+            for edge in selected_element["edgesData"]:
+                neighbor_set.add(edge["target"])
+                neighbor_set.add(edge["source"])
+                neighbor_set.remove(selected_element["data"]["id"])
+            neighbor_list = list(neighbor_set)
+            return neighbor_list, None
         return [], None
 
 
 def _update_edge_info(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-edge-info", "children"),
-        [Input("selected-node", "data"), Input("neighbors-dropdown", "value")],
-        State("graph", "data"),
+        [Input("selected-element", "data"), Input("neighbors-dropdown", "value")],
     )
-    def update(
-        selected_node: str | dict,
-        selected_neighbor: str | None,
-        graph: dict | None,
-    ) -> str:
-        if selected_node == "":
+    def update(selected_element: str | dict, selected_neighbor: str | None) -> str:
+        if selected_element == "":
             return "No Edge Selected"
-        if selected_node["curveNumber"] == 1:
-            selected_data = _get_node_data_from_id(
-                graph["links"], selected_node["text"]
-            )
+
+        edge_info = None
+        if selected_element["group"] == "nodes" and selected_neighbor is not None:
+            edge_name = None
+            if selected_element["data"]["isGene"]:
+                edge_name = selected_element["data"]["id"] + " - " + selected_neighbor
+            else:
+                edge_name = selected_neighbor + " - " + selected_element["data"]["id"]
+            for edge in selected_element["edgesData"]:
+                if edge["id"] == edge_name:
+                    edge_info = edge
+                    break
+        if selected_element["group"] == "edges":
+            edge_info = selected_element["data"]
+
+        if (
+            selected_element["group"] == "nodes" and selected_neighbor is not None
+        ) or selected_element["group"] == "edges":
             return (
                 "ID: "
-                + str(selected_data["id"])
+                + str(edge_info["id"])
                 + "\n\nApproval: "
-                + str(selected_data["approval"])
+                + str(edge_info["approval"])
                 + "\n\nScore: "
-                + str(selected_data["score"])
+                + str(edge_info["score"])
                 + "\n\nAttributes: "
-                + str(selected_data["attributes"])
+                + str(edge_info["attributes"])
                 + "\n\nSource: "
-                + str(selected_data["source"])
+                + str(edge_info["source"])
                 + "\n\nPmid: "
-                + str(selected_data["pmid"])
-            )
-        if selected_neighbor is not None:
-            edge_node_id = None
-            selected_node_is_gene = _get_node_data_from_id(
-                graph["nodes"], selected_node["text"]
-            )["isGene"]
-            selected_neighbor_is_gene = _get_node_data_from_id(
-                graph["nodes"], selected_neighbor
-            )["isGene"]
-            if selected_node_is_gene == selected_neighbor_is_gene:
-                return dash.no_update
-            if selected_node_is_gene:
-                edge_node_id = selected_node["text"] + " - " + selected_neighbor
-            elif selected_neighbor_is_gene:
-                edge_node_id = selected_neighbor + " - " + selected_node["text"]
-            selected_data = _get_node_data_from_id(graph["links"], edge_node_id)
-            if selected_data is None:
-                return dash.no_update
-            return (
-                "ID: "
-                + str(selected_data["id"])
-                + "\n\nApproval: "
-                + str(selected_data["approval"])
-                + "\n\nScore: "
-                + str(selected_data["score"])
-                + "\n\nAttributes: "
-                + str(selected_data["attributes"])
-                + "\n\nSource: "
-                + str(selected_data["source"])
-                + "\n\nPmid: "
-                + str(selected_data["pmid"])
+                + str(edge_info["pmid"])
             )
         return "No Edge Selected"
 
