@@ -29,6 +29,7 @@ dependencies = [
     "dash-bootstrap-components",
     "plotly",
     "networkx[default]",
+    "dash_cytoscape"
 ]
 dynamic = ["version"]
 
