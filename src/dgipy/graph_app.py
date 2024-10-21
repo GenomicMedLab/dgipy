@@ -156,14 +156,22 @@ def _set_app_layout(app: dash.Dash) -> None:
                                     dbc.CardHeader("Export Graph"),
                                     dbc.CardBody(
                                         [
-                                            dbc.Button("Export Graph as .png", id="export-png-graph", class_name="m-1"),
-                                            dbc.Button("Export Graph as .json", id="export-json-graph", class_name="m-1"),
-                                            dcc.Download(id="json-download")
+                                            dbc.Button(
+                                                "Export Graph as .png",
+                                                id="export-png-graph",
+                                                class_name="m-1",
+                                            ),
+                                            dbc.Button(
+                                                "Export Graph as .json",
+                                                id="export-json-graph",
+                                                class_name="m-1",
+                                            ),
+                                            dcc.Download(id="json-download"),
                                         ]
                                     ),
                                 ],
                                 style={"margin": "10px"},
-                            )
+                            ),
                         ],
                         width=4,
                     ),
@@ -171,6 +179,7 @@ def _set_app_layout(app: dash.Dash) -> None:
             ),
         ]
     )
+
 
 def _update_cytoscape(app: dash.Dash) -> None:
     @app.callback(
@@ -300,21 +309,23 @@ def _update_edge_info(app: dash.Dash) -> None:
             )
         return "No Edge Selected"
 
+
 def _generate_png(app: dash.Dash) -> None:
     @app.callback(
         Output("cytoscape-figure", "generateImage"),
-        Input("export-png-graph", "n_clicks")
+        Input("export-png-graph", "n_clicks"),
     )
     def update(export_png_graph: int) -> dict:  # noqa: ARG001
         if ctx.triggered_id is None:
             return dash.no_update
         return {"type": "png", "action": "download"}
 
+
 def _generate_json(app: dash.Dash) -> None:
     @app.callback(
         Output("json-download", "data"),
         Input("export-json-graph", "n_clicks"),
-        State("cytoscape-figure","elements"),
+        State("cytoscape-figure", "elements"),
     )
     def update(export_png_graph: int, cytoscape_figure: dict) -> dict:  # noqa: ARG001
         if ctx.triggered_id is None:
