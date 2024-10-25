@@ -10,6 +10,8 @@ from dgipy import dgidb
 from dgipy import network_graph as ng
 from dgipy.data_utils import make_tabular
 
+cyto.load_extra_layouts()
+
 
 def generate_app() -> dash.Dash:
     """Initialize a Dash application object with a layout designed for visualizing: drug-gene interactions, options for user interactivity, and other visual elements.
@@ -34,7 +36,7 @@ def generate_app() -> dash.Dash:
     _update_selected_element_text(app)
     _update_neighbors_dropdown(app)
     _update_edge_info(app)
-    _generate_png(app)
+    _generate_image(app)
     _generate_json(app)
 
     return app
@@ -159,6 +161,11 @@ def _set_app_layout(app: dash.Dash) -> None:
                                             dbc.Button(
                                                 "Export Graph as .png",
                                                 id="export-png-graph",
+                                                class_name="m-1",
+                                            ),
+                                            dbc.Button(
+                                                "Export Graph as .svg",
+                                                id="export-svg-graph",
                                                 class_name="m-1",
                                             ),
                                             dbc.Button(
@@ -310,15 +317,17 @@ def _update_edge_info(app: dash.Dash) -> None:
         return "No Edge Selected"
 
 
-def _generate_png(app: dash.Dash) -> None:
+def _generate_image(app: dash.Dash) -> None:
     @app.callback(
         Output("cytoscape-figure", "generateImage"),
-        Input("export-png-graph", "n_clicks"),
+        [Input("export-png-graph", "n_clicks"), Input("export-svg-graph", "n_clicks")],
     )
-    def update(export_png_graph: int) -> dict:  # noqa: ARG001
-        if ctx.triggered_id is None:
-            return dash.no_update
-        return {"type": "png", "action": "download"}
+    def update(export_png_graph: int, export_svg_graph: int) -> dict:  # noqa: ARG001
+        if ctx.triggered_id == "export-png-graph":
+            return {"type": "png", "action": "download"}
+        if ctx.triggered_id == "export-svg-graph":
+            return {"type": "svg", "action": "download"}
+        return dash.no_update
 
 
 def _generate_json(app: dash.Dash) -> None:
