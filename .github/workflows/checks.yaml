@@ -38,6 +38,24 @@ jobs:
       - name: Check style
         run: python3 -m ruff check . && python3 -m ruff format --check .
 
+  precommit_hooks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hook:
+          - name: "Check EOF format"
+            args: "end-of-file-fixer --all-files"
+          - name: "Check trailing whitespace"
+            args: "trailing-whitespace --all-files"
+          - name: "Check line ending format"
+            args: "mixed-line-ending --fix=lf --all-files"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: ${{ matrix.hook.name }}
+        uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: ${{ matrix.hook.args }}
   docs:
     runs-on: ubuntu-latest
     env:
