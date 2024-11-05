@@ -152,4 +152,3 @@ pytest.ini
 .vim/
 *.swp
 .vscode
-python-version
