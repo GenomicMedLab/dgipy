@@ -97,6 +97,14 @@ def _add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None
         interactions_graph.nodes[node]["node_color"] = set_color
         interactions_graph.nodes[node]["node_size"] = set_size
 
+        if (search_mode == "genes" and (not is_gene)) or (
+            search_mode == "drugs" and is_gene
+        ):
+            neighbors = "Group: " + "-".join(list(interactions_graph.neighbors(node)))
+            interactions_graph.nodes[node]["group"] = neighbors
+        else:
+            interactions_graph.nodes[node]["group"] = None
+
 
 def create_network(
     interactions: pd.DataFrame, terms: list, search_mode: str
@@ -129,4 +137,14 @@ def generate_cytoscape(graph: nx.Graph) -> dict:
             "position": {"x": int(node_pos[0].item()), "y": int(node_pos[1].item())}
         }
         cytoscape_node_data[node].update(node_pos)
+        if "group" in cytoscape_node_data[node]["data"]:
+            cytoscape_node_data[node]["data"]["parent"] = cytoscape_node_data[node][
+                "data"
+            ].pop("group")
+    groups = set()
+    for node in graph.nodes:
+        if ("group" in graph.nodes[node]) and (graph.nodes[node]["group"] is not None):
+            groups.add(graph.nodes[node]["group"])
+    for group in groups:
+        cytoscape_node_data.append({"data": {"id": group}})
     return cytoscape_node_data + cytoscape_edge_data

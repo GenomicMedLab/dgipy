@@ -197,7 +197,7 @@ def _update_cytoscape(app: dash.Dash) -> None:
     def update(terms: list | None, search_mode: str) -> dict:
         if len(terms) != 0:
             interactions = dgidb.get_interactions(terms, search_mode)
-            network_graph = ng.initalize_network(interactions, terms, search_mode)
+            network_graph = ng.create_network(interactions, terms, search_mode)
             return ng.generate_cytoscape(network_graph)
         return {}
 
