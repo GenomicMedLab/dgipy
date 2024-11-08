@@ -1,5 +1,7 @@
 """Provides functionality to create a Dash web application for interacting with drug-gene data from DGIdb"""
 
+import json
+
 import dash_bootstrap_components as dbc
 import dash_cytoscape as cyto
 from dash import Input, Output, State, ctx, dash, dcc, html
@@ -7,6 +9,8 @@ from dash import Input, Output, State, ctx, dash, dcc, html
 from dgipy import dgidb
 from dgipy import network_graph as ng
 from dgipy.data_utils import make_tabular
+
+cyto.load_extra_layouts()
 
 
 def generate_app() -> dash.Dash:
@@ -32,6 +36,8 @@ def generate_app() -> dash.Dash:
     _update_selected_element_text(app)
     _update_neighbors_dropdown(app)
     _update_edge_info(app)
+    _generate_image(app)
+    _generate_json(app)
 
     return app
 
@@ -134,14 +140,43 @@ def _set_app_layout(app: dash.Dash) -> None:
                                 style={"margin": "10px"},
                             ),
                             dbc.Card(
-                                dbc.CardBody(
-                                    [
-                                        html.H4("Selected Node/Edge:"),
-                                        html.P(selected_element_text),
-                                        html.H4("Selected Edge Info:"),
-                                        html.P(selected_edge_info),
-                                    ]
-                                ),
+                                [
+                                    dbc.CardHeader("Selection Info"),
+                                    dbc.CardBody(
+                                        [
+                                            html.H4("Selected Node/Edge:"),
+                                            html.P(selected_element_text),
+                                            html.H4("Selected Edge Info:"),
+                                            html.P(selected_edge_info),
+                                        ]
+                                    ),
+                                ],
+                                style={"margin": "10px"},
+                            ),
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader("Export Graph"),
+                                    dbc.CardBody(
+                                        [
+                                            dbc.Button(
+                                                "Export Graph as .png",
+                                                id="export-png-graph",
+                                                class_name="m-1",
+                                            ),
+                                            dbc.Button(
+                                                "Export Graph as .svg",
+                                                id="export-svg-graph",
+                                                class_name="m-1",
+                                            ),
+                                            dbc.Button(
+                                                "Export Graph as .json",
+                                                id="export-json-graph",
+                                                class_name="m-1",
+                                            ),
+                                            dcc.Download(id="json-download"),
+                                        ]
+                                    ),
+                                ],
                                 style={"margin": "10px"},
                             ),
                         ],
@@ -282,8 +317,26 @@ def _update_edge_info(app: dash.Dash) -> None:
         return "No Edge Selected"
 
 
-def _get_node_data_from_id(nodes: list, node_id: str) -> dict | None:
-    for node in nodes:
-        if node["id"] == node_id:
-            return node
-    return None
+def _generate_image(app: dash.Dash) -> None:
+    @app.callback(
+        Output("cytoscape-figure", "generateImage"),
+        [Input("export-png-graph", "n_clicks"), Input("export-svg-graph", "n_clicks")],
+    )
+    def update(export_png_graph: int, export_svg_graph: int) -> dict:  # noqa: ARG001
+        if ctx.triggered_id == "export-png-graph":
+            return {"type": "png", "action": "download"}
+        if ctx.triggered_id == "export-svg-graph":
+            return {"type": "svg", "action": "download"}
+        return dash.no_update
+
+
+def _generate_json(app: dash.Dash) -> None:
+    @app.callback(
+        Output("json-download", "data"),
+        Input("export-json-graph", "n_clicks"),
+        State("cytoscape-figure", "elements"),
+    )
+    def update(export_png_graph: int, cytoscape_figure: dict) -> dict:  # noqa: ARG001
+        if ctx.triggered_id is None:
+            return dash.no_update
+        return dcc.send_string(json.dumps(cytoscape_figure, indent=4), "cyto.json")
