@@ -25,7 +25,9 @@ def _get_client(api_url: str) -> Client:
     :param api_url: endpoint to request data at
     :return: GraphQL client
     """
-    transport = RequestsHTTPTransport(url=api_url)
+    transport = RequestsHTTPTransport(
+        url=api_url, headers={"dgidb-client-name": "dgipy"}
+    )
     return Client(transport=transport, fetch_schema_from_transport=True)
 
 
