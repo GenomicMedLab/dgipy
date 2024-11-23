@@ -84,20 +84,14 @@ def generate_cytoscape(graph: nx.Graph) -> dict:
     cytoscape_data = nx.cytoscape_data(graph)["elements"]
     cytoscape_node_data = cytoscape_data["nodes"]
     cytoscape_edge_data = cytoscape_data["edges"]
-    for node in range(len(cytoscape_node_data)):
-        node_pos = pos[cytoscape_node_data[node]["data"]["id"]]
-        node_pos = {
-            "position": {"x": int(node_pos[0].item()), "y": int(node_pos[1].item())}
-        }
-        cytoscape_node_data[node].update(node_pos)
-        if "group" in cytoscape_node_data[node]["data"]:
-            cytoscape_node_data[node]["data"]["parent"] = cytoscape_node_data[node][
-                "data"
-            ].pop("group")
     groups = set()
-    for node in graph.nodes:
-        if ("group" in graph.nodes[node]) and (graph.nodes[node]["group"] is not None):
-            groups.add(graph.nodes[node]["group"])
+    for node in cytoscape_node_data:
+        node_pos = pos[node["data"]["id"]]
+        node.update({"position": {"x": node_pos[0], "y": node_pos[1]}})
+        if "group" in node["data"]:
+            group = node["data"].pop("group")
+            groups.add(group)
+            node["data"]["parent"] = group
     for group in groups:
         cytoscape_node_data.append({"data": {"id": group}})
     return cytoscape_node_data + cytoscape_edge_data
