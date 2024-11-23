@@ -12,6 +12,7 @@ from .dgidb import (
     get_sources,
 )
 from .graph_app import generate_app
+from .network_graph import create_network, generate_cytoscape
 
 __all__ = [
     "get_drugs",
@@ -24,4 +25,6 @@ __all__ = [
     "get_drug_applications",
     "generate_app",
     "get_clinical_trials",
+    "create_network",
+    "generate_cytoscape",
 ]
