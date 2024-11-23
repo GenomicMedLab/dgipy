@@ -75,7 +75,7 @@ branch = true
 
 [tool.ruff]
 src = ["src"]
-exclude = ["docs/source/conf.py", "tests/test_graph_app.py", "tests/test_network_graph.py"]
+exclude = ["docs/source/conf.py"]
 lint.select = [
     "F",  # https://docs.astral.sh/ruff/rules/#pyflakes-f
     "E", "W",  # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
