@@ -1,50 +1,38 @@
 """Provides functionality to create networkx graphs and pltoly figures for network visualization"""
 
 import networkx as nx
-import pandas as pd
 
 LAYOUT_SEED = 7
 
 
-def initalize_network(
-    interactions: pd.DataFrame, terms: list, search_mode: str
-) -> nx.Graph:
-    """Create a networkx graph representing interactions between genes and drugs
-
-    :param interactions: DataFrame containing drug-gene interaction data
-    :param terms: List containing terms used to query interaction data
-    :param search_mode: String indicating whether query was gene-focused or drug-focused
-    :return: a networkx graph of drug-gene interactions
-    """
+def _initalize_network(interactions: dict, terms: list, search_mode: str) -> nx.Graph:
     interactions_graph = nx.Graph()
     graphed_terms = set()
-
-    for index in range(len(interactions["gene_name"]) - 1):
+    for row in zip(*interactions.values(), strict=True):
+        row_dict = dict(zip(interactions.keys(), row, strict=True))
         if search_mode == "genes":
-            graphed_terms.add(interactions["gene_name"][index])
+            graphed_terms.add(row_dict["gene_name"])
         if search_mode == "drugs":
-            graphed_terms.add(interactions["drug_name"][index])
+            graphed_terms.add(row_dict["drug_name"])
         interactions_graph.add_node(
-            interactions["gene_name"][index],
-            label=interactions["gene_name"][index],
+            row_dict["gene_name"],
+            label=row_dict["gene_name"],
             isGene=True,
         )
         interactions_graph.add_node(
-            interactions["drug_name"][index],
-            label=interactions["drug_name"][index],
+            row_dict["drug_name"],
+            label=row_dict["drug_name"],
             isGene=False,
         )
         interactions_graph.add_edge(
-            interactions["gene_name"][index],
-            interactions["drug_name"][index],
-            id=interactions["gene_name"][index]
-            + " - "
-            + interactions["drug_name"][index],
-            approval=interactions["drug_approved"][index],
-            score=interactions["interaction_score"][index],
-            attributes=interactions["interaction_attributes"][index],
-            sourcedata=interactions["interaction_sources"][index],
-            pmid=interactions["interaction_pmids"][index],
+            row_dict["gene_name"],
+            row_dict["drug_name"],
+            id=row_dict["gene_name"] + " - " + row_dict["drug_name"],
+            approval=row_dict["drug_approved"],
+            score=row_dict["interaction_score"],
+            attributes=row_dict["interaction_attributes"],
+            sourcedata=row_dict["interaction_sources"],
+            pmid=row_dict["interaction_pmids"],
         )
 
     graphed_terms = set(terms).difference(graphed_terms)
@@ -54,48 +42,15 @@ def initalize_network(
         if search_mode == "drugs":
             interactions_graph.add_node(term, label=term, isGene=False)
 
-    nx.set_node_attributes(
-        interactions_graph, dict(interactions_graph.degree()), "node_degree"
-    )
     return interactions_graph
 
 
 def _add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None:
+    nx.set_node_attributes(
+        interactions_graph, dict(interactions_graph.degree()), "node_degree"
+    )
     for node in interactions_graph.nodes:
         is_gene = interactions_graph.nodes[node]["isGene"]
-        degree = interactions_graph.degree[node]
-        if search_mode == "genes":
-            if is_gene:
-                if degree > 1:
-                    set_color = "cyan"
-                    set_size = 10
-                else:
-                    set_color = "blue"
-                    set_size = 10
-            else:
-                if degree > 1:
-                    set_color = "orange"
-                    set_size = 7
-                else:
-                    set_color = "red"
-                    set_size = 7
-        if search_mode == "drugs":
-            if is_gene:
-                if degree > 1:
-                    set_color = "cyan"
-                    set_size = 7
-                else:
-                    set_color = "blue"
-                    set_size = 7
-            else:
-                if degree > 1:
-                    set_color = "orange"
-                    set_size = 10
-                else:
-                    set_color = "red"
-                    set_size = 10
-        interactions_graph.nodes[node]["node_color"] = set_color
-        interactions_graph.nodes[node]["node_size"] = set_size
 
         if (search_mode == "genes" and (not is_gene)) or (
             search_mode == "drugs" and is_gene
@@ -106,17 +61,15 @@ def _add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None
             interactions_graph.nodes[node]["group"] = None
 
 
-def create_network(
-    interactions: pd.DataFrame, terms: list, search_mode: str
-) -> nx.Graph:
+def create_network(interactions: dict, terms: list, search_mode: str) -> nx.Graph:
     """Create a networkx graph representing interactions between genes and drugs
 
-    :param interactions: DataFrame containing drug-gene interaction data
+    :param interactions: Dictionary containing drug-gene interaction data
     :param terms: List containing terms used to query interaction data
     :param search_mode: String indicating whether query was gene-focused or drug-focused
     :return: a networkx graph of drug-gene interactions
     """
-    interactions_graph = initalize_network(interactions, terms, search_mode)
+    interactions_graph = _initalize_network(interactions, terms, search_mode)
     _add_node_attributes(interactions_graph, search_mode)
     return interactions_graph
 
