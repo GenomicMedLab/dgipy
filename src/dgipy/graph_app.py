@@ -262,6 +262,7 @@ def _update_neighbors_dropdown(app: dash.Dash) -> None:
         if (
             selected_element != ""
             and selected_element["group"] == "nodes"
+            and "node_degree" in selected_element["data"]
             and selected_element["data"]["node_degree"] != 1
         ):
             neighbor_set = set()
