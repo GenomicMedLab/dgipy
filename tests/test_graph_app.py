@@ -1,5 +1,3 @@
-import pytest
-
 from dgipy.graph_app import generate_app
 
 

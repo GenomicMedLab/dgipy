@@ -197,7 +197,7 @@ def _update_cytoscape(app: dash.Dash) -> None:
     def update(terms: list | None, search_mode: str) -> dict:
         if len(terms) != 0:
             interactions = dgidb.get_interactions(terms, search_mode)
-            network_graph = ng.initalize_network(interactions, terms, search_mode)
+            network_graph = ng.create_network(interactions, terms, search_mode)
             return ng.generate_cytoscape(network_graph)
         return {}
 
@@ -262,6 +262,7 @@ def _update_neighbors_dropdown(app: dash.Dash) -> None:
         if (
             selected_element != ""
             and selected_element["group"] == "nodes"
+            and "node_degree" in selected_element["data"]
             and selected_element["data"]["node_degree"] != 1
         ):
             neighbor_set = set()
