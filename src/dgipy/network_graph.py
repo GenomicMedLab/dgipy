@@ -92,6 +92,7 @@ def generate_cytoscape(graph: nx.Graph) -> dict:
             group = node["data"].pop("group")
             groups.add(group)
             node["data"]["parent"] = group
+    groups.remove(None)
     for group in groups:
         cytoscape_node_data.append({"data": {"id": group}})
     return cytoscape_node_data + cytoscape_edge_data
