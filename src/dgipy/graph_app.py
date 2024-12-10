@@ -56,25 +56,25 @@ def _set_app_layout(app: dash.Dash) -> None:
             },
             {"selector": "edge", "style": {"width": 0.75}},
             {
-                "selector": "[node_degree > 1][isGene]",
+                "selector": "[node_degree > 1][type = 'gene']",
                 "style": {
                     "background-color": "cyan",
                 },
             },
             {
-                "selector": "[node_degree <= 1][isGene]",
+                "selector": "[node_degree <= 1][type = 'gene']",
                 "style": {
                     "background-color": "blue",
                 },
             },
             {
-                "selector": "[node_degree > 1][!isGene]",
+                "selector": "[node_degree > 1][type = 'drug']",
                 "style": {
                     "background-color": "orange",
                 },
             },
             {
-                "selector": "[node_degree <= 1][!isGene]",
+                "selector": "[node_degree <= 1][type = 'drug']",
                 "style": {
                     "background-color": "red",
                 },
@@ -279,7 +279,6 @@ def _update_neighbors_dropdown(app: dash.Dash) -> None:
         if (
             selected_element != ""
             and selected_element["group"] == "nodes"
-            and "node_degree" in selected_element["data"]
             and selected_element["data"]["node_degree"] > 0
         ):
             neighbor_set = set()
@@ -304,7 +303,7 @@ def _update_edge_info(app: dash.Dash) -> None:
         edge_info = None
         if selected_element["group"] == "nodes" and selected_neighbor is not None:
             edge_name = None
-            if selected_element["data"]["isGene"]:
+            if selected_element["data"]["type"] == "gene":
                 edge_name = selected_element["data"]["id"] + " - " + selected_neighbor
             else:
                 edge_name = selected_neighbor + " - " + selected_element["data"]["id"]
@@ -370,10 +369,10 @@ def _run_query(app: dash.Dash) -> None:
         if ctx.triggered_id is None or selected_element == "":
             return dash.no_update
         if selected_element["group"] == "nodes":
-            if "node_degree" not in selected_element["data"]:
+            if selected_element["data"]["type"] == "compound":
                 return "Cluster Data"
-            if selected_element["data"]["isGene"] is True:
+            if selected_element["data"]["type"] == "gene":
                 return json.dumps(dgidb.get_genes(selected_element["data"]["id"]))
-            if selected_element["data"]["isGene"] is False:
+            if selected_element["data"]["type"] == "drug":
                 return json.dumps(dgidb.get_drugs(selected_element["data"]["id"]))
         return ""

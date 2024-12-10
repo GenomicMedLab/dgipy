@@ -17,12 +17,12 @@ def _initalize_network(interactions: dict, terms: list, search_mode: str) -> nx.
         interactions_graph.add_node(
             row_dict["gene_name"],
             label=row_dict["gene_name"],
-            isGene=True,
+            type="gene",
         )
         interactions_graph.add_node(
             row_dict["drug_name"],
             label=row_dict["drug_name"],
-            isGene=False,
+            type="drug",
         )
         interactions_graph.add_edge(
             row_dict["gene_name"],
@@ -38,9 +38,9 @@ def _initalize_network(interactions: dict, terms: list, search_mode: str) -> nx.
     graphed_terms = set(terms).difference(graphed_terms)
     for term in graphed_terms:
         if search_mode == "genes":
-            interactions_graph.add_node(term, label=term, isGene=True)
+            interactions_graph.add_node(term, label=term, type="gene")
         if search_mode == "drugs":
-            interactions_graph.add_node(term, label=term, isGene=False)
+            interactions_graph.add_node(term, label=term, type="drug")
 
     return interactions_graph
 
@@ -50,10 +50,10 @@ def _add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None
         interactions_graph, dict(interactions_graph.degree()), "node_degree"
     )
     for node in interactions_graph.nodes:
-        is_gene = interactions_graph.nodes[node]["isGene"]
+        node_type = interactions_graph.nodes[node]["type"]
 
-        if (search_mode == "genes" and (not is_gene)) or (
-            search_mode == "drugs" and is_gene
+        if (search_mode == "genes" and node_type == "drug") or (
+            search_mode == "drugs" and node_type == "gene"
         ):
             neighbors = "Group: " + "-".join(list(interactions_graph.neighbors(node)))
             interactions_graph.nodes[node]["group"] = neighbors
@@ -94,5 +94,7 @@ def generate_cytoscape(graph: nx.Graph) -> dict:
             node["data"]["parent"] = group
     groups.remove(None)
     for group in groups:
-        cytoscape_node_data.append({"data": {"id": group}})
+        cytoscape_node_data.append(
+            {"data": {"id": group, "type": "compound", "node_degree": 0}}
+        )
     return cytoscape_node_data + cytoscape_edge_data
