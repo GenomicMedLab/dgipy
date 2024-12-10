@@ -124,7 +124,7 @@ def _set_app_layout(app: dash.Dash) -> None:
     app.layout = html.Div(
         [
             # Variables
-            dcc.Store(id="selected-element", data=""),
+            dcc.Store(id="selected-element"),
             dcc.Store(id="graph"),
             # Layout
             dbc.Row(
@@ -245,11 +245,11 @@ def _update_selected_element(app: dash.Dash) -> None:
         tap_node: dict | None,
         tap_edge: dict | None,
         terms_dropdown: list | None,  # noqa: ARG001
-    ) -> str | dict:
+    ) -> dict | None:
         if ctx.triggered_prop_ids:
             dash_trigger = next(iter(ctx.triggered_prop_ids.keys()))
             if dash_trigger == "terms-dropdown.value":
-                return ""
+                return None
             if dash_trigger == "cytoscape-figure.tapNode" and tap_node is not None:
                 return tap_node
             if dash_trigger == "cytoscape-figure.tapEdge" and tap_edge is not None:
@@ -261,8 +261,8 @@ def _update_selected_element_text(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-element-text", "children"), Input("selected-element", "data")
     )
-    def update(selected_element: str | dict) -> str:
-        if selected_element != "":
+    def update(selected_element: dict | None) -> str:
+        if selected_element is not None:
             return selected_element["data"]["id"]
         return "No Node Selected"
 
@@ -275,9 +275,9 @@ def _update_neighbors_dropdown(app: dash.Dash) -> None:
         ],
         Input("selected-element", "data"),
     )
-    def update(selected_element: str | dict) -> tuple[list, None]:
+    def update(selected_element: dict | None) -> tuple[list, None]:
         if (
-            selected_element != ""
+            selected_element is not None
             and selected_element["group"] == "nodes"
             and selected_element["data"]["node_degree"] > 0
         ):
@@ -296,10 +296,9 @@ def _update_edge_info(app: dash.Dash) -> None:
         Output("selected-edge-info", "children"),
         [Input("selected-element", "data"), Input("neighbors-dropdown", "value")],
     )
-    def update(selected_element: str | dict, selected_neighbor: str | None) -> str:
-        if selected_element == "":
+    def update(selected_element: dict | None, selected_neighbor: str | None) -> str:
+        if selected_element is None:
             return "No Edge Selected"
-
         edge_info = None
         if selected_element["group"] == "nodes" and selected_neighbor is not None:
             edge_name = None
@@ -365,7 +364,7 @@ def _run_query(app: dash.Dash) -> None:
         Input("run-query", "n_clicks"),
         State("selected-element", "data"),
     )
-    def update(run_query: int, selected_element: str | dict) -> str:  # noqa: ARG001
+    def update(run_query: int, selected_element: dict | None) -> str:  # noqa: ARG001
         if ctx.triggered_id is None or selected_element == "":
             return dash.no_update
         if selected_element["group"] == "nodes":
