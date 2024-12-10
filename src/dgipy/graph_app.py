@@ -38,6 +38,7 @@ def generate_app() -> dash.Dash:
     _update_edge_info(app)
     _generate_image(app)
     _generate_json(app)
+    _run_query(app)
 
     return app
 
@@ -116,6 +117,10 @@ def _set_app_layout(app: dash.Dash) -> None:
         "Export Graph as .json", id="export-json-graph", class_name="m-1"
     )
 
+    run_query = dbc.Button("Run Query", id="run-query", class_name="m-1")
+
+    query_text = dcc.Markdown(id="query-text", children="No Query Data")
+
     app.layout = html.Div(
         [
             # Variables
@@ -174,6 +179,18 @@ def _set_app_layout(app: dash.Dash) -> None:
                                             export_svg_graph,
                                             export_json_graph,
                                             dcc.Download(id="json-download"),
+                                        ]
+                                    ),
+                                ],
+                                style={"margin": "10px"},
+                            ),
+                            dbc.Card(
+                                [
+                                    dbc.CardHeader("Query Selection"),
+                                    dbc.CardBody(
+                                        [
+                                            run_query,
+                                            query_text,
                                         ]
                                     ),
                                 ],
@@ -341,3 +358,22 @@ def _generate_json(app: dash.Dash) -> None:
         if ctx.triggered_id is None:
             return dash.no_update
         return dcc.send_string(json.dumps(cytoscape_figure, indent=4), "cyto.json")
+
+
+def _run_query(app: dash.Dash) -> None:
+    @app.callback(
+        Output("query-text", "children"),
+        Input("run-query", "n_clicks"),
+        State("selected-element", "data"),
+    )
+    def update(run_query: int, selected_element: str | dict) -> str:  # noqa: ARG001
+        if ctx.triggered_id is None or selected_element == "":
+            return dash.no_update
+        if selected_element["group"] == "nodes":
+            if "node_degree" not in selected_element["data"]:
+                return "Cluster Data"
+            if selected_element["data"]["isGene"] is True:
+                return json.dumps(dgidb.get_genes(selected_element["data"]["id"]))
+            if selected_element["data"]["isGene"] is False:
+                return json.dumps(dgidb.get_drugs(selected_element["data"]["id"]))
+        return ""
