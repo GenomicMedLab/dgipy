@@ -12,7 +12,6 @@ from dgipy.data_utils import make_tabular
 
 cyto.load_extra_layouts()
 
-
 def generate_app() -> dash.Dash:
     """Initialize a Dash application object with a layout designed for visualizing: drug-gene interactions, options for user interactivity, and other visual elements.
 
@@ -91,17 +90,43 @@ def _set_app_layout(app: dash.Dash) -> None:
     )
 
     terms_dropdown = dcc.Dropdown(
-        id="terms-dropdown", optionHeight=75, multi=True, value=[]
+        id="terms-dropdown",
+        optionHeight=75,
+        multi=True,
+        value=[]
+    )
+
+    neighbors_dropdown = dcc.Dropdown(
+        id="neighbors-dropdown",
+        multi=False
     )
 
     selected_element_text = dcc.Markdown(
-        id="selected-element-text", children="No Element Selected"
+        id="selected-element-text",
+        children="No Element Selected"
     )
 
-    neighbors_dropdown = dcc.Dropdown(id="neighbors-dropdown", multi=False)
-
     selected_edge_info = dcc.Markdown(
-        id="selected-edge-info", children="No Edge Selected"
+        id="selected-edge-info",
+        children="No Edge Selected"
+    )
+
+    export_png_graph = dbc.Button(
+        "Export Graph as .png",
+        id="export-png-graph",
+        class_name="m-1"
+    ),
+
+    export_svg_graph = dbc.Button(
+        "Export Graph as .svg",
+        id="export-svg-graph",
+        class_name="m-1"
+    ),
+
+    export_json_graph = dbc.Button(
+        "Export Graph as .json",
+        id="export-json-graph",
+        class_name="m-1"
     )
 
     app.layout = html.Div(
@@ -109,11 +134,16 @@ def _set_app_layout(app: dash.Dash) -> None:
             # Variables
             dcc.Store(id="selected-element", data=""),
             dcc.Store(id="graph"),
+
             # Layout
             dbc.Row(
                 [
                     dbc.Col(
-                        dbc.Card(cytoscape_figure, body=True, style={"margin": "10px"}),
+                        dbc.Card(
+                            cytoscape_figure,
+                            body=True,
+                            style={"margin": "10px"}
+                        ),
                         width=8,
                     ),
                     dbc.Col(
@@ -144,10 +174,10 @@ def _set_app_layout(app: dash.Dash) -> None:
                                     dbc.CardHeader("Selection Info"),
                                     dbc.CardBody(
                                         [
-                                            html.H4("Selected Node/Edge:"),
-                                            html.P(selected_element_text),
-                                            html.H4("Selected Edge Info:"),
-                                            html.P(selected_edge_info),
+                                            dcc.Markdown("#### Selected Node/Edge:"),
+                                            selected_element_text,
+                                            dcc.Markdown("#### Selected Edge Info:"),
+                                            selected_edge_info,
                                         ]
                                     ),
                                 ],
@@ -158,21 +188,9 @@ def _set_app_layout(app: dash.Dash) -> None:
                                     dbc.CardHeader("Export Graph"),
                                     dbc.CardBody(
                                         [
-                                            dbc.Button(
-                                                "Export Graph as .png",
-                                                id="export-png-graph",
-                                                class_name="m-1",
-                                            ),
-                                            dbc.Button(
-                                                "Export Graph as .svg",
-                                                id="export-svg-graph",
-                                                class_name="m-1",
-                                            ),
-                                            dbc.Button(
-                                                "Export Graph as .json",
-                                                id="export-json-graph",
-                                                class_name="m-1",
-                                            ),
+                                            export_png_graph,
+                                            export_svg_graph,
+                                            export_json_graph,
                                             dcc.Download(id="json-download"),
                                         ]
                                     ),
@@ -242,7 +260,8 @@ def _update_selected_element(app: dash.Dash) -> None:
 
 def _update_selected_element_text(app: dash.Dash) -> None:
     @app.callback(
-        Output("selected-element-text", "children"), Input("selected-element", "data")
+        Output("selected-element-text", "children"),
+        Input("selected-element", "data")
     )
     def update(selected_element: str | dict) -> str:
         if selected_element != "":
@@ -278,7 +297,10 @@ def _update_neighbors_dropdown(app: dash.Dash) -> None:
 def _update_edge_info(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-edge-info", "children"),
-        [Input("selected-element", "data"), Input("neighbors-dropdown", "value")],
+        [
+            Input("selected-element", "data"),
+            Input("neighbors-dropdown", "value")
+        ],
     )
     def update(selected_element: str | dict, selected_neighbor: str | None) -> str:
         if selected_element == "":
@@ -321,7 +343,10 @@ def _update_edge_info(app: dash.Dash) -> None:
 def _generate_image(app: dash.Dash) -> None:
     @app.callback(
         Output("cytoscape-figure", "generateImage"),
-        [Input("export-png-graph", "n_clicks"), Input("export-svg-graph", "n_clicks")],
+        [
+            Input("export-png-graph", "n_clicks"),
+            Input("export-svg-graph", "n_clicks")
+        ],
     )
     def update(export_png_graph: int, export_svg_graph: int) -> dict:  # noqa: ARG001
         if ctx.triggered_id == "export-png-graph":
