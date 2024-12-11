@@ -212,11 +212,11 @@ def _update_cytoscape(app: dash.Dash) -> None:
         State("search-mode", "value"),
     )
     def update(terms: list | None, search_mode: str) -> dict:
-        if len(terms) != 0:
-            interactions = dgidb.get_interactions(terms, search_mode)
-            network_graph = ng.create_network(interactions, terms, search_mode)
-            return ng.generate_cytoscape(network_graph)
-        return {}
+        if len(terms) == 0:
+            return {}
+        interactions = dgidb.get_interactions(terms, search_mode)
+        network_graph = ng.create_network(interactions, terms, search_mode)
+        return ng.generate_cytoscape(network_graph)
 
 
 def _update_terms_dropdown(app: dash.Dash, genes: list, drugs: list) -> None:
@@ -262,9 +262,9 @@ def _update_selected_element_text(app: dash.Dash) -> None:
         Output("selected-element-text", "children"), Input("selected-element", "data")
     )
     def update(selected_element: dict | None) -> str:
-        if selected_element is not None:
-            return selected_element["data"]["id"]
-        return "No Node Selected"
+        if selected_element is None:
+            return "No Node Selected"
+        return selected_element["data"]["id"]
 
 
 def _update_neighbors_dropdown(app: dash.Dash) -> None:
@@ -299,23 +299,27 @@ def _update_edge_info(app: dash.Dash) -> None:
     def update(selected_element: dict | None, selected_neighbor: str | None) -> str:
         if selected_element is None:
             return "No Edge Selected"
+
         edge_info = None
-        if selected_element["group"] == "nodes" and selected_neighbor is not None:
+        is_valid_node = (
+            selected_element["group"] == "nodes" and selected_neighbor is not None
+        )
+        is_valid_edge = selected_element["group"] == "edges"
+
+        if is_valid_node:
             edge_name = None
             if selected_element["data"]["type"] == "gene":
                 edge_name = selected_element["data"]["id"] + " - " + selected_neighbor
-            else:
+            elif selected_element["data"]["type"] == "drug":
                 edge_name = selected_neighbor + " - " + selected_element["data"]["id"]
             for edge in selected_element["edgesData"]:
                 if edge["id"] == edge_name:
                     edge_info = edge
                     break
-        if selected_element["group"] == "edges":
+        elif is_valid_edge:
             edge_info = selected_element["data"]
 
-        if (
-            selected_element["group"] == "nodes" and selected_neighbor is not None
-        ) or selected_element["group"] == "edges":
+        if is_valid_node or is_valid_edge:
             return (
                 "ID: "
                 + str(edge_info["id"])
@@ -365,7 +369,7 @@ def _run_query(app: dash.Dash) -> None:
         State("selected-element", "data"),
     )
     def update(run_query: int, selected_element: dict | None) -> str:  # noqa: ARG001
-        if ctx.triggered_id is None or selected_element == "":
+        if ctx.triggered_id is None or selected_element is None:
             return dash.no_update
         if selected_element["group"] == "nodes":
             if selected_element["data"]["type"] == "compound":
