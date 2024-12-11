@@ -211,11 +211,11 @@ def _update_cytoscape(app: dash.Dash) -> None:
         Input("terms-dropdown", "value"),
         State("search-mode", "value"),
     )
-    def update(terms: list | None, search_mode: str) -> dict:
-        if len(terms) == 0:
+    def update(terms_dropdown: list, search_mode: str) -> dict:
+        if len(terms_dropdown) == 0:
             return {}
-        interactions = dgidb.get_interactions(terms, search_mode)
-        network_graph = ng.create_network(interactions, terms, search_mode)
+        interactions = dgidb.get_interactions(terms_dropdown, search_mode)
+        network_graph = ng.create_network(interactions, terms_dropdown, search_mode)
         return ng.generate_cytoscape(network_graph)
 
 
@@ -244,7 +244,7 @@ def _update_selected_element(app: dash.Dash) -> None:
     def update(
         tap_node: dict | None,
         tap_edge: dict | None,
-        terms_dropdown: list | None,  # noqa: ARG001
+        terms_dropdown: list,  # noqa: ARG001
     ) -> dict | None:
         if ctx.triggered_prop_ids:
             dash_trigger = next(iter(ctx.triggered_prop_ids.keys()))
