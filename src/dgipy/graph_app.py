@@ -264,7 +264,7 @@ def _update_selected_element_text(app: dash.Dash) -> None:
     def update(selected_element: dict | None) -> str:
         if selected_element is None:
             return "No Element Selected"
-        return f"```\n{selected_element["data"]["id"]}\n```"
+        return f"```\n{selected_element['data']['id']}\n```"
 
 
 def _update_neighbors_dropdown(app: dash.Dash) -> None:
