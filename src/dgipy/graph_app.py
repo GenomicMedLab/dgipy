@@ -263,7 +263,7 @@ def _update_selected_element_text(app: dash.Dash) -> None:
     )
     def update(selected_element: dict | None) -> str:
         if selected_element is None:
-            return "No Node Selected"
+            return "No Element Selected"
         return f"```\n{selected_element["data"]["id"]}\n```"
 
 
@@ -356,12 +356,12 @@ def _run_query(app: dash.Dash) -> None:
     )
     def update(run_query: int, selected_element: dict | None) -> str:  # noqa: ARG001
         if ctx.triggered_id is None or selected_element is None:
-            return dash.no_update
+            return "No Query Data"
         if selected_element["group"] == "nodes":
             if selected_element["data"]["type"] == "compound":
-                return "Cluster Data"
+                return "Cluster Data (Placeholder)"
             if selected_element["data"]["type"] == "gene":
                 return f"```\n{json.dumps(dgidb.get_genes(selected_element['data']['id']), indent=4)}\n```"
             if selected_element["data"]["type"] == "drug":
                 return f"```\n{json.dumps(dgidb.get_drugs(selected_element['data']['id']), indent=4)}\n```"
-        return ""
+        return "No Query Data"
