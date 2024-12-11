@@ -105,12 +105,12 @@ def _set_app_layout(app: dash.Dash) -> None:
         id="selected-edge-info", children="No Edge Selected"
     )
 
-    export_png_graph = (
-        dbc.Button("Export Graph as .png", id="export-png-graph", class_name="m-1"),
+    export_png_graph = dbc.Button(
+        "Export Graph as .png", id="export-png-graph", class_name="m-1"
     )
 
-    export_svg_graph = (
-        dbc.Button("Export Graph as .svg", id="export-svg-graph", class_name="m-1"),
+    export_svg_graph = dbc.Button(
+        "Export Graph as .svg", id="export-svg-graph", class_name="m-1"
     )
 
     export_json_graph = dbc.Button(
