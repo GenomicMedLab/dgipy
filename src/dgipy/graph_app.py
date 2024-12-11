@@ -264,7 +264,7 @@ def _update_selected_element_text(app: dash.Dash) -> None:
     def update(selected_element: dict | None) -> str:
         if selected_element is None:
             return "No Node Selected"
-        return selected_element["data"]["id"]
+        return f"```\n{selected_element["data"]["id"]}\n```"
 
 
 def _update_neighbors_dropdown(app: dash.Dash) -> None:
@@ -318,22 +318,8 @@ def _update_edge_info(app: dash.Dash) -> None:
                     break
         elif is_valid_edge:
             edge_info = selected_element["data"]
-
         if is_valid_node or is_valid_edge:
-            return (
-                "ID: "
-                + str(edge_info["id"])
-                + "\n\nApproval: "
-                + str(edge_info["approval"])
-                + "\n\nScore: "
-                + str(edge_info["score"])
-                + "\n\nAttributes: "
-                + str(edge_info["attributes"])
-                + "\n\nSource: "
-                + str(edge_info["source"])
-                + "\n\nPmid: "
-                + str(edge_info["pmid"])
-            )
+            return f"```\n{json.dumps(edge_info, indent=4)}\n```"
         return "No Edge Selected"
 
 
@@ -375,7 +361,7 @@ def _run_query(app: dash.Dash) -> None:
             if selected_element["data"]["type"] == "compound":
                 return "Cluster Data"
             if selected_element["data"]["type"] == "gene":
-                return json.dumps(dgidb.get_genes(selected_element["data"]["id"]))
+                return f"```\n{json.dumps(dgidb.get_genes(selected_element['data']['id']), indent=4)}\n```"
             if selected_element["data"]["type"] == "drug":
-                return json.dumps(dgidb.get_drugs(selected_element["data"]["id"]))
+                return f"```\n{json.dumps(dgidb.get_drugs(selected_element['data']['id']), indent=4)}\n```"
         return ""
