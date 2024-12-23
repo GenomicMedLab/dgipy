@@ -35,7 +35,7 @@ def generate_app() -> dash.Dash:
     _update_selected_element(app)
     _update_selected_element_text(app)
     _update_neighbors_dropdown(app)
-    _update_edge_info(app)
+    _update_element_info(app)
     _generate_image(app)
     _generate_json(app)
     _run_query(app)
@@ -101,8 +101,8 @@ def _set_app_layout(app: dash.Dash) -> None:
         id="selected-element-text", children="```No Element Selected```"
     )
 
-    selected_edge_info = dcc.Markdown(
-        id="selected-edge-info", children="```No Edge Selected```"
+    selected_element_info = dcc.Markdown(
+        id="selected-element-info", children="```No Element Selected```"
     )
 
     export_png_graph = dbc.Button(
@@ -161,10 +161,10 @@ def _set_app_layout(app: dash.Dash) -> None:
                                     dbc.CardHeader("Selection Info"),
                                     dbc.CardBody(
                                         [
-                                            dcc.Markdown("#### Selected Node/Edge:"),
+                                            dcc.Markdown("#### Selected Element:"),
                                             selected_element_text,
-                                            dcc.Markdown("#### Selected Edge Info:"),
-                                            selected_edge_info,
+                                            dcc.Markdown("#### Selected Element Info:"),
+                                            selected_element_info,
                                         ]
                                     ),
                                 ],
@@ -291,22 +291,24 @@ def _update_neighbors_dropdown(app: dash.Dash) -> None:
         return [], None
 
 
-def _update_edge_info(app: dash.Dash) -> None:
+def _update_element_info(app: dash.Dash) -> None:
     @app.callback(
-        Output("selected-edge-info", "children"),
+        Output("selected-element-info", "children"),
         [Input("selected-element", "data"), Input("neighbors-dropdown", "value")],
     )
     def update(selected_element: dict | None, selected_neighbor: str | None) -> str:
         if selected_element is None:
-            return "```No Edge Selected```"
+            return "```No Element Selected```"
 
-        edge_info = None
-        is_valid_node = (
-            selected_element["group"] == "nodes" and selected_neighbor is not None
-        )
-        is_valid_edge = selected_element["group"] == "edges"
-
-        if is_valid_node:
+        element_info = None
+        if selected_element["group"] == "nodes" and selected_neighbor is None:
+            if selected_element["data"]["type"] == "compound":
+                element_info = "Cluster Data (Placeholder)"
+            if selected_element["data"]["type"] == "gene":
+                element_info = dgidb.get_genes(selected_element["data"]["id"])
+            if selected_element["data"]["type"] == "drug":
+                element_info = dgidb.get_drugs(selected_element["data"]["id"])
+        elif selected_element["group"] == "nodes" and selected_neighbor is not None:
             edge_name = None
             if selected_element["data"]["type"] == "gene":
                 edge_name = selected_element["data"]["id"] + " - " + selected_neighbor
@@ -314,13 +316,14 @@ def _update_edge_info(app: dash.Dash) -> None:
                 edge_name = selected_neighbor + " - " + selected_element["data"]["id"]
             for edge in selected_element["edgesData"]:
                 if edge["id"] == edge_name:
-                    edge_info = edge
+                    element_info = edge
                     break
-        elif is_valid_edge:
-            edge_info = selected_element["data"]
-        if is_valid_node or is_valid_edge:
-            return f"```\n{json.dumps(edge_info, indent=4)}\n```"
-        return "```No Edge Selected```"
+        elif selected_element["group"] == "edges":
+            element_info = selected_element["data"]
+
+        if element_info is not None:
+            return f"```\n{json.dumps(element_info, indent=4)}\n```"
+        return "```No Element Selected```"
 
 
 def _generate_image(app: dash.Dash) -> None:
