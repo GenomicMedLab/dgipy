@@ -98,11 +98,11 @@ def _set_app_layout(app: dash.Dash) -> None:
     neighbors_dropdown = dcc.Dropdown(id="neighbors-dropdown", multi=False)
 
     selected_element_text = dcc.Markdown(
-        id="selected-element-text", children="No Element Selected"
+        id="selected-element-text", children="```No Element Selected```"
     )
 
     selected_edge_info = dcc.Markdown(
-        id="selected-edge-info", children="No Edge Selected"
+        id="selected-edge-info", children="```No Edge Selected```"
     )
 
     export_png_graph = dbc.Button(
@@ -119,7 +119,7 @@ def _set_app_layout(app: dash.Dash) -> None:
 
     run_query = dbc.Button("Run Query", id="run-query", class_name="m-1")
 
-    query_text = dcc.Markdown(id="query-text", children="No Query Data")
+    query_text = dcc.Markdown(id="query-text", children="```No Query Data```")
 
     app.layout = html.Div(
         [
@@ -263,7 +263,7 @@ def _update_selected_element_text(app: dash.Dash) -> None:
     )
     def update(selected_element: dict | None) -> str:
         if selected_element is None:
-            return "No Element Selected"
+            return "```No Element Selected```"
         return f"```\n{selected_element['data']['id']}\n```"
 
 
@@ -298,7 +298,7 @@ def _update_edge_info(app: dash.Dash) -> None:
     )
     def update(selected_element: dict | None, selected_neighbor: str | None) -> str:
         if selected_element is None:
-            return "No Edge Selected"
+            return "```No Edge Selected```"
 
         edge_info = None
         is_valid_node = (
@@ -320,7 +320,7 @@ def _update_edge_info(app: dash.Dash) -> None:
             edge_info = selected_element["data"]
         if is_valid_node or is_valid_edge:
             return f"```\n{json.dumps(edge_info, indent=4)}\n```"
-        return "No Edge Selected"
+        return "```No Edge Selected```"
 
 
 def _generate_image(app: dash.Dash) -> None:
@@ -356,7 +356,7 @@ def _run_query(app: dash.Dash) -> None:
     )
     def update(run_query: int, selected_element: dict | None) -> str:  # noqa: ARG001
         if ctx.triggered_id is None or selected_element is None:
-            return "No Query Data"
+            return "```No Query Data```"
         if selected_element["group"] == "nodes":
             if selected_element["data"]["type"] == "compound":
                 return "Cluster Data (Placeholder)"
@@ -364,4 +364,4 @@ def _run_query(app: dash.Dash) -> None:
                 return f"```\n{json.dumps(dgidb.get_genes(selected_element['data']['id']), indent=4)}\n```"
             if selected_element["data"]["type"] == "drug":
                 return f"```\n{json.dumps(dgidb.get_drugs(selected_element['data']['id']), indent=4)}\n```"
-        return "No Query Data"
+        return "```No Query Data```"
