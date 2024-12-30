@@ -4,7 +4,7 @@ from pathlib import Path
 import requests_mock
 from regbot.fetch.clinical_trials import InterventionType, StandardAge, StudyType
 
-from dgipy.integration.clinical_trials import get_clinical_trials
+from dgipy.integrations.clinical_trials import get_clinical_trials
 
 
 def test_get_clinical_trials(fixtures_dir: Path):
@@ -55,7 +55,7 @@ def test_get_clinical_trials(fixtures_dir: Path):
         assert results["age_groups"][example_index] == [StandardAge.CHILD]
         assert results["pediatric"][example_index] is True
         assert results["conditions"][example_index] == ["Spinal Muscular Atrophy"]
-        assert results["interventions"][2] == [
+        assert results["interventions"][example_index] == [
             {
                 "type": InterventionType.GENETIC,
                 "name": "OAV101",

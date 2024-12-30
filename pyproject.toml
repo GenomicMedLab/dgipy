@@ -21,7 +21,7 @@ requires-python = ">=3.11"
 description = "Python wrapper for accessing an instance of DGIdb v5 database"
 license = {file = "LICENSE"}
 dependencies = [
-    "regbot~=0.1.1",
+    "regbot~=0.1.2",
     "requests",
     "gql[requests]",
     "pandas~=2.0",

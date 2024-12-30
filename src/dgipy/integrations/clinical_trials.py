@@ -1,10 +1,14 @@
 """Integrate data from FDA clinical trials API."""
 
+import logging
+
 from regbot.fetch.clinical_trials import StandardAge
 from regbot.fetch.clinical_trials import get_clinical_trials as get_trials_from_fda
 
+_logger = logging.getLogger(__name__)
 
-def get_clinical_trials(terms: list) -> dict:
+
+def get_clinical_trials(terms: list[str]) -> dict:
     """Acquire associated clinical trials data for drug term
 
     >>> from dgipy.dgidb import get_drugs
@@ -18,13 +22,10 @@ def get_clinical_trials(terms: list) -> dict:
     :param terms: drugs of interest
     :return: all clinical trials data for drugs of interest in a DataFrame-ready dict
     """
-    if isinstance(terms, str):
-        # we shouldn't be too picky about input types, but this is an easy mistake
-        # that's worth trying to catch
-        msg = (
-            "`get_clinical_trials()` takes a list of terms as a parameter, not a string"
+    if not isinstance(terms, list):
+        _logger.warning(
+            "Given `terms` arg doesn't appear to be a list. This argument should be a sequence of drug names (as strings)."
         )
-        raise ValueError(msg)
     if not terms:
         msg = "Must supply nonempty argument for `terms`"
         raise ValueError(msg)
@@ -35,6 +36,7 @@ def get_clinical_trials(terms: list) -> dict:
         "brief": [],
         "study_type": [],
         "min_age": [],
+        "max_age": [],
         "age_groups": [],
         "pediatric": [],
         "conditions": [],
@@ -55,6 +57,12 @@ def get_clinical_trials(terms: list) -> dict:
                 else None
             )
             output["min_age"].append(min_age)
+            max_age = (
+                study.protocol.eligibility.max_age
+                if study.protocol and study.protocol.eligibility
+                else None
+            )
+            output["max_age"].append(max_age)
             age_groups = (
                 study.protocol.eligibility.std_age
                 if study.protocol and study.protocol.eligibility
