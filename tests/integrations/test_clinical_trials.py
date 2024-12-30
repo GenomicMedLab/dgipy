@@ -2,7 +2,12 @@ import datetime
 from pathlib import Path
 
 import requests_mock
-from regbot.fetch.clinical_trials import InterventionType, StandardAge, StudyType
+from regbot.fetch.clinical_trials import (
+    InterventionType,
+    StandardAge,
+    Status,
+    StudyType,
+)
 
 from dgipy.integrations.clinical_trials import get_clinical_trials
 
@@ -63,3 +68,14 @@ def test_get_clinical_trials(fixtures_dir: Path):
                 "aliases": ["AVXS-101", "Zolgensma"],
             }
         ]
+        assert (
+            results["incl_excl_criteria"][example_index]
+            == "Inclusion Criteria\n\n* SMA diagnosis\n* Aged 2 to \\< 18 years\n* Have had at least four loading doses of nusinersen (Spinraza\u00ae) or at least 3 months of treatment with risdiplam (Evrysdi\u00ae) at Screening\n* Must have symptoms of SMA as defined in the protocol\n\nExclusion Criteria:\n\n* Anti Adeno Associated Virus Serotype 9 (AAV9) antibody titer using an immunoassay is reported as elevated\n* Clinically significant abnormalities in test results during screening\n* Contraindications for lumbar puncture procedure\n* At Baseline, participants are excluded if they received:\n\n  * nusinersen (Spinraza\u00ae) or\n  * risdiplam (Evrysdi\u00ae) within a defined timeframe\n* Vaccinations 2 weeks prior to administration of OAV101\n* Hospitalization for a pulmonary event, or for nutritional support within 2 months prior to Screening or inpatient major surgery planned.\n* Presence of an infection or febrile illness up to 30 days prior to administration of OAV101\n* Requiring invasive ventilation"
+        )
+        assert {
+            "name": "Child Hosp of the Kings Daughters",
+            "status": Status.RECRUITING,
+            "city": "Norfolk",
+            "country": "United States",
+            "coordinates": (36.84681, -76.28522),
+        } in results["potential_sites"][3]
