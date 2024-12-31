@@ -61,10 +61,10 @@ Source = "https://github.com/genomicmedlab/dgipy"
 [project.scripts]
 
 [build-system]
-requires = ["setuptools>=64", "setuptools_scm>=8"]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
-[tools.setuptools_scm]
+[tool.setuptools_scm]
 
 [tool.setuptools.packages.find]
 where = ["src"]
