@@ -21,7 +21,7 @@ requires-python = ">=3.11"
 description = "Python wrapper for accessing an instance of DGIdb v5 database"
 license = {file = "LICENSE"}
 dependencies = [
-    "regbot",
+    "regbot~=0.1.2",
     "requests",
     "gql[requests]",
     "pandas~=2.0",
@@ -34,7 +34,12 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-tests = ["pytest", "pytest-cov", "pytest-benchmark", "requests_mock"]
+tests = [
+    "pytest",
+    "pytest-cov",
+    "pytest-benchmark",
+    "requests_mock",
+]
 dev = ["pre-commit>=3.7.1", "ruff==0.5.0"]
 docs = [
     "sphinx==6.1.3",
