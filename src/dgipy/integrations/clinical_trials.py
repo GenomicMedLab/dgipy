@@ -12,6 +12,7 @@ def _add_study_to_output(output: dict[str, list], drug_name: str, study: Study) 
     """Update `output` in-place with results from study
 
     :param output: in-progress raw columnar data
+    :param drug_name: name of drug that was searched
     :param study: clinical trial study data to add to output
     """
     output["drug_name"].append(drug_name.upper())
