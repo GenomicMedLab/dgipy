@@ -40,7 +40,7 @@ tests = [
     "pytest-benchmark",
     "requests_mock",
 ]
-dev = ["pre-commit>=3.7.1", "ruff==0.5.0"]
+dev = ["pre-commit>=3.7.1", "ruff==0.8.4"]
 docs = [
     "sphinx==6.1.3",
     "sphinx-autodoc-typehints==1.22.0",
@@ -111,6 +111,8 @@ lint.select = [
     "ARG",  # https://docs.astral.sh/ruff/rules/#flake8-unused-arguments-arg
     "PTH",  # https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
     "PGH",  # https://docs.astral.sh/ruff/rules/#pygrep-hooks-pgh
+    "PLC",  # https://docs.astral.sh/ruff/rules/#convention-c
+    "PLE",  # https://docs.astral.sh/ruff/rules/#error-e_1
     "PERF",  # https://docs.astral.sh/ruff/rules/#perflint-perf
     "FURB",  # https://docs.astral.sh/ruff/rules/#refurb-furb
     "RUF",  # https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
@@ -129,14 +131,14 @@ lint.fixable = [
     "PT",
     "RSE",
     "SIM",
+    "PLC",
+    "PLE",
     "PERF",
     "FURB",
     "RUF"
 ]
 
 # ANN003 - missing-type-kwargs
-# ANN101 - missing-type-self
-# ANN102 - missing-type-cls
 # D203 - one-blank-line-before-class
 # D205 - blank-line-after-summary
 # D206 - indent-with-spaces*
@@ -151,7 +153,7 @@ lint.fixable = [
 # W191 - tab-indentation*
 # *ignored for compatibility with formatter
 lint.ignore = [
-    "ANN003", "ANN101", "ANN102",
+    "ANN003",
     "D203", "D205", "D206", "D213", "D300", "D400", "D415",
     "E111", "E114", "E117", "E501",
     "W191",
