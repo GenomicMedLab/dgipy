@@ -41,8 +41,8 @@ get_sources = _LazyQueryLoader("get_sources")
 
 
 __all__ = [
-    "get_all_genes",
     "get_all_drugs",
+    "get_all_genes",
     "get_drug_applications",
     "get_drugs",
     "get_gene_categories",

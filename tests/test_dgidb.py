@@ -217,7 +217,7 @@ def test_get_drug_applications(fixtures_dir, set_up_graphql_mock: Callable):
         assert results["drug_dosage_form"][0] == ProductDosageForm.TABLET
 
 
-@pytest.mark.performance()
+@pytest.mark.performance
 def test_get_interactions_benchmark(benchmark):
     """Skipped by default -- call pytest with `--performance` flag to run.
 

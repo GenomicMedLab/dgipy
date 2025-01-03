@@ -153,6 +153,7 @@ def get_interactions(
     :param approved: filter option for approved interactions
     :param api_url: API endpoint for GraphQL request
     :return: interaction results for terms
+    :raise ValueError: if invalid `search` arg used
     """
     params: dict[str, str | int | bool | list[str]] = {"names": terms}
     if immunotherapy is not None:
@@ -179,7 +180,7 @@ def get_interactions(
         results = raw_results["drugs"]["nodes"]
     else:
         msg = "Search type must be specified using: search='drugs' or search='genes'"
-        raise Exception(msg)
+        raise ValueError(msg)
     output = {
         "gene_name": [],
         "gene_concept_id": [],
