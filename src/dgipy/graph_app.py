@@ -295,15 +295,28 @@ def _update_element_info(app: dash.Dash) -> None:
     @app.callback(
         Output("selected-element-info", "children"),
         [Input("selected-element", "data"), Input("neighbors-dropdown", "value")],
+        State("cytoscape-figure", "elements"),
     )
-    def update(selected_element: dict | None, selected_neighbor: str | None) -> str:
+    def update(
+        selected_element: dict | None,
+        selected_neighbor: str | None,
+        cytoscape_figure: dict,
+    ) -> str:
         if selected_element is None:
             return "```No Element Selected```"
 
         element_info = None
         if selected_element["group"] == "nodes" and selected_neighbor is None:
             if selected_element["data"]["type"] == "compound":
-                element_info = "Cluster Data (Placeholder)"
+                score_sum = 0
+                score_num = 0
+                for element in cytoscape_figure:
+                    if (element["data"]["type"] == "edge") and (
+                        element["data"]["parent"] == selected_element["data"]["id"]
+                    ):
+                        score_sum += element["data"]["score"]
+                        score_num += 1
+                element_info = "Average Score: " + str(score_sum / score_num)
             if selected_element["data"]["type"] == "gene":
                 element_info = dgidb.get_genes(selected_element["data"]["id"])
             if selected_element["data"]["type"] == "drug":

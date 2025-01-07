@@ -33,6 +33,7 @@ def _initalize_network(interactions: dict, terms: list, search_mode: str) -> nx.
             attributes=row_dict["interaction_attributes"],
             sourcedata=row_dict["interaction_sources"],
             pmid=row_dict["interaction_pmids"],
+            type="edge",
         )
 
     graphed_terms = set(terms).difference(graphed_terms)
@@ -45,7 +46,7 @@ def _initalize_network(interactions: dict, terms: list, search_mode: str) -> nx.
     return interactions_graph
 
 
-def _add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None:
+def _add_attributes(interactions_graph: nx.Graph, search_mode: str) -> None:
     nx.set_node_attributes(
         interactions_graph, dict(interactions_graph.degree()), "node_degree"
     )
@@ -55,10 +56,15 @@ def _add_node_attributes(interactions_graph: nx.Graph, search_mode: str) -> None
         if (search_mode == "genes" and node_type == "drug") or (
             search_mode == "drugs" and node_type == "gene"
         ):
-            neighbors = "Group: " + "-".join(list(interactions_graph.neighbors(node)))
+            neighbors_list = list(interactions_graph.neighbors(node))
+            neighbors_list.sort()
+            neighbors = "Group: " + "-".join(neighbors_list)
             interactions_graph.nodes[node]["group"] = neighbors
         else:
             interactions_graph.nodes[node]["group"] = None
+    for edge in interactions_graph.edges:
+        source_node_group = interactions_graph.nodes[edge[1]]["group"]
+        interactions_graph.edges[edge]["group"] = source_node_group
 
 
 def create_network(interactions: dict, terms: list, search_mode: str) -> nx.Graph:
@@ -70,7 +76,7 @@ def create_network(interactions: dict, terms: list, search_mode: str) -> nx.Grap
     :return: a networkx graph of drug-gene interactions
     """
     interactions_graph = _initalize_network(interactions, terms, search_mode)
-    _add_node_attributes(interactions_graph, search_mode)
+    _add_attributes(interactions_graph, search_mode)
     return interactions_graph
 
 
@@ -90,8 +96,11 @@ def generate_cytoscape(graph: nx.Graph) -> dict:
         node.update({"position": {"x": node_pos[0], "y": node_pos[1]}})
         if "group" in node["data"]:
             group = node["data"].pop("group")
-            groups.add(group)
             node["data"]["parent"] = group
+            groups.add(group)
+    for edge in cytoscape_edge_data:
+        group = edge["data"].pop("group")
+        edge["data"]["parent"] = group
     groups.remove(None)
     for group in groups:
         cytoscape_node_data.append(
