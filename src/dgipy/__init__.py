@@ -4,7 +4,6 @@ from .dgidb import (
     SourceType,
     get_all_genes,
     get_categories,
-    get_clinical_trials,
     get_drug_applications,
     get_drugs,
     get_genes,
@@ -24,7 +23,6 @@ __all__ = [
     "get_all_genes",
     "get_drug_applications",
     "generate_app",
-    "get_clinical_trials",
     "create_network",
     "generate_cytoscape",
 ]
