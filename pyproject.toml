@@ -40,7 +40,10 @@ tests = [
     "pytest-benchmark",
     "requests_mock",
 ]
-dev = ["pre-commit>=3.7.1", "ruff==0.8.4"]
+dev = [
+    "pre-commit>=3.7.1",
+    "ruff==0.8.6",
+]
 docs = [
     "sphinx==6.1.3",
     "sphinx-autodoc-typehints==1.22.0",
@@ -80,7 +83,10 @@ branch = true
 
 [tool.ruff]
 src = ["src"]
-exclude = ["docs/source/conf.py", "tests/test_graph_app.py"]
+exclude = [
+    "docs/source/conf.py",
+    "tests/test_graph_app.py",
+]
 lint.select = [
     "F",  # https://docs.astral.sh/ruff/rules/#pyflakes-f
     "E", "W",  # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
@@ -167,7 +173,6 @@ lint.ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 # ANN001 - missing-type-function-argument
-# ANN102 - missing-type-cls
 # ANN2 - missing-return-type
 # D100 - undocumented-public-module
 # D101 - undocumented-public-class
@@ -178,7 +183,6 @@ lint.ignore = [
 # INP001 - implicit-namespace-package
 "tests/*" = [
     "ANN001",
-    "ANN102",
     "ANN2",
     "S101",
     "B011",
