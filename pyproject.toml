@@ -42,7 +42,7 @@ tests = [
 ]
 dev = [
     "pre-commit>=4.0.1",
-    "ruff==0.5.0"
+    "ruff==0.8.6",
 ]
 docs = [
     "sphinx==6.1.3",
@@ -83,7 +83,10 @@ branch = true
 
 [tool.ruff]
 src = ["src"]
-exclude = ["docs/source/conf.py", "tests/test_graph_app.py"]
+exclude = [
+    "docs/source/conf.py",
+    "tests/test_graph_app.py",
+]
 lint.select = [
     "F",  # https://docs.astral.sh/ruff/rules/#pyflakes-f
     "E", "W",  # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
@@ -110,10 +113,14 @@ lint.select = [
     "RSE",  # https://docs.astral.sh/ruff/rules/#flake8-raise-rse
     "RET",  # https://docs.astral.sh/ruff/rules/#flake8-return-ret
     "SLF",  # https://docs.astral.sh/ruff/rules/#flake8-self-slf
+    "SLOT",  # https://docs.astral.sh/ruff/rules/#flake8-slots-slot
     "SIM",  # https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
     "ARG",  # https://docs.astral.sh/ruff/rules/#flake8-unused-arguments-arg
     "PTH",  # https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
     "PGH",  # https://docs.astral.sh/ruff/rules/#pygrep-hooks-pgh
+    "PLC",  # https://docs.astral.sh/ruff/rules/#convention-c
+    "PLE",  # https://docs.astral.sh/ruff/rules/#error-e_1
+    "TRY",  # https://docs.astral.sh/ruff/rules/#tryceratops-try
     "PERF",  # https://docs.astral.sh/ruff/rules/#perflint-perf
     "FURB",  # https://docs.astral.sh/ruff/rules/#refurb-furb
     "RUF",  # https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
@@ -132,14 +139,15 @@ lint.fixable = [
     "PT",
     "RSE",
     "SIM",
+    "PLC",
+    "PLE",
+    "TRY",
     "PERF",
     "FURB",
     "RUF"
 ]
 
 # ANN003 - missing-type-kwargs
-# ANN101 - missing-type-self
-# ANN102 - missing-type-cls
 # D203 - one-blank-line-before-class
 # D205 - blank-line-after-summary
 # D206 - indent-with-spaces*
@@ -152,18 +160,19 @@ lint.fixable = [
 # E117 - over-indented*
 # E501 - line-too-long*
 # W191 - tab-indentation*
+# PLC0206 - dict-index-missing-items
 # *ignored for compatibility with formatter
 lint.ignore = [
-    "ANN003", "ANN101", "ANN102",
+    "ANN003",
     "D203", "D205", "D206", "D213", "D300", "D400", "D415",
     "E111", "E114", "E117", "E501",
     "W191",
-    "E722"
+    "E722",
+    "PLC0206",
 ]
 
 [tool.ruff.lint.per-file-ignores]
 # ANN001 - missing-type-function-argument
-# ANN102 - missing-type-cls
 # ANN2 - missing-return-type
 # D100 - undocumented-public-module
 # D101 - undocumented-public-class
@@ -174,7 +183,6 @@ lint.ignore = [
 # INP001 - implicit-namespace-package
 "tests/*" = [
     "ANN001",
-    "ANN102",
     "ANN2",
     "S101",
     "B011",
