@@ -52,10 +52,11 @@ def annotate(filepath: Path, contig: str) -> pd.DataFrame:
     :param filepath: link to a valid VCF file
     :param contig: specified chromosome (i.e. chr7)
     :return: Dataframe of drug-gene interactions
+    :raise TypeError: if filepath arg is not of type ``Path``
     """
     if not isinstance(filepath, Path):
         msg = "Filepath argument must be a valid pathlib.Path object"
-        raise ValueError(msg)
+        raise TypeError(msg)
 
     # Open VCF file
     records = _process_vcf(filepath, contig)
