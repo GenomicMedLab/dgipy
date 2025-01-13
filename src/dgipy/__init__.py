@@ -14,15 +14,15 @@ from .graph_app import generate_app
 from .network_graph import create_network, generate_cytoscape
 
 __all__ = [
+    "SourceType",
+    "generate_app",
+    "get_all_genes",
+    "get_categories",
+    "get_drug_applications",
     "get_drugs",
     "get_genes",
     "get_interactions",
-    "get_categories",
     "get_sources",
-    "SourceType",
-    "get_all_genes",
-    "get_drug_applications",
-    "generate_app",
     "create_network",
     "generate_cytoscape",
 ]
